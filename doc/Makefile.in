@@ -25,7 +25,7 @@ all:
 %.3.man: %.3.pod
 	pod2man -n libpty -r"$(VERSION)" -q\" -s3 -c "LIBPTY" <$< >$@
 
-%.html: %.pod
+%.html: %.3.pod
 	<$< pod2html >$@
 
 ../README: libpty.3.pod
@@ -33,13 +33,13 @@ all:
 
 tags allbin:
 
-alldoc:	libpty.3.man libpty.3.html ../README
+alldoc:	libpty.3.man libpty.html ../README
 
 clean:
 	$(RMF) *~ *.tmp
 
 realclean: clean
-	$(RMF) libpty.3.man libpty.3.html ../README
+	$(RMF) libpty.3.man libpty.html ../README
 
 cleandir: realclean
 

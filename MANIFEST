@@ -16,9 +16,8 @@ src/fdpass.C
 src/ptytty.h
 src/ptytty.C
 src/logging.C
-src/logging.h
 
 doc/Makefile.in
-doc/libpty.pod
-doc/libpty.man
+doc/libpty.3.pod
+doc/libpty.3.man
 doc/libpty.html

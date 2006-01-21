@@ -2,6 +2,8 @@
 
 SHELL = /bin/sh
 
+VERNAME = libpty-0.0
+
 srcdir =	@srcdir@
 VPATH =		@srcdir@
 .PATH:		@srcdir@

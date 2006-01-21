@@ -242,7 +242,7 @@ control_tty (int fd_tty)
 }
 
 void
-rxvt_ptytty::close_tty ()
+ptytty::close_tty ()
 {
   if (tty < 0)
     return;
@@ -252,13 +252,13 @@ rxvt_ptytty::close_tty ()
 }
 
 bool
-rxvt_ptytty::make_controlling_tty ()
+ptytty::make_controlling_tty ()
 {
   return control_tty (tty) >= 0;
 }
 
 void
-rxvt_ptytty::set_utf8_mode (bool on)
+ptytty::set_utf8_mode (bool on)
 {
 #ifdef IUTF8
   if (pty < 0)
@@ -307,7 +307,7 @@ static struct ttyconf {
     }
 } ttyconf;
 
-rxvt_ptytty_unix::rxvt_ptytty_unix ()
+ptytty_unix::ptytty_unix ()
 {
   name = 0;
 #if UTMP_SUPPORT
@@ -315,7 +315,7 @@ rxvt_ptytty_unix::rxvt_ptytty_unix ()
 #endif
 }
 
-rxvt_ptytty_unix::~rxvt_ptytty_unix ()
+ptytty_unix::~ptytty_unix ()
 {
 #if UTMP_SUPPORT
   logout ();
@@ -324,7 +324,7 @@ rxvt_ptytty_unix::~rxvt_ptytty_unix ()
 }
 
 void
-rxvt_ptytty_unix::put ()
+ptytty_unix::put ()
 {
   chmod (name, RESTORE_TTY_MODE);
   chown (name, 0, ttyconf.gid);
@@ -341,7 +341,7 @@ rxvt_ptytty_unix::put ()
 }
 
 bool
-rxvt_ptytty_unix::get ()
+ptytty_unix::get ()
 {
   /* get master (pty) */
   if ((pty = get_pty (&tty, &name)) < 0)
@@ -379,25 +379,25 @@ struct command
 {
   enum { get, login, destroy } type;
 
-  rxvt_ptytty *id;
+  ptytty *id;
 
   bool login_shell;
   int cmd_pid;
   char hostname[512]; // arbitrary, but should be plenty
 };
 
-struct rxvt_ptytty_proxy : zero_initialized, rxvt_ptytty
+struct ptytty_proxy : zero_initialized, ptytty
 {
-  rxvt_ptytty *id;
+  ptytty *id;
 
-  ~rxvt_ptytty_proxy ();
+  ~ptytty_proxy ();
 
   bool get ();
   void login (int cmd_pid, bool login_shell, const char *hostname);
 };
 
 bool
-rxvt_ptytty_proxy::get ()
+ptytty_proxy::get ()
 {
   command cmd;
 
@@ -406,20 +406,20 @@ rxvt_ptytty_proxy::get ()
   write (sock_fd, &cmd, sizeof (cmd));
 
   if (read (sock_fd, &id, sizeof (id)) != sizeof (id))
-    rxvt_fatal ("protocol error while creating pty using helper process, aborting.\n");
+    fatal ("protocol error while creating pty using helper process, aborting.\n");
 
   if (!id)
     return false;
 
-  if ((pty = rxvt_recv_fd (sock_fd)) < 0
-      || (tty = rxvt_recv_fd (sock_fd)) < 0)
-    rxvt_fatal ("protocol error while reading pty/tty fds from helper process, aborting.\n");
+  if ((pty = ptytty_recv_fd (sock_fd)) < 0
+      || (tty = ptytty_recv_fd (sock_fd)) < 0)
+    fatal ("protocol error while reading pty/tty fds from helper process, aborting.\n");
 
   return true;
 }
 
 void
-rxvt_ptytty_proxy::login (int cmd_pid, bool login_shell, const char *hostname)
+ptytty_proxy::login (int cmd_pid, bool login_shell, const char *hostname)
 {
   command cmd;
 
@@ -432,7 +432,7 @@ rxvt_ptytty_proxy::login (int cmd_pid, bool login_shell, const char *hostname)
   write (sock_fd, &cmd, sizeof (cmd));
 }
 
-rxvt_ptytty_proxy::~rxvt_ptytty_proxy ()
+ptytty_proxy::~ptytty_proxy ()
 {
   command cmd;
 
@@ -446,22 +446,22 @@ static
 void serve ()
 {
   command cmd;
-  vector<rxvt_ptytty *> ptys;
+  vector<ptytty *> ptys;
 
   while (read (sock_fd, &cmd, sizeof (command)) == sizeof (command))
     {
       if (cmd.type == command::get)
         {
           // -> id ptyfd ttyfd
-          cmd.id = new rxvt_ptytty_unix;
+          cmd.id = new ptytty_unix;
 
           if (cmd.id->get ())
             {
               write (sock_fd, &cmd.id, sizeof (cmd.id));
               ptys.push_back (cmd.id);
 
-              rxvt_send_fd (sock_fd, cmd.id->pty);
-              rxvt_send_fd (sock_fd, cmd.id->tty);
+              ptytty_send_fd (sock_fd, cmd.id->pty);
+              ptytty_send_fd (sock_fd, cmd.id->tty);
             }
           else
             {
@@ -482,7 +482,7 @@ void serve ()
         }
       else if (cmd.type == command::destroy)
         {
-          rxvt_ptytty **pty = find (ptys.begin (), ptys.end (), cmd.id);
+          ptytty **pty = find (ptys.begin (), ptys.end (), cmd.id);
 
           if (pty)
             {
@@ -495,21 +495,21 @@ void serve ()
     }
 
   // destroy all ptys
-  for (rxvt_ptytty **i = ptys.end (); i-- > ptys.begin (); )
+  for (ptytty **i = ptys.end (); i-- > ptys.begin (); )
     delete *i;
 }
 
-void rxvt_ptytty_server ()
+void ptytty_server ()
 {
   int sv[2];
 
   if (socketpair (AF_UNIX, SOCK_STREAM, 0, sv))
-    rxvt_fatal ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
+    fatal ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
 
   pid = fork ();
 
   if (pid < 0)
-    rxvt_fatal ("could not create pty/sessiondb helper process, aborting.\n");
+    fatal ("could not create pty/sessiondb helper process, aborting.\n");
 
   if (pid)
     {
@@ -535,16 +535,16 @@ void rxvt_ptytty_server ()
 #endif
 
 // a "factory" *g*
-rxvt_ptytty *
-rxvt_new_ptytty ()
+ptytty *
+new_ptytty ()
 {
 #if PTYTTY_HELPER
   if (pid > 0)
     // use helper process
-    return new rxvt_ptytty_proxy;
+    return new ptytty_proxy;
   else
 #endif
-    return new rxvt_ptytty_unix;
+    return new ptytty_unix;
 }
 
 /*----------------------- end-of-file (C source) -----------------------*/

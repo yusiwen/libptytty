@@ -32,7 +32,7 @@
  *----------------------------------------------------------------------*/
 
 #include "../config.h"
-#include "rxvt.h"
+
 #include "ptytty.h"
 
 #if UTMP_SUPPORT

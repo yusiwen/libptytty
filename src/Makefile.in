@@ -80,8 +80,10 @@ depend:
 
 # DO NOT DELETE: nice dependency list follows
 
-logging.o: ../config.h logging.h
-ptytty.o: ../config.h
+fdpass.o: ../config.h fdpass.h
+logging.o: ../config.h ptytty.h libpty.h ptytty_conf.h
+ptytty.o: ../config.h fdpass.h ptytty.h libpty.h ptytty_conf.h
 
-logging.lo: ../config.h logging.h
-ptytty.lo: ../config.h
+fdpass.lo: ../config.h fdpass.h
+logging.lo: ../config.h ptytty.h libpty.h ptytty_conf.h
+ptytty.lo: ../config.h fdpass.h ptytty.h libpty.h ptytty_conf.h

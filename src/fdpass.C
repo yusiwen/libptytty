@@ -22,6 +22,7 @@
 
 #include "../config.h"
 
+#include <sys/uio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -32,7 +33,7 @@
 #endif
 
 int
-rxvt_send_fd (int socket, int fd)
+ptytty_send_fd (int socket, int fd)
 {
   msghdr msg;
   iovec iov;
@@ -62,7 +63,7 @@ rxvt_send_fd (int socket, int fd)
 }
 
 int
-rxvt_recv_fd (int socket)
+ptytty_recv_fd (int socket)
 {
   msghdr msg;
   iovec iov;

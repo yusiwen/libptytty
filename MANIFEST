@@ -1,0 +1,15 @@
+MANIFEST
+configure
+configure.ac
+autogen.sh
+config.h.in
+Makefile.in
+
+src/Makefile.in
+src/ptytty.h
+src/logging.h
+src/ptytty.C
+src/logging.C
+
+doc/Makefile.in
+doc/libpty.pod

@@ -1,0 +1,28 @@
+=head1 NAME
+
+libpty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
+
+=head1 SYNOPSIS
+
+   -lpty
+
+=head1 DESCRIPTION
+
+=head1 THE pty CLASS
+
+=over 4
+
+=item new pty
+
+...
+
+=back
+
+=head1 BUGS
+
+You kiddin'?
+
+=head1 AUTHORS
+
+Emanuele Giaquinta L<< <e.giaquinta@glauco.it> >>, Marc Alexander Lehmann
+L<< <rxvt-unicode@schmorp.de> >>.

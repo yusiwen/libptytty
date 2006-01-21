@@ -18,6 +18,6 @@ src/ptytty.C
 src/logging.C
 
 doc/Makefile.in
-doc/libpty.pod
-doc/libpty.man
-doc/libpty.html
+doc/libpty.3.pod
+doc/libpty.3.man
+doc/libpty.3.html

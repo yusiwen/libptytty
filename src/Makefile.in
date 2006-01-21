@@ -1,0 +1,87 @@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+includedir = @includedir@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL@ -m 755
+INSTALL_DATA = @INSTALL@ -m 644
+CXXFLAGS = @CXXFLAGS@ 
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+COMPILE = $(CXX) $(CPPFLAGS) $(CXXFLAGS) -I.
+LINK = @LINKER@ $(LDFLAGS)
+
+srcdir =	@srcdir@
+VPATH =		@srcdir@
+.PATH:		@srcdir@
+
+top_builddir = ..
+basedir = ..
+thisdir = src
+
+.SUFFIXES:	.C .o
+
+#-------------------------------------------------------------------------
+# inference rules
+.C.o:
+	$(COMPILE) -c $<
+
+#.C.lo:
+#	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+#
+#.s.lo:
+#	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+#
+#.S.lo:
+#	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+#-------------------------------------------------------------------------
+
+all: allbin
+
+libpty.a: ptytty.o logging.o
+	$(LINK) -o $@ rxvt.o $(COMMON) $(LIBS) $(XLIB) $(DLIB) @PERLLIB@
+#	$(LIBTOOL) --mode=link $(LINK) rxvt.o librxvt.la $(LIBS) $(XLIB) $(DLIB) -o $@
+
+#-------------------------------------------------------------------------
+
+tags: *.[Ch]
+	ctags $^
+
+TAGS: *.[Ch]
+	etags $^
+
+allbin: libpty.a
+
+alldoc:
+
+clean:
+	$(RMF) *.a *.o *.tmp *.la .libs
+
+realclean: clean
+	$(RMF) tags TAGS
+
+cleandir: realclean
+
+distclean: realclean
+	(cd $(srcdir); $(RMF) Makefile)
+
+install: allbin alldoc install-perl
+#	$(INSTALL) -d $(DESTDIR)$(bindir)
+#	$(INSTALL_PROGRAM) rxvt  $(RXVT_BINNAME)
+#	$(INSTALL_PROGRAM) rxvtc $(RXVTC_BINNAME)
+#	$(INSTALL_PROGRAM) rxvtd $(RXVTD_BINNAME)
+
+depend:
+	makedepend -f Makefile.in -I. -Y *.C >/dev/null 2>&1
+	makedepend -f Makefile.in -I. -Y *.C -a -o .lo >/dev/null 2>&1
+
+# DO NOT DELETE: nice dependency list follows
+
+logging.o: ../config.h logging.h
+ptytty.o: ../config.h
+
+logging.lo: ../config.h logging.h
+ptytty.lo: ../config.h

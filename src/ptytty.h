@@ -1,8 +1,9 @@
 #ifndef PTYTTY_H
 #define PTYTTY_H
 
-#include "rxvt.h"
-#include "feature.h"
+#include "libpty.h"
+
+#include "ptytty_conf.h"
 
 #if defined(HAVE__GETPTY) || defined(HAVE_OPENPTY) || defined(UNIX98_PTY)
 # define NO_SETOWNER_TTYDEV 1

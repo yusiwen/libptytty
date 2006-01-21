@@ -23,6 +23,9 @@
 
 #include "../config.h"		/* NECESSARY */
 
+#include "fdpass.h"
+#include "ptytty.h"
+
 #include <cstdlib>
 #include <cstring>
 
@@ -52,10 +55,6 @@
 #endif
 
 #include <cstdio>
-
-#include "rxvtutil.h"
-#include "fdpass.h"
-#include "ptytty.h"
 
 /////////////////////////////////////////////////////////////////////////////
 

@@ -10,6 +10,7 @@ config.h.in
 Makefile.in
 
 src/Makefile.in
+src/ptytty_conf.h
 src/ptytty.h
 src/logging.h
 src/ptytty.C

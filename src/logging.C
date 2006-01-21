@@ -14,7 +14,7 @@
  * 				- extensive modifications
  * Copyright (c) 1999      D J Hawkey Jr <hawkeyd@visi.com>
  *				- lastlog support
- * Copyright (c) 2004      Marc Lehmann <pcg@goof.com>
+ * Copyright (c) 2004-2006 Marc Lehmann <pcg@goof.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,26 +30,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *----------------------------------------------------------------------*/
-/*----------------------------------------------------------------------*
- * Public:
- *	extern void cleanutent (void);
- *	extern void makeutent (const char * pty, const char * hostname);
- *
- * Private:
- *	rxvt_update_wtmp ();
- *----------------------------------------------------------------------*/
 
-#include "../config.h"		/* NECESSARY */
-#include "rxvt.h"		/* NECESSARY */
-#include "logging.h"
-#ifdef UTMP_SUPPORT
+#include "../config.h"
+#include "rxvt.h"
+#include "ptytty.h"
+
+#if UTMP_SUPPORT
 
 #if HAVE_STRUCT_UTMP
-int              rxvt_write_bsd_utmp              (int utmp_pos, struct utmp *wu);
-void             rxvt_update_wtmp                 (const char *fname, const struct utmp *putmp);
+static int              write_bsd_utmp              (int utmp_pos, struct utmp *wu);
+static void             update_wtmp                 (const char *fname, const struct utmp *putmp);
 #endif
 
-void             rxvt_update_lastlog              (const char *fname, const char *pty, const char *host);
+static void             update_lastlog              (const char *fname, const char *pty, const char *host);
 
 /*
  * BSD style utmp entry
@@ -64,30 +57,36 @@ void             rxvt_update_lastlog              (const char *fname, const char
  * make and write utmp and wtmp entries
  */
 void
-rxvt_term::makeutent (const char *pty, const char *hostname)
+ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 {
+  const char *pty = name;
+
+  if (!pty || !*pty)
+    return;
+
+  this->cmd_pid     = cmd_pid;
+  this->login_shell = login_shell;
+
 #ifdef HAVE_STRUCT_UTMP
   struct utmp *ut = &this->ut;
 #endif
 #ifdef HAVE_STRUCT_UTMPX
   struct utmpx *utx = &this->utx;
 #endif
-#ifdef HAVE_UTMP_PID
   int i;
-#endif
   struct passwd *pwent = getpwuid (getuid ());
 
   if (!strncmp (pty, "/dev/", 5))
     pty += 5;		/* skip /dev/ prefix */
 
-#ifdef HAVE_UTMP_PID
+#if defined(HAVE_UTMP_PID) || defined(HAVE_STRUCT_UTMPX)
   if (!strncmp (pty, "pty", 3) || !strncmp (pty, "tty", 3))
     strncpy (ut_id, pty + 3, sizeof (ut_id));
   else if (sscanf (pty, "pts/%d", &i) == 1)
     sprintf (ut_id, "vt%02x", (i & 0xff));	/* sysv naming */
   else if (strncmp (pty, "pty", 3) && strncmp (pty, "tty", 3))
     {
-      rxvt_warn ("can't parse tty name \"%s\", not adding utmp entry.\n", pty);
+      warn ("can't parse tty name \"%s\", not adding utmp entry.\n", pty);
       return;
     }
 #endif
@@ -99,7 +98,7 @@ rxvt_term::makeutent (const char *pty, const char *hostname)
   strncpy (ut->ut_id, ut_id, sizeof (ut->ut_id));
   ut->ut_type = DEAD_PROCESS;
   getutid (ut);		/* position to entry in utmp file */
-  strncpy (ut_id, ut_id, sizeof (ut_id));
+  strncpy (this->ut_id, ut_id, sizeof (this->ut_id));
 # endif
 #endif
 
@@ -109,7 +108,7 @@ rxvt_term::makeutent (const char *pty, const char *hostname)
   strncpy (utx->ut_id, ut_id, sizeof (utx->ut_id));
   utx->ut_type = DEAD_PROCESS;
   getutxid (utx);		/* position to entry in utmp file */
-  strncpy (ut_id, ut_id, sizeof (ut_id));
+  strncpy (this->ut_id, ut_id, sizeof (this->ut_id));
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
@@ -166,15 +165,19 @@ rxvt_term::makeutent (const char *pty, const char *hostname)
 #endif
 
 #if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
-
   {
-    int             i;
 # ifdef HAVE_TTYSLOT
+    int fdstdin = dup (STDIN_FILENO);
+    dup2 (tty, STDIN_FILENO);
+
     i = ttyslot ();
-    if (rxvt_write_bsd_utmp (i, ut))
+    if (write_bsd_utmp (i, ut))
       utmp_pos = i;
+
+    dup2 (fdstdin, STDIN_FILENO);
+    close (fdstdin);
 # else
-    FILE           *fd0;
+    FILE *fd0;
 
     if ((fd0 = fopen (TTYTAB_FILENAME, "r")) != NULL)
       {
@@ -187,7 +190,7 @@ rxvt_term::makeutent (const char *pty, const char *hostname)
               continue;
             if (!strcmp (ut->ut_line, name))
               {
-                if (!rxvt_write_bsd_utmp (i, ut))
+                if (!write_bsd_utmp (i, ut))
                   i = 0;
                 utmp_pos = i;
                 fclose (fd0);
@@ -198,34 +201,31 @@ rxvt_term::makeutent (const char *pty, const char *hostname)
         fclose (fd0);
       }
 # endif
-
   }
 #endif
 
 #ifdef WTMP_SUPPORT
-# ifdef WTMP_ONLY_ON_LOGIN
-  if (OPTION (Opt_loginShell))
-# endif
+#ifdef LOG_ONLY_ON_LOGIN
+  if (login_shell)
+#endif
     {
 # ifdef HAVE_STRUCT_UTMP
 #  ifdef HAVE_UPDWTMP
-      updwtmp (RXVT_WTMP_FILE, ut);
+      updwtmp (WTMP_FILE, ut);
 #  else
-      rxvt_update_wtmp (RXVT_WTMP_FILE, ut);
+      update_wtmp (WTMP_FILE, ut);
 #  endif
 # endif
-# ifdef HAVE_STRUCT_UTMPX
-#  if HAVE_UPDWTMPX
-      updwtmpx (RXVT_WTMPX_FILE, utx);
-#  else
-      pututxline (utx);
-#  endif
+# if defined(HAVE_STRUCT_UTMPX) && defined(HAVE_UPDWTMPX)
+      updwtmpx (WTMPX_FILE, utx);
 # endif
     }
 #endif
-#if defined(LASTLOG_SUPPORT) && defined(RXVT_LASTLOG_FILE)
-  if (OPTION (Opt_loginShell))
-    rxvt_update_lastlog (RXVT_LASTLOG_FILE, pty, hostname);
+#if defined(LASTLOG_SUPPORT) && defined(LASTLOG_FILE)
+#ifdef LOG_ONLY_ON_LOGIN
+  if (login_shell)
+#endif
+    update_lastlog (LASTLOG_FILE, pty, hostname);
 #endif
 }
 
@@ -234,10 +234,13 @@ rxvt_term::makeutent (const char *pty, const char *hostname)
  * remove utmp and wtmp entries
  */
 void
-rxvt_term::cleanutent ()
+ptytty_unix::logout ()
 {
+  if (!cmd_pid)
+    return;
+
 #ifdef HAVE_STRUCT_UTMP
-  struct utmp *ut = &this->ut;
+  struct utmp *tmput, *ut = &this->ut;
 #endif
 #ifdef HAVE_STRUCT_UTMPX
   struct utmpx *tmputx, *utx = &this->utx;
@@ -247,14 +250,10 @@ rxvt_term::cleanutent ()
 # ifdef HAVE_UTMP_PID
   memset (ut, 0, sizeof (struct utmp));
   setutent ();
-  strncpy (ut->ut_id, ut_id, sizeof (ut->ut_id));
+  strncpy (ut->ut_id, this->ut_id, sizeof (ut->ut_id));
   ut->ut_type = USER_PROCESS;
-  {
-    struct utmp    *tmput = getutid (ut);
-
-    if (tmput)		/* position to entry in utmp file */
-      ut = tmput;
-  }
+  if ((tmput = getutid (ut)))		/* position to entry in utmp file */
+    ut = tmput;
   ut->ut_type = DEAD_PROCESS;
 # else
   memset (ut->ut_name, 0, sizeof (ut->ut_name));
@@ -268,7 +267,7 @@ rxvt_term::cleanutent ()
 #ifdef HAVE_STRUCT_UTMPX
   memset (utx, 0, sizeof (struct utmpx));
   setutxent ();
-  strncpy (utx->ut_id, ut_id, sizeof (utx->ut_id));
+  strncpy (utx->ut_id, this->ut_id, sizeof (utx->ut_id));
   utx->ut_type = USER_PROCESS;
   if ((tmputx = getutxid (utx)))	/* position to entry in utmp file */
     utx = tmputx;
@@ -284,23 +283,19 @@ rxvt_term::cleanutent ()
    * Write ending wtmp entry
    */
 #ifdef WTMP_SUPPORT
-# ifdef WTMP_ONLY_ON_LOGIN
-  if (OPTION (Opt_loginShell))
-# endif
+#ifdef LOG_ONLY_ON_LOGIN
+  if (login_shell)
+#endif
     {
 # ifdef HAVE_STRUCT_UTMP
 #  ifdef HAVE_UPDWTMP
-      updwtmp (RXVT_WTMP_FILE, ut);
+      updwtmp (WTMP_FILE, ut);
 #  else
-      rxvt_update_wtmp (RXVT_WTMP_FILE, ut);
+      update_wtmp (WTMP_FILE, ut);
 #  endif
 # endif
-# ifdef HAVE_STRUCT_UTMPX
-#  if HAVE_UPDWTMPX
-      updwtmpx (RXVT_WTMPX_FILE, utx);
-#  else
-      pututxline (utx);
-#  endif
+# if defined(HAVE_STRUCT_UTMPX) && defined(HAVE_UPDWTMPX)
+      updwtmpx (WTMPX_FILE, utx);
 # endif
     }
 #endif
@@ -315,7 +310,7 @@ rxvt_term::cleanutent ()
   endutent ();
 # else
   memset (ut, 0, sizeof (struct utmp));
-  rxvt_write_bsd_utmp (utmp_pos, ut);
+  write_bsd_utmp (utmp_pos, ut);
 # endif
 #endif
 #ifdef HAVE_STRUCT_UTMPX
@@ -323,19 +318,21 @@ rxvt_term::cleanutent ()
     pututxline (utx);
   endutxent ();
 #endif
+
+  cmd_pid = 0;
 }
 
 /* ------------------------------------------------------------------------- */
 /*
  * Write a BSD style utmp entry
  */
-#ifdef HAVE_UTMP_H
-int
-rxvt_write_bsd_utmp (int utmp_pos, struct utmp *wu)
+#if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
+static int
+write_bsd_utmp (int utmp_pos, struct utmp *wu)
 {
   int             fd;
 
-  if (utmp_pos <= 0 || (fd = open (RXVT_UTMP_FILE, O_WRONLY)) == -1)
+  if (utmp_pos <= 0 || (fd = open (UTMP_FILE, O_WRONLY)) == -1)
     return 0;
 
   if (lseek (fd, (off_t) (utmp_pos * sizeof (struct utmp)), SEEK_SET) != -1)
@@ -350,8 +347,8 @@ rxvt_write_bsd_utmp (int utmp_pos, struct utmp *wu)
  * Update a BSD style wtmp entry
  */
 #if defined(WTMP_SUPPORT) && !defined(HAVE_UPDWTMP) && defined(HAVE_STRUCT_UTMP)
-void
-rxvt_update_wtmp (const char *fname, const struct utmp *putmp)
+static void
+update_wtmp (const char *fname, const struct utmp *putmp)
 {
   int             fd, gotlock, retry;
   struct flock    lck;	/* fcntl locking scheme */
@@ -391,8 +388,8 @@ rxvt_update_wtmp (const char *fname, const struct utmp *putmp)
 
 /* ------------------------------------------------------------------------- */
 #ifdef LASTLOG_SUPPORT
-void
-rxvt_update_lastlog (const char *fname, const char *pty, const char *host)
+static void
+update_lastlog (const char *fname, const char *pty, const char *host)
 {
 # ifdef HAVE_STRUCT_LASTLOGX
   struct lastlogx llx;
@@ -412,14 +409,14 @@ rxvt_update_lastlog (const char *fname, const char *pty, const char *host)
   llx.ll_tv.tv_usec = 0;
   strncpy (llx.ll_line, pty, sizeof (llx.ll_line));
   strncpy (llx.ll_host, host, sizeof (llx.ll_host));
-  updlastlogx (RXVT_LASTLOGX_FILE, getuid (), &llx);
+  updlastlogx (LASTLOGX_FILE, getuid (), &llx);
 # endif
 
 # ifdef HAVE_STRUCT_LASTLOG
   pwent = getpwuid (getuid ());
   if (!pwent)
     {
-      rxvt_warn ("no entry in password file, not updating lastlog.\n");
+      warn ("no entry in password file, not updating lastlog.\n");
       return;
     }
 

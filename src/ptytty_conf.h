@@ -1,6 +1,5 @@
-#include <vector>
-
-/* Default mode to restore when releasing the PTS device. It is relaxed to be
+/*
+ * Default mode to restore when releasing the PTS device. It is relaxed to be
  * compatible with most systems, change it to a more secure value if your
  * system supports it (0640 for example).
  */
@@ -11,4 +10,10 @@
  * when running setuid/setgid. You need this when making it setuid/setgid.
  */
 #define PTYTTY_HELPER 1
+
+/*
+ * Provide a STL-like vector class.
+ * The default is fine for normal C++ environments.
+ */
+#include <vector>
 

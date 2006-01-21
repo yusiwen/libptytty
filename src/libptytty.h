@@ -1,0 +1,32 @@
+#ifndef LIBPTY_H_ /* public libpty header file */
+#define LIBPTY_H_
+
+struct ptytty {
+  int pty; // pty file descriptor; connected to rxvt
+  int tty; // tty file descriptor; connected to child
+
+  virtual ~ptytty ()
+  {
+  }
+
+  virtual bool get () = 0;
+#if UTMP_SUPPORT
+  virtual void login (int cmd_pid, bool login_shell, const char *hostname) = 0;
+#endif
+
+  void close_tty ();
+  bool make_controlling_tty ();
+  void set_utf8_mode (bool on);
+
+protected:
+  ptytty ()
+  : pty(-1), tty(-1)
+  {
+  }
+};
+
+ptytty *ptytty_new (); // create a new pty object
+void ptytty_server (); // start the ptytty server process
+
+#endif
+

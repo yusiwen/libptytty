@@ -10,9 +10,7 @@ struct ptytty {
   }
 
   virtual bool get () = 0;
-#if UTMP_SUPPORT
   virtual void login (int cmd_pid, bool login_shell, const char *hostname) = 0;
-#endif
 
   void close_tty ();
   bool make_controlling_tty ();

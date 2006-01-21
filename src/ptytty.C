@@ -513,7 +513,7 @@ void ptytty_server ()
 
   if (pid)
     {
-      // client, urxvt
+      // client, process
       sock_fd = sv[0];
       close (sv[1]);
       fcntl (sock_fd, F_SETFD, FD_CLOEXEC);

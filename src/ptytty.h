@@ -1,7 +1,7 @@
 #ifndef PTYTTY_H
 #define PTYTTY_H
 
-#include "libpty.h"
+#include "libptytty.h"
 
 #include "ptytty_conf.h"
 
@@ -59,6 +59,8 @@ public:
   bool get ();
   void put ();
 
+  void login (int cmd_pid, bool login_shell, const char *hostname);
+
 #if UTMP_SUPPORT
   int utmp_pos;
   int cmd_pid;
@@ -74,7 +76,6 @@ public:
   char ut_id[5];
 #endif
 
-  void login (int cmd_pid, bool login_shell, const char *hostname);
   void logout ();
 #endif
 };

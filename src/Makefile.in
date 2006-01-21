@@ -41,8 +41,8 @@ thisdir = src
 
 all: allbin
 
-libpty.a: ptytty.o logging.o
-	$(LINK) -o $@ rxvt.o $(COMMON) $(LIBS) $(XLIB) $(DLIB) @PERLLIB@
+libptytty.a: ptytty.o logging.o fdpass.o
+	$(LINK) -o $@ $^ $(LIBS)
 #	$(LIBTOOL) --mode=link $(LINK) rxvt.o librxvt.la $(LIBS) $(XLIB) $(DLIB) -o $@
 
 #-------------------------------------------------------------------------
@@ -53,7 +53,7 @@ tags: *.[Ch]
 TAGS: *.[Ch]
 	etags $^
 
-allbin: libpty.a
+allbin: libptytty.a
 
 alldoc:
 
@@ -81,9 +81,9 @@ depend:
 # DO NOT DELETE: nice dependency list follows
 
 fdpass.o: ../config.h fdpass.h
-logging.o: ../config.h ptytty.h libpty.h ptytty_conf.h
-ptytty.o: ../config.h fdpass.h ptytty.h libpty.h ptytty_conf.h
+logging.o: ../config.h ptytty.h ptytty_conf.h
+ptytty.o: ../config.h fdpass.h ptytty.h ptytty_conf.h
 
 fdpass.lo: ../config.h fdpass.h
-logging.lo: ../config.h ptytty.h libpty.h ptytty_conf.h
-ptytty.lo: ../config.h fdpass.h ptytty.h libpty.h ptytty_conf.h
+logging.lo: ../config.h ptytty.h ptytty_conf.h
+ptytty.lo: ../config.h fdpass.h ptytty.h ptytty_conf.h

@@ -1,13 +1,13 @@
 NAME
-    libpty - OS independent and secure pty/tty and utmp/wtmp/lastlog
+    libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog
     handling
 
 SYNOPSIS
-       -lpty
+       -lptytty
 
 DESCRIPTION
-THE pty CLASS
-    new pty
+THE ptytty CLASS
+    new ptytty
         ...
 
 BUGS

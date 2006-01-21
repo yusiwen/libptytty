@@ -4,7 +4,7 @@ dnl#
 
 AC_INIT
 AC_PREREQ(2.50)
-AC_CONFIG_SRCDIR([src/logging.h])
+AC_CONFIG_SRCDIR([src/logging.C])
 AC_CONFIG_HEADER(config.h:config.h.in)
 
 AC_CANONICAL_HOST

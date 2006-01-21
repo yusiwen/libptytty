@@ -1,5 +1,5 @@
-#ifndef LIBPTY_H_ /* public libpty header file */
-#define LIBPTY_H_
+#ifndef LIBPTYTTY_H_ /* public libptytty header file */
+#define LIBPTYTTY_H_
 
 struct ptytty {
   int pty; // pty file descriptor; connected to rxvt

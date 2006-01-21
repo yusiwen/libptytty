@@ -1,18 +1,18 @@
 =head1 NAME
 
-libpty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
+libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
 
 =head1 SYNOPSIS
 
-   -lpty
+   -lptytty
 
 =head1 DESCRIPTION
 
-=head1 THE pty CLASS
+=head1 THE ptytty CLASS
 
 =over 4
 
-=item new pty
+=item new ptytty
 
 ...
 

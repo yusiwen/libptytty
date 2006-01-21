@@ -15,6 +15,7 @@ AC_PROG_INSTALL
 AC_LANG(C++)
 
 AC_CONFIG_FILES([Makefile \
+doc/Makefile \
 src/Makefile \
 ])
 AC_OUTPUT

@@ -1,0 +1,19 @@
+NAME
+    libpty - OS independent and secure pty/tty and utmp/wtmp/lastlog
+    handling
+
+SYNOPSIS
+       -lpty
+
+DESCRIPTION
+THE pty CLASS
+    new pty
+        ...
+
+BUGS
+    You kiddin'?
+
+AUTHORS
+    Emanuele Giaquinta <e.giaquinta@glauco.it>, Marc Alexander Lehmann
+    <rxvt-unicode@schmorp.de>.
+

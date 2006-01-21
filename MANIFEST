@@ -1,6 +1,10 @@
+README
 MANIFEST
 configure
 configure.ac
+config.sub
+config.guess
+install-sh
 autogen.sh
 config.h.in
 Makefile.in
@@ -13,3 +17,5 @@ src/logging.C
 
 doc/Makefile.in
 doc/libpty.pod
+doc/libpty.man
+doc/libpty.html

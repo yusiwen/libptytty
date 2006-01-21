@@ -1,0 +1,53 @@
+# doc/Makefile.in	-*- Makefile -*-
+
+SHELL = /bin/sh
+prefix = @prefix@
+man3dir = @mandir@/man3
+man3ext = 3
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL@ -m 755
+INSTALL_DATA = @INSTALL@ -m 644
+
+srcdir =	@srcdir@
+VPATH =		@srcdir@
+.PATH:		@srcdir@
+
+basedir = ..
+thisdir = doc
+
+first_rule: all
+dummy:
+
+#-------------------------------------------------------------------------
+
+all:
+
+%.3.man: %.3.pod
+	pod2man -n libpty -r"$(VERSION)" -q\" -s3 -c "LIBPTY" <$< >$@
+
+%.html: %.pod
+	<$< pod2html >$@
+
+../README: libpty.3.pod
+	<$< pod2text >$@
+
+tags allbin:
+
+alldoc:	libpty.3.man libpty.3.html ../README
+
+clean:
+	$(RMF) *~ *.tmp
+
+realclean: clean
+	$(RMF) libpty.3.man libpty.3.html ../README
+
+cleandir: realclean
+
+distclean:
+
+install:
+	$(INSTALL) -d $(DESTDIR)$(man3dir)
+	$(INSTALL_DATA) libpty.3.man $(DESTDIR)$(man3dir)/$(RXVTNAME).$(man1ext)
+
+distdepend: alldoc
+

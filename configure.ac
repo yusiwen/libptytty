@@ -14,9 +14,14 @@ AC_PROG_INSTALL
 
 AC_LANG(C++)
 
+PTY_CHECK
+
+UTMP_CHECK
+
+SCM_RIGHTS_CHECK
+
 AC_CONFIG_FILES([Makefile \
 doc/Makefile \
 src/Makefile \
 ])
 AC_OUTPUT
-

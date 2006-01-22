@@ -21,29 +21,21 @@ top_builddir = ..
 basedir = ..
 thisdir = src
 
-.SUFFIXES:	.C .o .lo
+.SUFFIXES: .lo
 
 #-------------------------------------------------------------------------
 # inference rules
-.C.o:
-	$(COMPILE) -c $<
-
 .C.lo:
 	libtool --mode=compile $(COMPILE) -c $<
-
-#.s.lo:
-#	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
-#
-#.S.lo:
-#	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
 
 #-------------------------------------------------------------------------
 
 all: allbin
 
-libptytty.a: ptytty.lo logging.lo fdpass.lo
-#	$(LINK) -o $@ $^ $(LIBS)
-	libtool --mode=link $(LINK) -o libptytty.la $^
+libptytty_objects = ptytty.lo logging.lo fdpass.lo
+
+libptytty.la: $(libptytty_objects)
+	libtool --mode=link $(LINK) -rpath $(libdir) -o $@ $(libptytty_objects)
 
 #-------------------------------------------------------------------------
 
@@ -53,12 +45,12 @@ tags: *.[Ch]
 TAGS: *.[Ch]
 	etags *.[Ch]
 
-allbin: libptytty.a
+allbin: libptytty.la
 
 alldoc:
 
 clean:
-	rm -rf *.a *.o *.lo *.tmp *.la .libs
+	rm -rf *.o *.lo *.la *~ .libs
 
 realclean: clean
 	rm -f tags TAGS

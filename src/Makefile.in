@@ -43,7 +43,7 @@ all: allbin
 
 libptytty.a: ptytty.lo logging.lo fdpass.lo
 #	$(LINK) -o $@ $^ $(LIBS)
-	$(LIBTOOL) --mode=link $(LINK) -o libptytty.la $^
+	libtool --mode=link $(LINK) -o libptytty.la $^
 
 #-------------------------------------------------------------------------
 

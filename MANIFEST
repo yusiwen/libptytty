@@ -6,10 +6,10 @@ config.sub
 config.guess
 aclocal.m4
 ptytty.m4
+install-sh
 autogen.sh
 config.h.in
 Makefile.in
-install-sh
 
 src/Makefile.in
 src/libptytty.h

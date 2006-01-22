@@ -16,15 +16,20 @@ struct ptytty {
   bool make_controlling_tty ();
   void set_utf8_mode (bool on);
 
+  static void init ();
+  static void drop_privileges ();
+  static ptytty *create (); // create a new pty object
+
+  static int send_fd (int socket, int fd);
+  static int recv_fd (int socket);
+
 protected:
+
   ptytty ()
   : pty(-1), tty(-1)
   {
   }
 };
-
-ptytty *ptytty_new (); // create a new pty object
-void ptytty_server (); // start the ptytty server process
 
 #endif
 

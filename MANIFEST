@@ -12,9 +12,8 @@ Makefile.in
 src/Makefile.in
 src/libptytty.h
 src/ptytty_conf.h
-src/fdpass.h
-src/fdpass.C
 src/ptytty.h
+src/fdpass.C
 src/ptytty.C
 src/logging.C
 

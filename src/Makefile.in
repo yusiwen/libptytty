@@ -6,7 +6,9 @@ includedir = @includedir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL@ -m 755
 INSTALL_DATA = @INSTALL@ -m 644
+SHELL = @SHELL@
 CXX = @CXX@
+LIBTOOL = @LIBTOOL@
 CXXFLAGS = @CXXFLAGS@ 
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
@@ -27,7 +29,7 @@ thisdir = src
 #-------------------------------------------------------------------------
 # inference rules
 .C.lo:
-	libtool --mode=compile $(COMPILE) -c $<
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
 
 #-------------------------------------------------------------------------
 
@@ -36,7 +38,7 @@ all: allbin
 libptytty_objects = ptytty.lo logging.lo fdpass.lo
 
 libptytty.la: $(libptytty_objects)
-	libtool --mode=link $(LINK) -rpath $(libdir) -o $@ $(libptytty_objects)
+	$(LIBTOOL) --mode=link $(LINK) -rpath $(libdir) -o $@ $(libptytty_objects)
 
 #-------------------------------------------------------------------------
 

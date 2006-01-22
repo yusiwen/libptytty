@@ -12,6 +12,9 @@
 /* Define to 1 if you have /dev/ptmx */
 #undef HAVE_DEV_PTMX
 
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
 /* Define to 1 if you have the `getpt' function. */
 #undef HAVE_GETPT
 

@@ -19581,7 +19581,6 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <stdio.h>
 #include <sys/types.h>
 #include <utmp.h>
@@ -19658,7 +19657,6 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <stdio.h>
 #include <sys/types.h>
 #include <utmpx.h>
@@ -19745,7 +19743,6 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <stdio.h>
 #include <sys/types.h>
 #ifdef HAVE_UTMP_H
@@ -19823,7 +19820,6 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <stdio.h>
 #ifdef HAVE_UTMPX_H
 #include <utmpx.h>
@@ -19900,7 +19896,6 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <stdio.h>
 #include <sys/types.h>
 #ifdef HAVE_UTMPX_H
@@ -19989,7 +19984,6 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-
 #include <stdio.h>
 #ifdef HAVE_UTMPX_H
 #include <utmpx.h>

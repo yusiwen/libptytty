@@ -18,8 +18,10 @@
 #define PTYTTY_HELPER 1
 
 /*
- * Provide a STL-like vector class.
- * The default is fine for normal C++ environments.
+ * Provide a STL-like vector class and find algorithm.
+ * The default below fine for normal C++ environments.
  */
 #include <vector>
+#include <algorithm>
+using namespace std;
 

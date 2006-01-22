@@ -8,9 +8,30 @@ libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
 
 =head1 DESCRIPTION
 
-=head1 INTEGRATION
+=head1 SECURITY CONSIDERATIONS
 
-make setuid/setgid etc.
+I<< B<It is of paramount importance that you at least read thw following
+paragraph!> >>
+
+If you are a typical terminal-like program that just wants one or more
+ptys, you should call the C<ptytty::init ()> method as the very first
+thing in your program:
+
+   int main (int argc, char *argv[])
+   {
+      // do nothing here
+      ptytty::init ();
+
+      // initialise, parse arguments, etc.
+   }
+
+This checks wether the program runs setuid or setgid. If yes then it will
+fork a helper process and drop privileges.
+
+Some programs need finer control over if and when this helper process is
+started, and if and how to drop privileges.
+
+etc.. etc..
 
 =head1 THE ptytty CLASS
 

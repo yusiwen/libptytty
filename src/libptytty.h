@@ -20,8 +20,10 @@ struct ptytty {
   void set_utf8_mode (bool on);
 
   static void init ();
-  static void drop_privileges ();
   static ptytty *create (); // create a new pty object
+
+  static void drop_privileges ();
+  static void use_helper ();
 
   static int send_fd (int socket, int fd);
   static int recv_fd (int socket);

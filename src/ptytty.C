@@ -26,7 +26,6 @@
 
 #include "../config.h"
 
-#include "fdpass.h"
 #include "ptytty.h"
 
 #include <cstdlib>
@@ -375,8 +374,8 @@ ptytty_unix::get ()
 
 #if PTYTTY_HELPER
 
-static int sock_fd;
-static int pid;
+static int sock_fd = -1;
+static int helper_pid, owner_pid;
 
 struct command
 {
@@ -419,8 +418,8 @@ ptytty_proxy::get ()
   if (!id)
     return false;
 
-  if ((pty = ptytty_recv_fd (sock_fd)) < 0
-      || (tty = ptytty_recv_fd (sock_fd)) < 0)
+  if ((pty = recv_fd (sock_fd)) < 0
+      || (tty = recv_fd (sock_fd)) < 0)
     fatal ("protocol error while reading pty/tty fds from helper process, aborting.\n");
 
   return true;
@@ -471,8 +470,8 @@ void serve ()
               write (sock_fd, &cmd.id, sizeof (cmd.id));
               ptys.push_back (cmd.id);
 
-              ptytty_send_fd (sock_fd, cmd.id->pty);
-              ptytty_send_fd (sock_fd, cmd.id->tty);
+              ptytty::send_fd (sock_fd, cmd.id->pty);
+              ptytty::send_fd (sock_fd, cmd.id->tty);
             }
           else
             {
@@ -493,9 +492,9 @@ void serve ()
         }
       else if (cmd.type == command::destroy)
         {
-          ptytty **pty = find (ptys.begin (), ptys.end (), cmd.id);
+          vector<ptytty *>::iterator pty = find (ptys.begin (), ptys.end (), cmd.id);
 
-          if (pty)
+          if (pty != ptys.end ())
             {
               delete *pty;
               ptys.erase (pty);
@@ -506,23 +505,31 @@ void serve ()
     }
 
   // destroy all ptys
-  for (ptytty **i = ptys.end (); i-- > ptys.begin (); )
+  for (vector<ptytty *>::iterator i = ptys.end (); i-- > ptys.begin (); )
     delete *i;
 }
 
-void ptytty_server ()
+void
+ptytty::use_helper ()
 {
+  int pid = getpid ();
+
+  if (sock_fd >= 0 && pid == owner_pid)
+    return;
+
+  owner_pid = pid;
+
   int sv[2];
 
   if (socketpair (AF_UNIX, SOCK_STREAM, 0, sv))
     fatal ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
 
-  pid = fork ();
+  helper_pid = fork ();
 
-  if (pid < 0)
+  if (helper_pid < 0)
     fatal ("could not create pty/sessiondb helper process, aborting.\n");
 
-  if (pid)
+  if (helper_pid)
     {
       // client, process
       sock_fd = sv[0];
@@ -533,6 +540,8 @@ void ptytty_server ()
     {
       // server, pty-helper
       sock_fd = sv[1];
+
+      chdir ("/");
 
       for (int fd = 0; fd < 1023; fd++)
         if (fd != sock_fd)
@@ -545,12 +554,11 @@ void ptytty_server ()
 
 #endif
 
-// a "factory" *g*
 ptytty *
-new_ptytty ()
+ptytty::create ()
 {
 #if PTYTTY_HELPER
-  if (pid > 0)
+  if (helper_pid && getpid () == owner_pid)
     // use helper process
     return new ptytty_proxy;
   else
@@ -558,5 +566,4 @@ new_ptytty ()
     return new ptytty_unix;
 }
 
-/*----------------------- end-of-file (C source) -----------------------*/
 

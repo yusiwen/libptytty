@@ -29,7 +29,7 @@ thisdir = src
 	$(COMPILE) -c $<
 
 .C.lo:
-	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+	libtool --mode=compile $(COMPILE) -c $<
 
 #.s.lo:
 #	$(LIBTOOL) --mode=compile $(COMPILE) -c $<

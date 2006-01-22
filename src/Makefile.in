@@ -3,6 +3,8 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 libdir = @libdir@
 includedir = @includedir@
+RM = @RM@
+RMF = @RM@ -f
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL@ -m 755
 INSTALL_DATA = @INSTALL@ -m 644
@@ -11,7 +13,7 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 COMPILE = $(CXX) $(CPPFLAGS) $(CXXFLAGS) -I.
-LINK = @LINKER@ $(LDFLAGS)
+LINK = $(CXX) $(LDFLAGS)
 
 srcdir =	@srcdir@
 VPATH =		@srcdir@

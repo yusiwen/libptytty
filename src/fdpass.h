@@ -22,7 +22,7 @@
 
 #include "../config.h"
 
-int libpty_send_fd (int socket, int fd);
-int libpty_recv_fd (int socket);
+int ptytty_send_fd (int socket, int fd);
+int ptytty_recv_fd (int socket);
 
 

@@ -386,9 +386,14 @@ struct command
   char hostname[512]; // arbitrary, but should be plenty
 };
 
-struct ptytty_proxy : zero_initialized, ptytty
+struct ptytty_proxy : ptytty
 {
   ptytty *id;
+
+  ~ptytty_proxy ()
+  : id(0)
+  {
+  }
 
   ~ptytty_proxy ();
 
@@ -434,12 +439,15 @@ ptytty_proxy::login (int cmd_pid, bool login_shell, const char *hostname)
 
 ptytty_proxy::~ptytty_proxy ()
 {
-  command cmd;
+  if (id)
+    {
+      command cmd;
 
-  cmd.type = command::destroy;
-  cmd.id = id;
+      cmd.type = command::destroy;
+      cmd.id = id;
 
-  write (sock_fd, &cmd, sizeof (cmd));
+      write (sock_fd, &cmd, sizeof (cmd));
+    }
 }
 
 static

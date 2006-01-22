@@ -60,15 +60,15 @@ allbin: libptytty.a
 alldoc:
 
 clean:
-	$(RMF) *.a *.o *.tmp *.la .libs
+	rm -f *.a *.o *.tmp *.la .libs
 
 realclean: clean
-	$(RMF) tags TAGS
+	rm -f tags TAGS
 
 cleandir: realclean
 
 distclean: realclean
-	(cd $(srcdir); $(RMF) Makefile)
+	(cd $(srcdir); rm -f Makefile)
 
 install: allbin alldoc install-perl
 #	$(INSTALL) -d $(DESTDIR)$(bindir)

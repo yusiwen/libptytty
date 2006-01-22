@@ -25,3 +25,10 @@
 #include <algorithm>
 using namespace std;
 
+/*
+ * printf-like functions to be called on fatal conditions
+ * (must exit), or warning conditions (only print message)
+ * TODO move elsewhere, e.g. util.C
+ */
+#define ptytty_fatal(msg) do { ptytty_warn (msg); _exit (1); } while (0)
+#define ptytty_warn(msg) fprintf (stderr, msg) // TODO

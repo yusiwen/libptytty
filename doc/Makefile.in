@@ -36,10 +36,10 @@ tags allbin:
 alldoc:	libptytty.3.man libptytty.html ../README
 
 clean:
-	$(RMF) *~ *.tmp
+	rm -f *~ *.tmp
 
 realclean: clean
-	$(RMF) libptytty.3.man libptytty.html ../README
+	rm -f libptytty.3.man libptytty.html ../README
 
 cleandir: realclean
 

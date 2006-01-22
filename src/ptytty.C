@@ -236,7 +236,7 @@ control_tty (int fd_tty)
 
   int fd = open ("/dev/tty", O_WRONLY);
   if (fd < 0)
-    return -1;		/* fatal */
+    return -1; /* fatal */
 
   close (fd);
 
@@ -413,14 +413,14 @@ ptytty_proxy::get ()
   write (sock_fd, &cmd, sizeof (cmd));
 
   if (read (sock_fd, &id, sizeof (id)) != sizeof (id))
-    fatal ("protocol error while creating pty using helper process, aborting.\n");
+    ptytty_fatal ("protocol error while creating pty using helper process, aborting.\n");
 
   if (!id)
     return false;
 
   if ((pty = recv_fd (sock_fd)) < 0
       || (tty = recv_fd (sock_fd)) < 0)
-    fatal ("protocol error while reading pty/tty fds from helper process, aborting.\n");
+    ptytty_fatal ("protocol error while reading pty/tty fds from helper process, aborting.\n");
 
   return true;
 }
@@ -522,12 +522,12 @@ ptytty::use_helper ()
   int sv[2];
 
   if (socketpair (AF_UNIX, SOCK_STREAM, 0, sv))
-    fatal ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
+    ptytty_fatal ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
 
   helper_pid = fork ();
 
   if (helper_pid < 0)
-    fatal ("could not create pty/sessiondb helper process, aborting.\n");
+    ptytty_fatal ("could not create pty/sessiondb helper process, aborting.\n");
 
   if (helper_pid)
     {
@@ -566,4 +566,47 @@ ptytty::create ()
     return new ptytty_unix;
 }
 
+void
+ptytty::init ()
+{
+  uid_t uid = getuid ();
+  gid_t gid = getgid ();
+      
+  // before doing anything else, check for setuid/setgid operation,
+  // start the helper process and drop privileges
+  if (uid != geteuid ()
+      || gid != getegid ())
+    {
+#if PTYTTY_HELPER
+      use_helper ();
+#else
+      ptytty_warn ("running setuid/setgid without pty helper compiled in, continuing unprivileged.\n");
+#endif
+
+      drop_privileges ();
+    }
+}
+
+void
+ptytty::drop_privileges ()
+{
+  uid_t uid = getuid ();
+  gid_t gid = getgid ();
+
+  // drop privileges
+#if HAVE_SETRESUID
+  setresgid (gid, gid, gid);
+  setresuid (uid, uid, uid);
+#elif HAVE_SETREUID
+  setregid (gid, gid);
+  setreuid (uid, uid);
+#elif HAVE_SETUID
+  setgid (gid);
+  setuid (uid);
+#endif
+
+  if (uid != geteuid ()
+      || gid != getegid ())
+    ptytty_fatal ("unable to drop privileges, aborting.\n");
+}
 

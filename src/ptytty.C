@@ -390,7 +390,7 @@ struct ptytty_proxy : ptytty
 {
   ptytty *id;
 
-  ~ptytty_proxy ()
+  ptytty_proxy ()
   : id(0)
   {
   }

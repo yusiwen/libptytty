@@ -1,4 +1,10 @@
 /*
+ * This file contains a few tunables for libptytty. Normally there should
+ * be little reason to change this file. It is provided to suit rare or
+ * special cases only.
+ */
+
+/*
  * Default mode to restore when releasing the PTS device. It is relaxed to be
  * compatible with most systems, change it to a more secure value if your
  * system supports it (0640 for example).

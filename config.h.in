@@ -1,5 +1,132 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* clone device filename */
+#undef CLONE_DEVICE
+
+/* Define to 1 if you have /dev/ptym/clone */
+#undef HAVE_DEV_CLONE
+
+/* Define to 1 if you have /dev/ptc */
+#undef HAVE_DEV_PTC
+
+/* Define to 1 if you have /dev/ptmx */
+#undef HAVE_DEV_PTMX
+
+/* Define to 1 if you have the `getpt' function. */
+#undef HAVE_GETPT
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `isastream' function. */
+#undef HAVE_ISASTREAM
+
+/* Define to 1 if you have the <lastlog.h> header file. */
+#undef HAVE_LASTLOG_H
+
+/* Define to 1 if you have the <libutil.h> header file. */
+#undef HAVE_LIBUTIL_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `openpty' function. */
+#undef HAVE_OPENPTY
+
+/* Define to 1 if you have the `posix_openpt' function. */
+#undef HAVE_POSIX_OPENPT
+
+/* Define to 1 if you have the <pty.h> header file. */
+#undef HAVE_PTY_H
+
+/* Define to 1 if you have the `revoke' function. */
+#undef HAVE_REVOKE
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define if utmp.h or lastlog.h has struct lastlog */
+#undef HAVE_STRUCT_LASTLOG
+
+/* Define if utmpx.h or lastlog.h has struct lastlogx */
+#undef HAVE_STRUCT_LASTLOGX
+
+/* Define if utmp.h has struct utmp */
+#undef HAVE_STRUCT_UTMP
+
+/* Define if utmpx.h has struct utmpx */
+#undef HAVE_STRUCT_UTMPX
+
+/* Define to 1 if you have the <sys/ioctl.h> header file. */
+#undef HAVE_SYS_IOCTL_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/stropts.h> header file. */
+#undef HAVE_SYS_STROPTS_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the `ttyslot' function. */
+#undef HAVE_TTYSLOT
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define if sys/socket.h defines the necessary macros/functions for file
+   handle passing */
+#undef HAVE_UNIX_FDPASS
+
+/* Define to 1 if you have the `updwtmp' function. */
+#undef HAVE_UPDWTMP
+
+/* Define to 1 if you have the `updwtmpx' function. */
+#undef HAVE_UPDWTMPX
+
+/* Define to 1 if you have the <util.h> header file. */
+#undef HAVE_UTIL_H
+
+/* Define to 1 if you have the <utmpx.h> header file. */
+#undef HAVE_UTMPX_H
+
+/* Define if struct utmpx contains ut_host */
+#undef HAVE_UTMPX_HOST
+
+/* Define if struct utmpx contains ut_session */
+#undef HAVE_UTMPX_SESSION
+
+/* Define to 1 if you have the <utmp.h> header file. */
+#undef HAVE_UTMP_H
+
+/* Define if struct utmp contains ut_host */
+#undef HAVE_UTMP_HOST
+
+/* Define if struct utmp contains ut_pid */
+#undef HAVE_UTMP_PID
+
+/* Define to 1 if you have the `_getpty' function. */
+#undef HAVE__GETPTY
+
+/* Define location of lastlogx */
+#undef LASTLOGX_FILE
+
+/* Define location of lastlog */
+#undef LASTLOG_FILE
+
+/* Define if lastlog is provided via a directory */
+#undef LASTLOG_IS_DIR
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
@@ -14,3 +141,21 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* "" */
+#undef UNIX98_PTY
+
+/* Define location of utmpx */
+#undef UTMPX_FILE
+
+/* Define location of utmp */
+#undef UTMP_FILE
+
+/* Define location of wtmpx */
+#undef WTMPX_FILE
+
+/* Define location of wtmp */
+#undef WTMP_FILE

@@ -10,7 +10,7 @@ libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
 
 =head1 SECURITY CONSIDERATIONS
 
-I<< B<It is of paramount importance that you at least read thw following
+I<< B<It is of paramount importance that you at least read the following
 paragraph!> >>
 
 If you are a typical terminal-like program that just wants one or more

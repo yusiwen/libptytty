@@ -636,10 +636,7 @@ DEFINE_METHOD(void,set_utf8_mode,(void *ptytty, int on),(on))
 extern "C" retval ptytty_ ## name args           \
 { return ptytty::name args; }
 
-DEFINE_STATIC(void,drop_privileges,())
-DEFINE_STATIC(void,use_helper,())
 DEFINE_STATIC(void,init,())
-
 DEFINE_STATIC(void *,create,())
 
 void ptytty_delete (void *ptytty)
@@ -647,6 +644,7 @@ void ptytty_delete (void *ptytty)
   delete (struct ptytty *)ptytty;
 }
 
-// send_fd, recv_fd not exposed
+DEFINE_STATIC(void,drop_privileges,())
+DEFINE_STATIC(void,use_helper,())
 
 #endif

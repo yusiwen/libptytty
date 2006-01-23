@@ -373,6 +373,9 @@ ptytty_unix::get ()
   return true;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+// helper/proxy support
+
 #if PTYTTY_HELPER
 
 static int sock_fd = -1;
@@ -610,4 +613,35 @@ ptytty::drop_privileges ()
       || gid != getegid ())
     ptytty_fatal ("unable to drop privileges, aborting.\n");
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// C API
+
+#define DEFINE_METHOD(retval, name, args1, args2) \
+extern "C" retval ptytty_ ## name args1           \
+{ return ((struct ptytty *)ptytty)->name args2; }
+
+DEFINE_METHOD(int,pty,(void *ptytty),)
+DEFINE_METHOD(int,tty,(void *ptytty),)
+DEFINE_METHOD(int,get,(void *ptytty),())
+DEFINE_METHOD(void,login,(void *ptytty, int cmd_pid, bool login_shell, const char *hostname),(cmd_pid,login_shell,hostname))
+
+DEFINE_METHOD(void,close_tty,(void *ptytty),())
+DEFINE_METHOD(int,make_controlling_tty,(void *ptytty),())
+DEFINE_METHOD(void,set_utf8_mode,(void *ptytty, int on),(on))
+
+#define DEFINE_STATIC(retval, name, args) \
+extern "C" retval ptytty_ ## name args           \
+{ return ptytty::name args; }
+
+DEFINE_STATIC(void,init,())
+DEFINE_STATIC(void *,create,())
+
+void ptytty_delete (void *ptytty)
+{
+  delete (struct ptytty *)ptytty;
+}
+
+DEFINE_STATIC(void,drop_privileges,())
+DEFINE_STATIC(void,use_helper,())
 

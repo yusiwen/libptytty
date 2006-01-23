@@ -23,7 +23,7 @@
  * process having started it, and it might not be possible to start another
  * helper.
  */
-//#define PTYTTY_REENTRANT 1
+#define PTYTTY_REENTRANT 1
 
 /*
  * Provide a STL-like vector class and find algorithm.

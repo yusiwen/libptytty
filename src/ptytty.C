@@ -408,9 +408,19 @@ struct ptytty_proxy : ptytty
   void login (int cmd_pid, bool login_shell, const char *hostname);
 };
 
+#if PTYTTY_REENTRANT
+# define NEED_TOKEN do { char ch; read  (lock_fd, &ch, 1); } while (0)
+# define GIVE_TOKEN do { char ch; write (lock_fd, &ch, 1); } while (0)
+#else
+# define NEED_TOKEN (void)0
+# define GIVE_TOKEN (void)0
+#endif
+
 bool
 ptytty_proxy::get ()
 {
+  NEED_TOKEN;
+
   command cmd;
 
   cmd.type = command::get;
@@ -421,18 +431,24 @@ ptytty_proxy::get ()
     ptytty_fatal ("protocol error while creating pty using helper process, aborting.\n");
 
   if (!id)
-    return false;
+    {
+      GIVE_TOKEN;
+      return false;
+    }
 
   if ((pty = recv_fd (sock_fd)) < 0
       || (tty = recv_fd (sock_fd)) < 0)
     ptytty_fatal ("protocol error while reading pty/tty fds from helper process, aborting.\n");
 
+  GIVE_TOKEN;
   return true;
 }
 
 void
 ptytty_proxy::login (int cmd_pid, bool login_shell, const char *hostname)
 {
+  NEED_TOKEN;
+
   command cmd;
 
   cmd.type = command::login;
@@ -442,18 +458,24 @@ ptytty_proxy::login (int cmd_pid, bool login_shell, const char *hostname)
   strncpy (cmd.hostname, hostname, sizeof (cmd.hostname));
 
   write (sock_fd, &cmd, sizeof (cmd));
+
+  GIVE_TOKEN;
 }
 
 ptytty_proxy::~ptytty_proxy ()
 {
   if (id)
     {
+      NEED_TOKEN;
+
       command cmd;
 
       cmd.type = command::destroy;
       cmd.id = id;
 
       write (sock_fd, &cmd, sizeof (cmd));
+
+      GIVE_TOKEN;
     }
 }
 
@@ -463,8 +485,13 @@ void serve ()
   command cmd;
   vector<ptytty *> ptys;
 
-  while (read (sock_fd, &cmd, sizeof (command)) == sizeof (command))
+  for (;;)
     {
+      GIVE_TOKEN;
+
+      if (read (sock_fd, &cmd, sizeof (command)) != sizeof (command))
+        break;
+
       if (cmd.type == command::get)
         {
           // -> id ptyfd ttyfd
@@ -507,6 +534,8 @@ void serve ()
         }
       else
         break;
+
+      NEED_TOKEN;
     }
 
   // destroy all ptys

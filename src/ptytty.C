@@ -31,6 +31,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <csignal>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -378,7 +379,7 @@ ptytty_unix::get ()
 
 #if PTYTTY_HELPER
 
-static int sock_fd = -1;
+static int sock_fd = -1, lock_fd = -1;
 static int helper_pid, owner_pid;
 
 struct command
@@ -528,6 +529,13 @@ ptytty::use_helper ()
   if (socketpair (AF_UNIX, SOCK_STREAM, 0, sv))
     ptytty_fatal ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
 
+#ifdef PTYTTY_REENTRANT
+  int lv[2];
+
+  if (socketpair (AF_UNIX, SOCK_STREAM, 0, lv))
+    ptytty_fatal ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
+#endif
+
   helper_pid = fork ();
 
   if (helper_pid < 0)
@@ -539,16 +547,29 @@ ptytty::use_helper ()
       sock_fd = sv[0];
       close (sv[1]);
       fcntl (sock_fd, F_SETFD, FD_CLOEXEC);
+#ifdef PTYTTY_REENTRANT
+      lock_fd = lv[0];
+      close (lv[1]);
+      fcntl (lock_fd, F_SETFD, FD_CLOEXEC);
+#endif
     }
   else
     {
       // server, pty-helper
       sock_fd = sv[1];
+#ifdef PTYTTY_REENTRANT
+      lock_fd = lv[1];
+#endif
 
       chdir ("/");
 
+      signal (SIGHUP,  SIG_IGN);
+      signal (SIGTERM, SIG_IGN);
+      signal (SIGINT,  SIG_IGN);
+      signal (SIGPIPE, SIG_IGN);
+
       for (int fd = 0; fd < 1023; fd++)
-        if (fd != sock_fd)
+        if (fd != sock_fd && fd != lock_fd)
           close (fd);
 
       serve ();
@@ -633,7 +654,7 @@ DEFINE_METHOD(int,make_controlling_tty,(void *ptytty),())
 DEFINE_METHOD(void,set_utf8_mode,(void *ptytty, int on),(on))
 
 #define DEFINE_STATIC(retval, name, args) \
- retval ptytty_ ## name args           \
+extern "C" retval ptytty_ ## name args           \
 { return ptytty::name args; }
 
 DEFINE_STATIC(void,drop_privileges,())

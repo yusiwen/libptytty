@@ -135,11 +135,74 @@ libptytty \- OS independent and secure pty/tty and utmp/wtmp/lastlog handling
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 .Vb 1
-\&   -lptytty
+\&   cc ... -lptytty
+.Ve
+.PP
+.Vb 1
+\&   #include <libptytty.h>
+.Ve
+.PP
+.Vb 2
+\&   // C++
+\&   ptytty *pty = ptytty::create ();
+.Ve
+.PP
+.Vb 2
+\&   if (!pty->get ())
+\&     // error allocating pty
+.Ve
+.PP
+.Vb 4
+\&   if (we want utmp)
+\&     pty->login (process_pid, 0, "remote.host");
+\&   else if (we want utmp AND wtmp/lastlog)
+\&     pty->login (process_pid, 1, "remote.host");
+.Ve
+.PP
+.Vb 2
+\&   // we are done with it
+\&   delete pty;
+.Ve
+.PP
+.Vb 2
+\&   // C
+\&   PTYTTY pty = ptytty_create ();
+.Ve
+.PP
+.Vb 2
+\&   if (!ptytty_get (pty))
+\&     // error allocating pty
+.Ve
+.PP
+.Vb 4
+\&   if (we want utmp)
+\&     ptytty_login (pty, process_pid, 0, "remote.host");
+\&   else if (we want utmp AND wtmp/lastlog)
+\&     ptytty_login (pty, process_pid, 1, "remote.host");
+.Ve
+.PP
+.Vb 2
+\&   // we are done with it
+\&   ptytty_delete (pty);
 .Ve
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
-\&\s-1TODO\s0
+Libptytty is a small library that offers pseudo-tty management in an
+OS-independent way.  It was created out of frustration over the many
+differences of pty/tty handling in different operating systems for the use
+inside \f(CW\*(C`rxvt\-unicode\*(C'\fR.
+.PP
+In addition to offering mere pty/tty management, it also offers session
+database support (utmp and optional wtmp/lastlog updates for login
+shells).
+.PP
+It also supports fork'ing after startup and dropping privileges in the
+calling process, so in case the calling process gets compromised by the
+user starting the program there is less to gain, as only the helper
+process runs with privileges (e.g. setuid/setgid), which reduces the area
+of attack immensely.
+.PP
+Libptytty is written in \*(C+, but it also offers a C\-only \s-1API\s0.
 .SH "SECURITY CONSIDERATIONS"
 .IX Header "SECURITY CONSIDERATIONS"
 \&\fI\f(BIIt is of paramount importance that you at least read the following

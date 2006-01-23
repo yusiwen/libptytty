@@ -39,12 +39,54 @@
 <hr />
 <h1><a name="synopsis">SYNOPSIS</a></h1>
 <pre>
-   -lptytty</pre>
+   cc ... -lptytty</pre>
+<pre>
+   #include &lt;libptytty.h&gt;</pre>
+<pre>
+   // C++
+   ptytty *pty = ptytty::create ();</pre>
+<pre>
+   if (!pty-&gt;get ())
+     // error allocating pty</pre>
+<pre>
+   if (we want utmp)
+     pty-&gt;login (process_pid, 0, &quot;remote.host&quot;);
+   else if (we want utmp AND wtmp/lastlog)
+     pty-&gt;login (process_pid, 1, &quot;remote.host&quot;);</pre>
+<pre>
+   // we are done with it
+   delete pty;</pre>
+<pre>
+   // C
+   PTYTTY pty = ptytty_create ();</pre>
+<pre>
+   if (!ptytty_get (pty))
+     // error allocating pty</pre>
+<pre>
+   if (we want utmp)
+     ptytty_login (pty, process_pid, 0, &quot;remote.host&quot;);
+   else if (we want utmp AND wtmp/lastlog)
+     ptytty_login (pty, process_pid, 1, &quot;remote.host&quot;);</pre>
+<pre>
+   // we are done with it
+   ptytty_delete (pty);</pre>
 <p>
 </p>
 <hr />
 <h1><a name="description">DESCRIPTION</a></h1>
-<p>TODO</p>
+<p>Libptytty is a small library that offers pseudo-tty management in an
+OS-independent way.  It was created out of frustration over the many
+differences of pty/tty handling in different operating systems for the use
+inside <code>rxvt-unicode</code>.</p>
+<p>In addition to offering mere pty/tty management, it also offers session
+database support (utmp and optional wtmp/lastlog updates for login
+shells).</p>
+<p>It also supports fork'ing after startup and dropping privileges in the
+calling process, so in case the calling process gets compromised by the
+user starting the program there is less to gain, as only the helper
+process runs with privileges (e.g. setuid/setgid), which reduces the area
+of attack immensely.</p>
+<p>Libptytty is written in C++, but it also offers a C-only API.</p>
 <p>
 </p>
 <hr />

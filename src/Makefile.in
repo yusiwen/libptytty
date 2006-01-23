@@ -63,11 +63,11 @@ cleandir: realclean
 distclean: realclean
 	(cd $(srcdir); rm -f Makefile)
 
-install: allbin alldoc install-perl
-#	$(INSTALL) -d $(DESTDIR)$(bindir)
-#	$(INSTALL_PROGRAM) rxvt  $(RXVT_BINNAME)
-#	$(INSTALL_PROGRAM) rxvtc $(RXVTC_BINNAME)
-#	$(INSTALL_PROGRAM) rxvtd $(RXVTD_BINNAME)
+install: allbin
+	$(INSTALL) -d $(DESTDIR)$(libdir)
+	$(LIBTOOL) --mode=install $(INSTALL_PROGRAM) libptytty.la $(DESTDIR)/$(libdir)
+	$(INSTALL) -d $(DESTDIR)$(includedir)
+	$(INSTALL_DATA) libptytty.h $(DESTDIR)/$(includedir)
 
 depend:
 	makedepend -f Makefile.in -I. -Y *.C >/dev/null 2>&1

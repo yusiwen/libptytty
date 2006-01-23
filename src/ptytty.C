@@ -546,12 +546,20 @@ void serve ()
 void
 ptytty::use_helper ()
 {
+#ifndef PTYTTY_NO_PID_CHECK
   int pid = getpid ();
+#endif
 
-  if (sock_fd >= 0 && pid == owner_pid)
+  if (sock_fd >= 0
+#ifndef PTYTTY_NO_PID_CHECK
+      && pid == owner_pid
+#endif
+      )
     return;
 
+#ifndef PTYTTY_NO_PID_CHECK
   owner_pid = pid;
+#endif
 
   int sv[2];
 
@@ -612,7 +620,11 @@ ptytty *
 ptytty::create ()
 {
 #if PTYTTY_HELPER
-  if (helper_pid && getpid () == owner_pid)
+  if (helper_pid
+# ifndef PTYTTY_NO_PID_CHECK
+      && getpid () == owner_pid
+# endif
+      )
     // use helper process
     return new ptytty_proxy;
   else
@@ -667,7 +679,7 @@ ptytty::drop_privileges ()
 /////////////////////////////////////////////////////////////////////////////
 // C API
 
-#ifndef NO_C_API
+#ifndef PTYTTY_NO_C_API
 
 #define DEFINE_METHOD(retval, name, args1, args2) \
 extern "C" retval ptytty_ ## name args1           \

@@ -16,7 +16,7 @@ I<< B<It is of paramount importance that you at least read the following
 paragraph!> >>
 
 If you are a typical terminal-like program that just wants one or more
-ptys, you should call the C<ptytty::init ()> method (C: C<ptytty_init ()
+ptys, you should call the C<ptytty::init ()> method (C: C<ptytty_init ()>
 function) as the very first thing in your program:
 
    int main (int argc, char *argv[])

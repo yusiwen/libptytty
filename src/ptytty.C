@@ -633,13 +633,13 @@ DEFINE_METHOD(int,make_controlling_tty,(void *ptytty),())
 DEFINE_METHOD(void,set_utf8_mode,(void *ptytty, int on),(on))
 
 #define DEFINE_STATIC(retval, name, args) \
-extern "C" retval ptytty_ ## name args           \
+ retval ptytty_ ## name args           \
 { return ptytty::name args; }
 
 DEFINE_STATIC(void,drop_privileges,())
 DEFINE_STATIC(void,use_helper,())
-
 DEFINE_STATIC(void,init,())
+
 DEFINE_STATIC(void *,create,())
 
 void ptytty_delete (void *ptytty)

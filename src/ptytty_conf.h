@@ -40,3 +40,4 @@ using namespace std;
  */
 #define ptytty_fatal(msg) do { ptytty_warn (msg); _exit (1); } while (0)
 #define ptytty_warn(msg) fprintf (stderr, msg) // TODO
+

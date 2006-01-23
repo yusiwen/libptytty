@@ -4,7 +4,7 @@ libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
 
 =head1 SYNOPSIS
 
-   cc ... -lptytty
+   c++ ... -lptytty
 
    #include <libptytty.h>
 

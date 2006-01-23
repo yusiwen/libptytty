@@ -617,6 +617,8 @@ ptytty::drop_privileges ()
 /////////////////////////////////////////////////////////////////////////////
 // C API
 
+#ifndef NO_C_API
+
 #define DEFINE_METHOD(retval, name, args1, args2) \
 extern "C" retval ptytty_ ## name args1           \
 { return ((struct ptytty *)ptytty)->name args2; }
@@ -634,7 +636,10 @@ DEFINE_METHOD(void,set_utf8_mode,(void *ptytty, int on),(on))
 extern "C" retval ptytty_ ## name args           \
 { return ptytty::name args; }
 
+DEFINE_STATIC(void,drop_privileges,())
+DEFINE_STATIC(void,use_helper,())
 DEFINE_STATIC(void,init,())
+
 DEFINE_STATIC(void *,create,())
 
 void ptytty_delete (void *ptytty)
@@ -642,6 +647,6 @@ void ptytty_delete (void *ptytty)
   delete (struct ptytty *)ptytty;
 }
 
-DEFINE_STATIC(void,drop_privileges,())
-DEFINE_STATIC(void,use_helper,())
+// send_fd, recv_fd not exposed
 
+#endif

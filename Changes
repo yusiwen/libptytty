@@ -1,5 +1,6 @@
 0.1
 	- added an untested C API.
+        - small freebsd patch to fdpass.C by Thierry Thomas.
 
 0.0
         - originally cloned rxvt-unicode.

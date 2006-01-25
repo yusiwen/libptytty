@@ -4,7 +4,7 @@ libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
 
 =head1 SYNOPSIS
 
-   c++ ... -lptytty
+   cc ... -lptytty
 
    #include <libptytty.h>
 
@@ -38,7 +38,8 @@ libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
    // we are done with it
    ptytty_delete (pty);
 
-
+See also the F<eg/> directory, which currently contains the F<c-sample.c>
+file that spawns a loginshell from C using libptytty.
 
 =head1 DESCRIPTION
 

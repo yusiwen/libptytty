@@ -1,6 +1,9 @@
 0.1
 	- added an untested C API.
         - small freebsd patch to fdpass.C by Thierry Thomas.
+        - added eg/c-sample.c.
+        - small fixes to the C api.
+        - restructured source files.
 
 0.0
         - originally cloned from rxvt-unicode.

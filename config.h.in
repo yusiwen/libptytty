@@ -130,6 +130,9 @@
 /* Define if lastlog is provided via a directory */
 #undef LASTLOG_IS_DIR
 
+/* Define if you want to have lastlog support when utmp/utmpx is enabled */
+#undef LASTLOG_SUPPORT
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
@@ -149,6 +152,9 @@
 #undef STDC_HEADERS
 
 /* "" */
+#undef TTY_GID_SUPPORT
+
+/* "" */
 #undef UNIX98_PTY
 
 /* Define location of utmpx */
@@ -157,8 +163,14 @@
 /* Define location of utmp */
 #undef UTMP_FILE
 
+/* Define if you want to have utmp/utmpx support */
+#undef UTMP_SUPPORT
+
 /* Define location of wtmpx */
 #undef WTMPX_FILE
 
 /* Define location of wtmp */
 #undef WTMP_FILE
+
+/* Define if you want to have wtmp support when utmp/utmpx is enabled */
+#undef WTMP_SUPPORT

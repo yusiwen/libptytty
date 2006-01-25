@@ -75,10 +75,14 @@ depend:
 
 # DO NOT DELETE: nice dependency list follows
 
+c-api.o: ../config.h ptytty.h libptytty.h ptytty_conf.h
 fdpass.o: ../config.h libptytty.h
 logging.o: ../config.h ptytty.h libptytty.h ptytty_conf.h
+proxy.o: ../config.h ptytty.h libptytty.h ptytty_conf.h
 ptytty.o: ../config.h ptytty.h libptytty.h ptytty_conf.h
 
+c-api.lo: ../config.h ptytty.h libptytty.h ptytty_conf.h
 fdpass.lo: ../config.h libptytty.h
 logging.lo: ../config.h ptytty.h libptytty.h ptytty_conf.h
+proxy.lo: ../config.h ptytty.h libptytty.h ptytty_conf.h
 ptytty.lo: ../config.h ptytty.h libptytty.h ptytty_conf.h

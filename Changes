@@ -3,5 +3,5 @@
         - small freebsd patch to fdpass.C by Thierry Thomas.
 
 0.0
-        - originally cloned rxvt-unicode.
+        - originally cloned from rxvt-unicode.
 

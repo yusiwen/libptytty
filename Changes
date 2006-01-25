@@ -4,6 +4,7 @@
         - added eg/c-sample.c.
         - small fixes to the C api.
         - restructured source files.
+        - added set*uid checks to ptytty.m4.
 
 0.0
         - originally cloned from rxvt-unicode.

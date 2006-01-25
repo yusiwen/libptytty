@@ -35,7 +35,7 @@ thisdir = src
 
 all: allbin
 
-libptytty_objects = ptytty.lo logging.lo fdpass.lo
+libptytty_objects = ptytty.lo proxy.lo logging.lo fdpass.lo c-api.lo
 
 libptytty.la: $(libptytty_objects)
 	$(LIBTOOL) --mode=link $(LINK) -rpath $(libdir) -o $@ $(libptytty_objects)

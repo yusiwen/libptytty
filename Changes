@@ -1,3 +1,6 @@
+
+	- move include files outside #ifdef PTYTTY_HELPER in proxy.C.
+
 0.1  Wed Jan 25 22:56:36 CET 2006
 	- added the C API.
         - small freebsd patch to fdpass.C by Thierry Thomas.

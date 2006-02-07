@@ -1,5 +1,6 @@
 
 	- move include files outside #ifdef PTYTTY_HELPER in proxy.C.
+        - added proxy.C to cvs (was missing before).
 
 0.1  Wed Jan 25 22:56:36 CET 2006
 	- added the C API.

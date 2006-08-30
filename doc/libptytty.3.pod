@@ -99,7 +99,7 @@ the first thing in the C<main> function, or earlier e.g. during static
 construction time. The earlier, the better.
 
 This method checks wether the program runs with setuid/setgid permissions
-and, if yes, spawns a helper process for pty/tty management. IT then
+and, if yes, spawns a helper process for pty/tty management. It then
 drops the privileges completely, so the actual program runs without
 setuid/setgid privileges.
 
@@ -113,13 +113,13 @@ you are not running setuid/setgid but want to drop privileges (e.g. when
 running as a root-started daemon).
 
 This method will try not to start more than one helper process. The same
-helper process cna usually be used form the process starting it an all its
-fork'ed (not exec'ed) children
+helper process can usually be used both from the process starting it and
+all its fork'ed (not exec'ed) children.
 
 =item ptytty::drop_privileges ()
 
 Drops privileges completely, i.e. sets real, effective and saved user id
-to the real user id. Also aborts if this cnanot be achieved. Useful to
+to the real user id. Also aborts if this cannot be achieved. Useful to
 make sure that the process doesn't run with special privileges.
 
 =item bool success = ptytty::send_fd (int socket, int fd)
@@ -186,9 +186,9 @@ process. Useful after forking in the child/tty process.
 
 =item pty->set_utf8_mode (bool on)
 
-On systems supporting special UTF-8 line disciplines (e.g. Linux), tries
-to enable it for the given pty. Can be called at any time to change the
-mode.
+On systems supporting special UTF-8 line disciplines (e.g. Linux), this
+tries to enable this discipline for the given pty. Can be called at any
+time to change the mode.
 
 =back
 
@@ -204,7 +204,7 @@ See C<ptytty::init ()>.
 =item PTYTTY ptytty_create ()
 
 Creates a new opaque PTYTTY object and returns it. Do not try to access it
-in any way excecp by testing it for truthness (e.g. C<if (pty) ....>). See
+in any way except by testing it for truthness (e.g. C<if (pty) ....>). See
 C<ptytty::create ()>.
 
 =item int ptytty_pty (PTYTTY ptytty)

@@ -73,7 +73,7 @@ SECURITY CONSIDERATIONS
           // initialise, parse arguments, etc.
        }
 
-    This checks wether the program runs setuid or setgid. If yes then it
+    This checks whether the program runs setuid or setgid. If yes then it
     will fork a helper process and drop privileges.
 
     Some programs need finer control over if and when this helper process is
@@ -88,7 +88,7 @@ C++ INTERFACE: THE ptytty CLASS
         as the first thing in the "main" function, or earlier e.g. during
         static construction time. The earlier, the better.
 
-        This method checks wether the program runs with setuid/setgid
+        This method checks whether the program runs with setuid/setgid
         permissions and, if yes, spawns a helper process for pty/tty
         management. It then drops the privileges completely, so the actual
         program runs without setuid/setgid privileges.
@@ -145,8 +145,8 @@ C++ INTERFACE: THE ptytty CLASS
     pty->login (int cmd_pid, bool login_shell, const char *hostname)
         Creates an entry in the systems session database(s) (utmp, wtmp,
         lastlog). "cmd_pid" must be the pid of the process representing the
-        session (such as the login shell), "login_shell" defines wether the
-        session is associated with a login, which influences wether wtmp and
+        session (such as the login shell), "login_shell" defines whether the
+        session is associated with a login, which influences whether wtmp and
         lastlog entries are created, and "hostname" should identify the
         "hostname" the user logs in from, which often is the value of the
         "DISPLAY" variable or tty line in case of local logins.

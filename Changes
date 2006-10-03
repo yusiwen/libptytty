@@ -1,3 +1,6 @@
+1.0  Tue Oct  3 13:18:00 CEST 2006
+	- do not call chmod/chown with 0 argument when pty never opened.
+        - reformatted ptytty.C to hopefully be more clear.
 
 0.2  Thu Jul 20 04:57:26 CEST 2006
 	- move include files outside #ifdef PTYTTY_HELPER in proxy.C.

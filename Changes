@@ -1,5 +1,6 @@
 1.1
-        - when using the helper, close the pty fd also in the main process.
+        - when using the helper, close the pty and tty fd also in the main
+          process (Patch by Andrei Paskevich).
 
 1.0  Tue Oct  3 13:18:00 CEST 2006
 	- do not call chmod/chown with 0 argument when pty never opened.

@@ -307,19 +307,10 @@ ptytty::sanitise_stdfd ()
         int fd2 = open ("/dev/tty", fd ? O_WRONLY : O_RDONLY);
 
         if (fd2 < 0)
-          {
-            fd2 = open ("/dev/null", fd ? O_WRONLY : O_RDONLY);
-            if (fd2 < 0)
-              abort ();
-          }
+          fd2 = open ("/dev/null", fd ? O_WRONLY : O_RDONLY);
 
         if (fd2 != fd)
-          {
-            if (dup2 (fd2, fd) < 0)
-              abort ();
-
-            close (fd2);
-          }
+          abort ();
       }
 }
 

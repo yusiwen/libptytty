@@ -1,6 +1,8 @@
-1.1
+1.1  Mon Feb 12 18:25:07 CET 2007
         - when using the helper, close the pty and tty fd also in the main
-          process (Patch by Andrei Paskevich).
+          process (patch by Andrei Paskevich).
+        - implement ptytty::sanitise_stdfd to ensure stdin/out/error exist
+          and are usable and use it.
 
 1.0  Tue Oct  3 13:18:00 CEST 2006
 	- do not call chmod/chown with 0 argument when pty never opened.

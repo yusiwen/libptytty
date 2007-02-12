@@ -83,8 +83,8 @@ fork a helper process and drop privileges.
 
 Some programs need finer control over if and when this helper process
 is started, and if and how to drop privileges. For those programs, the
-methods C<ptytty::use_helper> and C<ptytty::drop_privileges> are more
-useful.
+methods C<ptytty::use_helper> and C<ptytty::drop_privileges> (and possibly
+C<ptytty::sanitise_stdfd>) are more useful.
 
 =head1 C++ INTERFACE: THE ptytty CLASS
 
@@ -94,14 +94,14 @@ useful.
 
 =item ptytty::init ()
 
-The default way to initialise libptytty. Must be called imemdiately as
+The default way to initialise libptytty. Must be called immediately as
 the first thing in the C<main> function, or earlier e.g. during static
 construction time. The earlier, the better.
 
-This method checks wether the program runs with setuid/setgid permissions
-and, if yes, spawns a helper process for pty/tty management. It then
-drops the privileges completely, so the actual program runs without
-setuid/setgid privileges.
+This method calls C<sanitise_stdf> and then checks wether the program runs
+with setuid/setgid permissions and, if yes, spawns a helper process for
+pty/tty management. It then drops the privileges completely, so the actual
+program runs without setuid/setgid privileges.
 
 =item ptytty::use_helper ()
 
@@ -121,6 +121,14 @@ all its fork'ed (not exec'ed) children.
 Drops privileges completely, i.e. sets real, effective and saved user id
 to the real user id. Also aborts if this cannot be achieved. Useful to
 make sure that the process doesn't run with special privileges.
+
+=item ptytty::sanitise_stdfd ()
+
+Checks wether file descriptors 0, 1 and 2 (stdin, stdout and stderr) are
+valid (open) and, if not, connects them to F</dev/tty> or F</dev/null>
+if possible (and aborts otherwise). This is necessary because libptytty
+might want to output error messages to those descriptors, which might be
+connected to something unsuitable (this can be a security issue).
 
 =item bool success = ptytty::send_fd (int socket, int fd)
 

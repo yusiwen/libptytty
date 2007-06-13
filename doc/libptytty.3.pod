@@ -208,7 +208,7 @@ time to change the mode.
 =item ptytty_init ()
 
 See C<ptytty::init ()>.
-   
+
 =item PTYTTY ptytty_create ()
 
 Creates a new opaque PTYTTY object and returns it. Do not try to access it
@@ -218,11 +218,11 @@ C<ptytty::create ()>.
 =item int ptytty_pty (PTYTTY ptytty)
 
 Return the pty file descriptor. See C<< pty->pty >>.
-   
+
 =item int ptytty_tty (PTYTTY ptytty)
 
 Return the tty file descriptor. See C<< pty->tty >>.
-   
+
 =item void ptytty_delete (PTYTTY ptytty)
 
 Destroys the PTYTTY object, freeing the pty/tty pair and cleaning up the
@@ -240,11 +240,11 @@ See C<< pty->login >>.
 =item void ptytty_close_tty (PTYTTY ptytty)
 
 See C<< pty->close_tty >>.
-   
+
 =item int ptytty_make_controlling_tty (PTYTTY ptytty)
 
 See C<< pty->make_controlling_tty >>.
-   
+
 =item void ptytty_set_utf8_mode (PTYTTY ptytty, int on)
 
 See C<< pty->set_utf8_mode >>.
@@ -252,7 +252,7 @@ See C<< pty->set_utf8_mode >>.
 =item void ptytty_drop_privileges ()
 
 See C<< ptytty::drop_privileges >>.
-   
+
 =item void ptytty_use_helper ()
 
 See C<< ptytty::use_helper >>.

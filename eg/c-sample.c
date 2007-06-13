@@ -72,7 +72,7 @@ int main (void)
       execl ("/bin/sh", "-sh", 0);
       _exit (EXIT_FAILURE);
     }
-  
+
   return EXIT_SUCCESS;
 }
 

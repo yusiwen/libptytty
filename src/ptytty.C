@@ -253,7 +253,13 @@ control_tty (int fd_tty)
     }
 #endif
 
+#ifdef TIOCSCTTY
   ioctl (fd_tty, TIOCSCTTY, NULL);
+#else
+  fd = open (name, O_RDWR);
+  if (fd >= 0)
+    close (fd);
+#endif
 
   int fd = open ("/dev/tty", O_WRONLY);
   if (fd < 0)

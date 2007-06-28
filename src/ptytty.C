@@ -124,11 +124,14 @@
   get_pty (int *fd_tty, char **ttydev)
   {
     int pfd;
+    char *slave;
 
-    *ttydev = _getpty (&pfd, O_RDWR | O_NONBLOCK | O_NOCTTY, 0622, 0);
+    slave = _getpty (&pfd, O_RDWR | O_NONBLOCK | O_NOCTTY, 0622, 0);
 
-    if (*ttydev != NULL)
+    if (slave != NULL) {
+      *ttydev = strdup (slave);
       return pfd;
+    }
 
     return -1;
   }

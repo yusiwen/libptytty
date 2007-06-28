@@ -106,13 +106,12 @@
   {
     int pfd;
     int res;
-    char tty_name[32];
 
-    res = openpty (&pfd, fd_tty, tty_name, NULL, NULL);
+    res = openpty (&pfd, fd_tty, NULL, NULL, NULL);
 
     if (res != -1)
       {
-        *ttydev = strdup (tty_name);
+        *ttydev = strdup (ttyname (*fd_tty));
         return pfd;
       }
 

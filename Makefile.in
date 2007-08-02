@@ -2,7 +2,7 @@
 
 SHELL = /bin/sh
 
-VERNAME = libptytty-1.1
+VERNAME = libptytty-1.2
 
 srcdir =	@srcdir@
 VPATH =		@srcdir@

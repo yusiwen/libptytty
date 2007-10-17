@@ -85,19 +85,19 @@ support_wtmp=yes
 support_lastlog=yes
 
 AC_ARG_ENABLE(utmp,
-  [  --enable-utmp           enable utmp (utmpx) support],
+  [AS_HELP_STRING([--enable-utmp],[enable utmp (utmpx) support])],
   [if test x$enableval = xyes -o x$enableval = xno; then
     support_utmp=$enableval
   fi])
 
 AC_ARG_ENABLE(wtmp,
-  [  --enable-wtmp           enable wtmp (wtmpx) support (requires --enable-utmp)],
+  [AS_HELP_STRING([--enable-wtmp],[enable wtmp (wtmpx) support (requires --enable-utmp)])],
   [if test x$enableval = xyes -o x$enableval = xno; then
     support_wtmp=$enableval
   fi])
 
 AC_ARG_ENABLE(lastlog,
-  [  --enable-lastlog        enable lastlog support (requires --enable-utmp)],
+  [AS_HELP_STRING([--enable-lastlog],[enable lastlog support (requires --enable-utmp)])],
   [if test x$enableval = xyes -o x$enableval = xno; then
     support_lastlog=$enableval
   fi])

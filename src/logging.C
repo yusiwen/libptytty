@@ -161,25 +161,25 @@ update_lastlog (const char *fname, const char *pty, const char *host)
     return;
   if (S_ISDIR (st.st_mode))
     {
-  sprintf (lastlogfile, "%.*s/%.*s",
-          sizeof (lastlogfile) - sizeof (pwent->pw_name) - 2, fname,
-          sizeof (pwent->pw_name),
-          (!pwent->pw_name || pwent->pw_name[0] == '\0') ? "unknown"
-          : pwent->pw_name);
-  if ((fd = open (lastlogfile, O_WRONLY | O_CREAT, 0644)) >= 0)
-    {
-      write (fd, &ll, sizeof (ll));
-      close (fd);
-    }
+      sprintf (lastlogfile, "%.*s/%.*s",
+               sizeof (lastlogfile) - sizeof (pwent->pw_name) - 2, fname,
+               sizeof (pwent->pw_name),
+               (!pwent->pw_name || pwent->pw_name[0] == '\0') ? "unknown"
+               : pwent->pw_name);
+      if ((fd = open (lastlogfile, O_WRONLY | O_CREAT, 0644)) >= 0)
+        {
+          write (fd, &ll, sizeof (ll));
+          close (fd);
+        }
     }
   else if (S_ISREG (st.st_mode))
-  if ((fd = open (fname, O_RDWR)) != -1)
-    {
-      if (lseek (fd, (off_t) ((long)pwent->pw_uid * sizeof (ll)),
-                SEEK_SET) != -1)
-        write (fd, &ll, sizeof (ll));
-      close (fd);
-    }
+    if ((fd = open (fname, O_RDWR)) != -1)
+      {
+        if (lseek (fd, (off_t) ((long)pwent->pw_uid * sizeof (ll)),
+                   SEEK_SET) != -1)
+          write (fd, &ll, sizeof (ll));
+        close (fd);
+      }
 # endif				/* HAVE_STRUCT_LASTLOG */
 }
 #endif				/* LASTLOG_SUPPORT */

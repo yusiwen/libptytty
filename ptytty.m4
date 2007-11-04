@@ -406,9 +406,6 @@ main()
   AC_MSG_WARN(Define LASTLOG_FILE in config.h manually)])])
 if test x$path_lastlog != x; then
   AC_DEFINE_UNQUOTED(LASTLOG_FILE, "$path_lastlog", Define location of lastlog)
-  if test -d "$path_lastlog"; then
-    AC_DEFINE(LASTLOG_IS_DIR, 1, Define if lastlog is provided via a directory)
-  fi
 fi
 dnl# --------------------------------------------------------------------------
 

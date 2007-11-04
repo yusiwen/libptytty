@@ -403,7 +403,7 @@ update_wtmp (const char *fname, const struct utmp *putmp)
 static void
 update_lastlog (const char *fname, const char *pty, const char *host)
 {
-# ifdef HAVE_STRUCT_LASTLOGX
+# if defined(HAVE_STRUCT_LASTLOGX) && defined(HAVE_UPDLASTLOGX)
   struct lastlogx llx;
 # endif
 # ifdef HAVE_STRUCT_LASTLOG
@@ -415,7 +415,7 @@ update_lastlog (const char *fname, const char *pty, const char *host)
   struct passwd  *pwent;
 # endif
 
-# ifdef HAVE_STRUCT_LASTLOGX
+# if defined(HAVE_STRUCT_LASTLOGX) && defined(HAVE_UPDLASTLOGX)
   memset (&llx, 0, sizeof (llx));
   llx.ll_tv.tv_sec = time (NULL);
   llx.ll_tv.tv_usec = 0;

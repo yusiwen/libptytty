@@ -116,6 +116,7 @@ AC_CHECK_FUNCS( \
 	ttyslot \
 	updwtmp \
 	updwtmpx \
+	updlastlogx \
 )
 
 AC_CHECK_HEADERS( \

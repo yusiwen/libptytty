@@ -113,7 +113,6 @@ if test x$support_lastlog = xyes; then
 fi
 
 AC_CHECK_FUNCS( \
-	ttyslot \
 	updwtmp \
 	updwtmpx \
 	updlastlogx \

@@ -299,7 +299,7 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 
 #if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
   {
-# ifdef HAVE_TTYSLOT
+# if 1
     int fdstdin = dup (STDIN_FILENO);
     dup2 (tty, STDIN_FILENO);
 
@@ -309,30 +309,6 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 
     dup2 (fdstdin, STDIN_FILENO);
     close (fdstdin);
-# else
-    FILE *fd0;
-
-    if ((fd0 = fopen (TTYTAB_FILENAME, "r")) != NULL)
-      {
-        char buf[256], name[256];
-
-        buf[sizeof (buf) - 1] = '\0';
-        for (i = 1; (fgets (buf, sizeof (buf) - 1, fd0) != NULL);)
-          {
-            if (*buf == '#' || sscanf (buf, "%s", name) != 1)
-              continue;
-            if (!strcmp (ut->ut_line, name))
-              {
-                if (!write_bsd_utmp (i, ut))
-                  i = 0;
-                utmp_pos = i;
-                fclose (fd0);
-                break;
-              }
-            i++;
-          }
-        fclose (fd0);
-      }
 # endif
   }
 #endif

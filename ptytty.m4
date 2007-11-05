@@ -118,11 +118,7 @@ AC_CHECK_FUNCS( \
 	updlastlogx \
 )
 
-AC_CHECK_HEADERS( \
-	utmp.h \
-	utmpx.h \
-	lastlog.h \
-)
+AC_CHECK_HEADERS(lastlog.h)
 
 dnl# --------------------------------------------------------------------------
 dnl# DO ALL UTMP AND WTMP CHECKING
@@ -130,7 +126,7 @@ dnl# --------------------------------------------------------------------------
 dnl# check for host field in utmp structure
 
 dnl# --------------------------------------------
-AC_CHECK_HEADER(utmp.h,
+AC_CHECK_HEADERS(utmp.h,
 [AC_CACHE_CHECK([for struct utmp], struct_utmp,
 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
 #include <utmp.h>]], [[struct utmp ut;]])],[struct_utmp=yes],[struct_utmp=no])])
@@ -152,11 +148,11 @@ AC_CACHE_CHECK(for ut_pid in utmp struct, struct_utmp_pid,
 if test x$struct_utmp_pid = xyes; then
   AC_DEFINE(HAVE_UTMP_PID, 1, Define if struct utmp contains ut_pid)
 fi
-) dnl# AC_CHECK_HEADER(utmp.h
+) dnl# AC_CHECK_HEADERS(utmp.h
 
 dnl# --------------------------------------------
 
-AC_CHECK_HEADER(utmpx.h,
+AC_CHECK_HEADERS(utmpx.h,
 [AC_CACHE_CHECK([for struct utmpx], struct_utmpx,
 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
 #include <utmpx.h>]], [[struct utmpx ut;]])],[struct_utmpx=yes],[struct_utmpx=no])])
@@ -180,7 +176,7 @@ struct_utmpx_session=yes, struct_utmpx_session=no)])
 if test x$struct_utmpx_session = xyes; then
   AC_DEFINE(HAVE_UTMPX_SESSION, 1, Define if struct utmpx contains ut_session)
 fi
-) dnl# AC_CHECK_HEADER(utmpx.h
+) dnl# AC_CHECK_HEADERS(utmpx.h
 
 dnl# --------------------------------------------------------------------------
 dnl# check for struct lastlog

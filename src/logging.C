@@ -180,9 +180,9 @@ update_lastlog (const char *fname, const char *pty, const char *host)
           write (fd, &ll, sizeof (ll));
         close (fd);
       }
-# endif				/* HAVE_STRUCT_LASTLOG */
+# endif /* HAVE_STRUCT_LASTLOG */
 }
-#endif				/* LASTLOG_SUPPORT */
+#endif /* LASTLOG_SUPPORT */
 
 /* ------------------------------------------------------------------------- */
 

@@ -218,7 +218,7 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
     strncpy (ut_id, pty + 3, sizeof (ut_id));
   else if (sscanf (pty, "pts/%d", &i) == 1)
     sprintf (ut_id, "vt%02x", (i & 0xff));	/* sysv naming */
-  else if (strncmp (pty, "pty", 3) && strncmp (pty, "tty", 3))
+  else
     {
       ptytty_warn ("can't parse tty name \"%s\", not adding utmp entry.\n", pty);
       return;

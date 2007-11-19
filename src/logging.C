@@ -232,7 +232,6 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   strncpy (ut->ut_id, ut_id, sizeof (ut->ut_id));
   ut->ut_type = DEAD_PROCESS;
   getutid (ut);		/* position to entry in utmp file */
-  strncpy (this->ut_id, ut_id, sizeof (this->ut_id));
 # endif
 #endif
 
@@ -242,7 +241,6 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   strncpy (utx->ut_id, ut_id, sizeof (utx->ut_id));
   utx->ut_type = DEAD_PROCESS;
   getutxid (utx);		/* position to entry in utmp file */
-  strncpy (this->ut_id, ut_id, sizeof (this->ut_id));
 #endif
 
 #ifdef HAVE_STRUCT_UTMP

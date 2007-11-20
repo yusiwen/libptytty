@@ -245,24 +245,20 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 
 #ifdef HAVE_STRUCT_UTMP
   strncpy (ut->ut_line, pty, sizeof (ut->ut_line));
+# ifdef HAVE_UTMP_HOST
+  strncpy (ut->ut_host, hostname, sizeof (ut->ut_host));
+# endif
   ut->ut_time = time (NULL);
 # ifdef HAVE_UTMP_PID
   strncpy (ut->ut_user, name, sizeof (ut->ut_user));
   strncpy (ut->ut_id, ut_id, sizeof (ut->ut_id));
-  ut->ut_time = time (NULL);
   ut->ut_pid = cmd_pid;
-#  ifdef HAVE_UTMP_HOST
-  strncpy (ut->ut_host, hostname, sizeof (ut->ut_host));
-#  endif
   ut->ut_type = USER_PROCESS;
   pututline (ut);
   endutent ();			/* close the file */
   utmp_pos = 0;
 # else
   strncpy (ut->ut_name, name, sizeof (ut->ut_name));
-#  ifdef HAVE_UTMP_HOST
-  strncpy (ut->ut_host, hostname, sizeof (ut->ut_host));
-#  endif
 # endif
 #endif
 

@@ -106,7 +106,8 @@ update_wtmp (const char *fname, const struct utmp *putmp)
     else if (errno != EAGAIN && errno != EACCES)
       break;
   if (!gotlock)
-    {		/* give it up */
+    {
+      /* give it up */
       close (fd);
       return;
     }

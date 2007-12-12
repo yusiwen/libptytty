@@ -29,4 +29,3 @@ src/logging.C
 doc/Makefile.in
 doc/libptytty.3.pod
 doc/libptytty.3.man
-doc/libptytty.html

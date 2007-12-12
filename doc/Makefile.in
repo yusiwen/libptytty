@@ -33,7 +33,7 @@ all:
 
 tags allbin:
 
-alldoc:	libptytty.3.man libptytty.html ../README
+alldoc:	libptytty.3.man ../README
 
 clean:
 	rm -f *~ *.tmp

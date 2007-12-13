@@ -129,10 +129,11 @@
 
     slave = _getpty (&pfd, O_RDWR | O_NONBLOCK | O_NOCTTY, 0622, 0);
 
-    if (slave != NULL) {
-      *ttydev = strdup (slave);
-      return pfd;
-    }
+    if (slave != NULL)
+      {
+        *ttydev = strdup (slave);
+        return pfd;
+      }
 
     return -1;
   }

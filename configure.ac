@@ -21,4 +21,5 @@ UTMP_CHECK
 
 SCM_RIGHTS_CHECK
 
-AC_OUTPUT(Makefile doc/Makefile src/Makefile)
+AC_CONFIG_FILES([Makefile doc/Makefile src/Makefile])
+AC_OUTPUT

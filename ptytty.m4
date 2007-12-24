@@ -65,8 +65,8 @@ esac
 
 if test x$ac_cv_func_getpt = xyes -o x$ac_cv_func_posix_openpt = xyes -o x$have_clone = xyes; then
   AC_MSG_CHECKING(for UNIX98 ptys)
-  AC_TRY_LINK([#include <stdlib.h>],
-              [grantpt(0);unlockpt(0);ptsname(0);],
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>]],
+              [[grantpt(0);unlockpt(0);ptsname(0);]])],
               [unix98_pty=yes
                AC_DEFINE(UNIX98_PTY, 1, "")
                AC_MSG_RESULT(yes)],
@@ -169,10 +169,8 @@ if test x$struct_utmpx_host = xyes; then
 fi
 
 AC_CACHE_CHECK(for session in utmpx struct, struct_utmpx_session,
-[AC_TRY_COMPILE([#include <sys/types.h>
-#include <utmpx.h>],
-[struct utmpx utx; utx.ut_session;],
-struct_utmpx_session=yes, struct_utmpx_session=no)])
+[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+#include <utmpx.h>]], [[struct utmpx utx; utx.ut_session;]])],[struct_utmpx_session=yes],[struct_utmpx_session=no])])
 if test x$struct_utmpx_session = xyes; then
   AC_DEFINE(HAVE_UTMPX_SESSION, 1, Define if struct utmpx contains ut_session)
 fi
@@ -442,12 +440,12 @@ fi
 AC_DEFUN([SCM_RIGHTS_CHECK],
 [
 AC_CACHE_CHECK(for unix-compliant filehandle passing ability, can_pass_fds,
-[AC_TRY_LINK([
+[AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <cstddef> // broken bsds (is that redundant?) need this
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/uio.h>
-],[
+]], [[
 {
   msghdr msg;
   iovec iov;
@@ -471,7 +469,7 @@ AC_CACHE_CHECK(for unix-compliant filehandle passing ability, can_pass_fds,
 
   return sendmsg (3, &msg, 0);
 }
-],[can_pass_fds=yes],[can_pass_fds=no])])
+]])],[can_pass_fds=yes],[can_pass_fds=no])])
 if test x$can_pass_fds = xyes; then
    AC_DEFINE(HAVE_UNIX_FDPASS, 1, Define if sys/socket.h defines the necessary macros/functions for file handle passing)
 else
@@ -482,7 +480,7 @@ fi
 AC_DEFUN([TTY_GROUP_CHECK],
 [
 AC_CACHE_CHECK([for tty group], tty_group,
-[AC_TRY_RUN([
+[AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -502,8 +500,7 @@ main()
     return 0;
   else
     return 1;
-}],
-[tty_group=yes],[tty_group=no],[tty_group=no])])
+}]])],[tty_group=yes],[tty_group=no],[tty_group=no])])
 if test x$tty_group = xyes; then
   AC_DEFINE(TTY_GID_SUPPORT, 1, "")
 fi])

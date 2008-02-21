@@ -22,7 +22,7 @@ realclean: clean
 	rm -f config.h config.status config.log libtool
 
 clean:
-	rm -f *~ config.cache
+	rm -f config.cache
 	rm -f -r autom4te.cache
 	@for I in ${subdirs}; do (cd $$I; ${MAKE} $@) || exit 1; done
 
@@ -37,7 +37,7 @@ cleandir: realclean
 # In that case most of those commands do nothing, except cleaning *~
 # and cleaning source links.
 distclean:
-	(cd $(srcdir); rm -f *~ config.cache config.h config.log config.status libtool)
+	(cd $(srcdir); rm -f config.cache config.h config.log config.status libtool)
 	@for I in $(allsubdirs); do (cd $$I; $(MAKE) $@) || exit 1; done
 	(cd $(srcdir); rm -f Makefile)
 

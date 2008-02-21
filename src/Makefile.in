@@ -53,7 +53,7 @@ allbin: libptytty.la
 alldoc:
 
 clean:
-	rm -rf *.o *.lo *.la *~ .libs
+	rm -rf *.o *.lo *.la .libs
 
 realclean: clean
 	rm -f tags TAGS

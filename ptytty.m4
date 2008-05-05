@@ -9,6 +9,7 @@ AC_CHECK_HEADERS( \
   libutil.h \
   sys/ioctl.h \
   sys/stropts.h \
+  stropts.h \
 )
 
 AC_CHECK_FUNCS( \

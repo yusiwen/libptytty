@@ -1,4 +1,6 @@
 1.3
+	- fedora 9 apparently has isastream but not the stropts.h header
+          file for it, work around this (reported by Tuncer Ayaz).
         - detect if lastlog is a directory at runtime.
         - assume ttyslot availability for bsd style utmp.
 

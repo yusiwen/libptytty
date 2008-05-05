@@ -44,7 +44,7 @@
 #if defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
 # include <sys/stropts.h>      /* for I_PUSH */
 #endif
-#ifdef HAVE_ISASTREAM
+#if defined(HAVE_ISASTREAM) && defined(HAVE_STROPTS_H)
 # include <stropts.h>
 #endif
 #if defined(HAVE_PTY_H)
@@ -250,7 +250,7 @@ control_tty (int fd_tty)
    * close () - on the master side which causes a hang up to be sent
    * through - Geoff Wing
    */
-# ifdef HAVE_ISASTREAM
+#if defined(HAVE_ISASTREAM) && defined(HAVE_STROPTS_H)
   if (isastream (fd_tty) == 1)
 # endif
     {

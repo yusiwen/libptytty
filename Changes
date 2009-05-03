@@ -5,6 +5,7 @@
         - assume ttyslot availability for bsd style utmp.
         - make sure the alignment for fd passing control messages
           is correct and work around some NetBSD issues (Taylor R Campbell).
+        - add some missing include statements.
 
 1.2  Thu Aug  2 15:50:02 CEST 2007
         - restore the SysV way of acquiring a controlling terminal

@@ -3,6 +3,7 @@ dnl# Process this file with autoconf to produce a configure script.
 dnl#
 
 AC_INIT
+AM_INIT_AUTOMAKE(libptytty,1.3)
 AC_CONFIG_HEADER(config.h:config.h.in)
 
 AC_CANONICAL_HOST
@@ -21,5 +22,5 @@ UTMP_CHECK
 
 SCM_RIGHTS_CHECK
 
-AC_CONFIG_FILES([Makefile doc/Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

@@ -1,6 +1,6 @@
 #! /bin/sh
 
-if autoheader && autoconf; then
+if autoreconf -i; then
 	rm -rf autom4te.cache
 	echo "Now run ./configure"
 fi

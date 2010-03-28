@@ -26,20 +26,9 @@ AC_CHECK_FUNCS( \
 
 have_clone=no
 
-AC_MSG_CHECKING(for /dev/ptym/clone)
-if test -e /dev/ptym/clone; then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(HAVE_DEV_CLONE, 1, [Define to 1 if you have /dev/ptym/clone])
-  AC_DEFINE(CLONE_DEVICE, "/dev/ptym/clone", [clone device filename])
-  have_clone=yes
-else
-  AC_MSG_RESULT(no)
-fi
-
 AC_MSG_CHECKING(for /dev/ptc)
 if test -e /dev/ptc; then
   AC_MSG_RESULT(yes)
-  AC_DEFINE(HAVE_DEV_PTC, 1, [Define to 1 if you have /dev/ptc])
   AC_DEFINE(CLONE_DEVICE, "/dev/ptc", [clone device filename])
   have_clone=yes
 else

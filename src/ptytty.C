@@ -139,38 +139,6 @@
     return -1;
   }
 
-#elif defined(HAVE_DEV_PTC)
-
-  static int
-  get_pty (int *fd_tty, char **ttydev)
-  {
-    int pfd;
-
-    if ((pfd = open ("/dev/ptc", O_RDWR | O_NOCTTY, 0)) >= 0)
-      {
-        *ttydev = strdup (ttyname (pfd));
-        return pfd;
-      }
-
-    return -1;
-  }
-
-#elif defined(HAVE_DEV_CLONE)
-
-  static int
-  get_pty (int *fd_tty, char **ttydev)
-  {
-    int pfd;
-
-    if ((pfd = open ("/dev/ptym/clone", O_RDWR | O_NOCTTY, 0)) >= 0)
-      {
-        *ttydev = strdup (ptsname (pfd));
-        return pfd;
-      }
-
-    return -1;
-  }
-
 #else
 
   /* Based on the code in openssh/openbsd-compat/bsd-openpty.c */

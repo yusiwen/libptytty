@@ -86,7 +86,7 @@ write_bsd_utmp (int utmp_pos, struct utmp *wu)
 static void
 update_wtmp (const char *fname, const struct utmp *putmp)
 {
-  int             fd, retry;
+  int             fd, gotlock, retry;
   struct flock    lck;	/* fcntl locking scheme */
   struct stat     sbuf;
 
@@ -99,18 +99,20 @@ update_wtmp (const char *fname, const struct utmp *putmp)
   lck.l_type = F_WRLCK;	/* we want a write lock */
 
   /* attempt lock with F_SETLK; F_SETLKW would cause a deadlock! */
-  retry = 10;
-  while (retry--)
+  for (retry = 10, gotlock = 0; retry--;)
     if (fcntl (fd, F_SETLK, &lck) != -1)
       {
+        gotlock = 1;
         break;
       }
     else if (errno != EAGAIN && errno != EACCES)
-      {
-        /* give it up */
-        close (fd);
-        return;
-      }
+      break;
+  if (!gotlock)
+    {
+      /* give it up */
+      close (fd);
+      return;
+    }
   if (fstat (fd, &sbuf) == 0)
     if (write (fd, putmp, sizeof (struct utmp)) != sizeof (struct utmp))
       ftruncate (fd, sbuf.st_size);	/* remove bad writes */

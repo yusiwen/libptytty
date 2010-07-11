@@ -231,53 +231,6 @@ fi
 
 dnl# --------------------------------------------------------------------------
 
-dnl# find utmpx - if a utmp file exists at the same location and is more than
-dnl# a day newer, then dump the utmpx.  People leave lots of junk around.
-AC_CACHE_CHECK(where utmpx is located, pt_cv_path_utmpx,
-[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <utmpx.h>
-#include <errno.h>
-#include <sys/stat.h>
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-main()
-{
-    char **u, *p, *utmplist[] = {
-#ifdef UTMPX_FILE
-	UTMPX_FILE,
-#endif
-#ifdef _PATH_UTMPX
-	_PATH_UTMPX,
-#endif
-    "/var/adm/utmpx", "/etc/utmpx", NULL };
-    FILE *a, *f=fopen("conftestval", "w");
-    struct stat statu, statux;
-    if (!f) exit(1);
-    for (u = utmplist; *u; u++) {
-	if ((a = fopen(*u, "r")) != NULL || errno == EACCES) {
-	    if (stat(*u, &statux) < 0)
-		continue;
-	    p = strdup(*u);
-	    p[strlen(p) - 1] = '\0';
-	    if (stat(p, &statu) >= 0
-		&& (statu.st_mtime - statux.st_mtime > 86400))
-		continue;
-	    fprintf(f, "%s\n", *u);
-	    exit(0);
-	}
-    }
-    exit(0);
-}]])],[pt_cv_path_utmpx=`cat conftestval`],[pt_cv_path_utmpx=],[dnl
-  AC_MSG_WARN(Define UTMPX_FILE in config.h manually)])])
-if test x$pt_cv_path_utmpx != x; then
-  AC_DEFINE_UNQUOTED(UTMPX_FILE, "$pt_cv_path_utmpx", Define location of utmpx)
-fi
-
-dnl# --------------------------------------------------------------------------
-
 dnl# find wtmp
 AC_CACHE_CHECK(where wtmp is located, pt_cv_path_wtmp,
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>

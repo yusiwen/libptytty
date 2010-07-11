@@ -64,7 +64,7 @@ if test x$ac_cv_func_getpt = xyes -o x$ac_cv_func_posix_openpt = xyes -o x$have_
 fi
 
 if test -z "$unix98_pty"; then
-  AC_CHECK_FUNCS(openpty, [], [AC_CHECK_LIB(util, openpty, [AC_DEFINE(HAVE_OPENPTY) LIBS="$LIBS -lutil"])])
+  AC_SEARCH_LIBS(openpty, util, AC_DEFINE(HAVE_OPENPTY, 1, ""))
 fi
 ])
 

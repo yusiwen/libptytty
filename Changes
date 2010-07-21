@@ -1,3 +1,5 @@
+	- fix utmpx detection on upcoming FreeBSD 9.
+
 1.3  Sun May  3 23:44:16 CEST 2009
 	- fedora 9 apparently has isastream but not the stropts.h header
           file for it, work around this (reported by Tuncer Ayaz).

@@ -39,7 +39,7 @@ libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
    ptytty_delete (pty);
 
 See also the F<eg/> directory, which currently contains the F<c-sample.c>
-file that spawns a loginshell from C using libptytty.
+file that spawns a login shell from C using libptytty.
 
 =head1 DESCRIPTION
 
@@ -78,7 +78,7 @@ function) as the very first thing in your program:
       // initialise, parse arguments, etc.
    }
 
-This checks wether the program runs setuid or setgid. If yes then it will
+This checks whether the program runs setuid or setgid. If yes then it will
 fork a helper process and drop privileges.
 
 Some programs need finer control over if and when this helper process
@@ -98,7 +98,7 @@ The default way to initialise libptytty. Must be called immediately as
 the first thing in the C<main> function, or earlier e.g. during static
 construction time. The earlier, the better.
 
-This method calls C<sanitise_stdf> and then checks wether the program runs
+This method calls C<sanitise_stdfd> and then checks whether the program runs
 with setuid/setgid permissions and, if yes, spawns a helper process for
 pty/tty management. It then drops the privileges completely, so the actual
 program runs without setuid/setgid privileges.
@@ -108,7 +108,7 @@ program runs without setuid/setgid privileges.
 Tries to start a helper process that retains privileges even when the
 calling process does not. This is usually called from C<ptytty::init> when
 it detects that the program is running setuid or setgid, but can be called
-manually if it is inconvinient to drop privileges at startup, or when
+manually if it is inconvenient to drop privileges at startup, or when
 you are not running setuid/setgid but want to drop privileges (e.g. when
 running as a root-started daemon).
 
@@ -124,7 +124,7 @@ make sure that the process doesn't run with special privileges.
 
 =item ptytty::sanitise_stdfd ()
 
-Checks wether file descriptors 0, 1 and 2 (stdin, stdout and stderr) are
+Checks whether file descriptors 0, 1 and 2 (stdin, stdout and stderr) are
 valid (open) and, if not, connects them to F</dev/tty> or F</dev/null> if
 possible (and aborts otherwise). This is necessary because libptytty might
 want to output error messages to those descriptors, which at the time of
@@ -135,13 +135,13 @@ opened by the unsuspecting program itself (this can be a security issue).
 
 Utility method to send a file descriptor over a unix domain
 socket. Returns true if successful, false otherwise. This method is only
-exposed for your convinience and is not required for normal operation.
+exposed for your convenience and is not required for normal operation.
 
 =item int fd = ptytty::recv_fd (int socket)
 
 Utility method to receive a file descriptor over a unix domain
-socket. Returns the fd if sucecssful and C<-1> otherwise. This method
-is only exposed for your convinience and is not required for normal
+socket. Returns the fd if successful and C<-1> otherwise. This method
+is only exposed for your convenience and is not required for normal
 operation.
 
 =item ptytty *pty = ptytty::create ()
@@ -175,8 +175,8 @@ when successful.
 
 Creates an entry in the systems session database(s) (utmp, wtmp, lastlog).
 C<cmd_pid> must be the pid of the process representing the session
-(such as the login shell), C<login_shell> defines wether the session is
-associated with a login, which influences wether wtmp and lastlog entries
+(such as the login shell), C<login_shell> defines whether the session is
+associated with a login, which influences whether wtmp and lastlog entries
 are created, and C<hostname> should identify the "hostname" the user logs
 in from, which often is the value of the C<DISPLAY> variable or tty line
 in case of local logins.

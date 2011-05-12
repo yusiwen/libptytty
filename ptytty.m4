@@ -1,6 +1,38 @@
 dnl this file is part of libptytty, do not make local modifications
 dnl http://software.schmorp.de/pkg/libptytty
 
+AC_DEFUN([PT_FIND_FILE],
+[AC_CACHE_CHECK(where $1 is located, pt_cv_path_$1,
+[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
+#include <stdlib.h>
+$5
+#include <errno.h>
+int main()
+{
+    char **path, *list[] = { $4, NULL };
+    FILE *a, *f=fopen("conftestval", "w");
+    if (!f) exit(1);
+#ifdef $2
+    fprintf(f, "%s\n", $2);
+    exit(0);
+#endif
+#ifdef $3
+    fprintf(f, "%s\n", $3);
+    exit(0);
+#endif
+    for (path = list; *path; path++) {
+        if ((a = fopen(*path, "r")) != NULL || errno == EACCES) {
+            fprintf(f, "%s\n", *path);
+            exit(0);
+        }
+    }
+    exit(0);
+}]])],[pt_cv_path_$1=`cat conftestval`],[pt_cv_path_$1=],
+[AC_MSG_WARN(Define $2 in config.h manually)])])
+if test x$pt_cv_path_$1 != x; then
+  AC_DEFINE_UNQUOTED($2, "$pt_cv_path_$1", Define location of $1)
+fi])
+
 AC_DEFUN([PTY_CHECK],
 [
 AC_CHECK_HEADERS( \
@@ -196,118 +228,36 @@ dnl# FIND FILES
 dnl# --------------------------------------------------------------------------
 
 dnl# find utmp
-AC_CACHE_CHECK(where utmp is located, pt_cv_path_utmp,
-[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
-#include <stdlib.h>
+PT_FIND_FILE([utmp], [UTMP_FILE], [_PATH_UTMP],
+["/var/run/utmp", "/var/adm/utmp", "/etc/utmp", "/usr/etc/utmp", "/usr/adm/utmp"],[
 #include <sys/types.h>
 #include <utmp.h>
-#include <errno.h>
-int main()
-{
-    char **u, *utmplist[] = {
-    "/var/run/utmp", "/var/adm/utmp", "/etc/utmp", "/usr/etc/utmp", "/usr/adm/utmp", NULL };
-    FILE *a, *f=fopen("conftestval", "w");
-    if (!f) exit(1);
-#ifdef UTMP_FILE
-    fprintf(f, "%s\n", UTMP_FILE);
-    exit(0);
-#endif
-#ifdef _PATH_UTMP
-    fprintf(f, "%s\n", _PATH_UTMP);
-    exit(0);
-#endif
-    for (u = utmplist; *u; u++) {
-	if ((a = fopen(*u, "r")) != NULL || errno == EACCES) {
-	    fprintf(f, "%s\n", *u);
-	    exit(0);
-	}
-    }
-    exit(0);
-}]])],[pt_cv_path_utmp=`cat conftestval`],[pt_cv_path_utmp=],[dnl
-  AC_MSG_WARN(Define UTMP_FILE in config.h manually)])])
-if test x$pt_cv_path_utmp != x; then
-  AC_DEFINE_UNQUOTED(UTMP_FILE, "$pt_cv_path_utmp", Define location of utmp)
-fi
+])
 
 dnl# --------------------------------------------------------------------------
 
 dnl# find wtmp
-AC_CACHE_CHECK(where wtmp is located, pt_cv_path_wtmp,
-[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
-#include <stdlib.h>
+PT_FIND_FILE([wtmp], [WTMP_FILE], [_PATH_WTMP],
+["/var/log/wtmp", "/var/adm/wtmp", "/etc/wtmp", "/usr/etc/wtmp", "/usr/adm/wtmp"],[
 #include <sys/types.h>
 #ifdef HAVE_UTMP_H
 #include <utmp.h>
 #endif
-#include <errno.h>
-int main()
-{
-    char **w, *wtmplist[] = {
-    "/var/log/wtmp", "/var/adm/wtmp", "/etc/wtmp", "/usr/etc/wtmp", "/usr/adm/wtmp", NULL };
-    FILE *a, *f=fopen("conftestval", "w");
-    if (!f) exit(1);
-#ifdef WTMP_FILE
-    fprintf(f, "%s\n", WTMP_FILE);
-    exit(0);
-#endif
-#ifdef _PATH_WTMP
-    fprintf(f, "%s\n", _PATH_WTMP);
-    exit(0);
-#endif
-    for (w = wtmplist; *w; w++) {
-	if ((a = fopen(*w, "r")) != NULL || errno == EACCES) {
-	    fprintf(f, "%s\n", *w);
-	    exit(0);
-	}
-    }
-    exit(0);
-}]])],[pt_cv_path_wtmp=`cat conftestval`],[pt_cv_path_wtmp=],[dnl
-  AC_MSG_WARN(Define WTMP_FILE in config.h manually)])])
-if test x$pt_cv_path_wtmp != x; then
-  AC_DEFINE_UNQUOTED(WTMP_FILE, "$pt_cv_path_wtmp", Define location of wtmp)
-fi
+])
 dnl# --------------------------------------------------------------------------
 
 dnl# find wtmpx
-AC_CACHE_CHECK(where wtmpx is located, pt_cv_path_wtmpx,
-[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
-#include <stdlib.h>
+PT_FIND_FILE([wtmpx], [WTMPX_FILE], [_PATH_WTMPX],
+["/var/log/wtmpx", "/var/adm/wtmpx"],[
 #ifdef HAVE_UTMPX_H
 #include <utmpx.h>
 #endif
-#include <errno.h>
-int main()
-{
-    char **w, *wtmplist[] = {
-    "/var/log/wtmpx", "/var/adm/wtmpx", NULL };
-    FILE *a, *f=fopen("conftestval", "w");
-    if (!f) exit(1);
-#ifdef WTMPX_FILE
-    fprintf(f, "%s\n", WTMPX_FILE);
-    exit(0);
-#endif
-#ifdef _PATH_WTMPX
-    fprintf(f, "%s\n", _PATH_WTMPX);
-    exit(0);
-#endif
-    for (w = wtmplist; *w; w++) {
-	if ((a = fopen(*w, "r")) != NULL || errno == EACCES) {
-	    fprintf(f, "%s\n", *w);
-	    exit(0);
-	}
-    }
-    exit(0);
-}]])],[pt_cv_path_wtmpx=`cat conftestval`],[pt_cv_path_wtmpx=],[dnl
-  AC_MSG_WARN(Define WTMPX_FILE in config.h manually)])])
-if test x$pt_cv_path_wtmpx != x; then
-  AC_DEFINE_UNQUOTED(WTMPX_FILE, "$pt_cv_path_wtmpx", Define location of wtmpx)
-fi
+])
 dnl# --------------------------------------------------------------------------
 
 dnl# find lastlog
-AC_CACHE_CHECK(where lastlog is located, pt_cv_path_lastlog,
-[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
-#include <stdlib.h>
+PT_FIND_FILE([lastlog], [LASTLOG_FILE], [_PATH_LASTLOG],
+["/var/log/lastlog"],[
 #include <sys/types.h>
 #ifdef HAVE_UTMP_H
 #include <utmp.h>
@@ -315,67 +265,16 @@ AC_CACHE_CHECK(where lastlog is located, pt_cv_path_lastlog,
 #ifdef HAVE_LASTLOG_H
 #include <lastlog.h>
 #endif
-#include <errno.h>
-int main()
-{
-    char **w, *lastloglist[] = { "/var/log/lastlog", NULL };
-    FILE *a, *f=fopen("conftestval", "w");
-    if (!f) exit(1);
-#ifdef LASTLOG_FILE
-    fprintf(f, "%s\n", LASTLOG_FILE);
-    exit(0);
-#endif
-#ifdef _PATH_LASTLOG
-    fprintf(f, "%s\n", _PATH_LASTLOG);
-    exit(0);
-#endif
-    for (w = lastloglist; *w; w++) {
-	if ((a = fopen(*w, "r")) != NULL || errno == EACCES) {
-	    fprintf(f, "%s\n", *w);
-	    exit(0);
-	}
-    }
-    exit(0);
-}]])],[pt_cv_path_lastlog=`cat conftestval`],[pt_cv_path_lastlog=],[dnl
-  AC_MSG_WARN(Define LASTLOG_FILE in config.h manually)])])
-if test x$pt_cv_path_lastlog != x; then
-  AC_DEFINE_UNQUOTED(LASTLOG_FILE, "$pt_cv_path_lastlog", Define location of lastlog)
-fi
+])
 dnl# --------------------------------------------------------------------------
 
 dnl# find lastlogx
-AC_CACHE_CHECK(where lastlogx is located, pt_cv_path_lastlogx,
-[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
-#include <stdlib.h>
+PT_FIND_FILE([lastlogx], [LASTLOGX_FILE], [_PATH_LASTLOGX],
+["/var/log/lastlogx", "/var/adm/lastlogx"],[
 #ifdef HAVE_UTMPX_H
 #include <utmpx.h>
 #endif
-#include <errno.h>
-int main()
-{
-    char **w, *wtmplist[] = { "/var/log/lastlogx", "/var/adm/lastlogx", NULL };
-    FILE *a, *f=fopen("conftestval", "w");
-    if (!f) exit(1);
-#ifdef LASTLOGX_FILE
-    fprintf(f, "%s\n", LASTLOGX_FILE);
-    exit(0);
-#endif
-#ifdef _PATH_LASTLOGX
-    fprintf(f, "%s\n", _PATH_LASTLOGX);
-    exit(0);
-#endif
-    for (w = wtmplist; *w; w++) {
-	if ((a = fopen(*w, "r")) != NULL || errno == EACCES) {
-	    fprintf(f, "%s\n", *w);
-	    exit(0);
-	}
-    }
-    exit(0);
-}]])],[pt_cv_path_lastlogx=`cat conftestval`],[pt_cv_path_lastlogx=],[dnl
-  AC_MSG_WARN(Define LASTLOGX_FILE in config.h manually)])])
-if test x$pt_cv_path_lastlogx != x; then
-  AC_DEFINE_UNQUOTED(LASTLOGX_FILE, "$pt_cv_path_lastlogx", Define location of lastlogx)
-fi
+])
 ])
 
 AC_DEFUN([SCM_RIGHTS_CHECK],

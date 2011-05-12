@@ -5,28 +5,27 @@ AC_DEFUN([PT_FIND_FILE],
 [AC_CACHE_CHECK(where $1 is located, pt_cv_path_$1,
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 $5
-#include <errno.h>
 int main()
 {
     char **path, *list[] = { $4, NULL };
-    FILE *a, *f=fopen("conftestval", "w");
-    if (!f) exit(1);
+    FILE *f = fopen("conftestval", "w");
+    if (!f) return 1;
 #ifdef $2
     fprintf(f, "%s\n", $2);
-    exit(0);
-#endif
-#ifdef $3
+#elif defined($3)
     fprintf(f, "%s\n", $3);
-    exit(0);
-#endif
+#else
     for (path = list; *path; path++) {
-        if ((a = fopen(*path, "r")) != NULL || errno == EACCES) {
+        struct stat st;
+        if (stat(*path, &st) == 0) {
             fprintf(f, "%s\n", *path);
-            exit(0);
+            break;
         }
     }
-    exit(0);
+#endif
+    return fclose(f) != 0;
 }]])],[pt_cv_path_$1=`cat conftestval`],[pt_cv_path_$1=],
 [AC_MSG_WARN(Define $2 in config.h manually)])])
 if test x$pt_cv_path_$1 != x; then

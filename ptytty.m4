@@ -309,9 +309,7 @@ AC_CACHE_CHECK(where lastlog is located, pt_cv_path_lastlog,
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#ifdef HAVE_UTMPX_H
-#include <utmpx.h>
-#elif defined(HAVE_UTMP_H)
+#ifdef HAVE_UTMP_H
 #include <utmp.h>
 #endif
 #ifdef HAVE_LASTLOG_H

@@ -126,7 +126,7 @@ update_wtmp (const char *fname, const struct utmp *putmp)
 /* ------------------------------------------------------------------------- */
 #ifdef LASTLOG_SUPPORT
 static void
-update_lastlog (const char *fname, const char *pty, const char *host)
+update_lastlog (const char *pty, const char *host)
 {
 # if defined(HAVE_STRUCT_LASTLOGX) && defined(HAVE_UPDLASTLOGX)
   struct lastlogx llx;
@@ -160,11 +160,11 @@ update_lastlog (const char *fname, const char *pty, const char *host)
   ll.ll_time = time (NULL);
   strncpy (ll.ll_line, pty, sizeof (ll.ll_line));
   strncpy (ll.ll_host, host, sizeof (ll.ll_host));
-  if (stat (fname, &st) != 0)
+  if (stat (LASTLOG_FILE, &st) != 0)
     return;
   if (S_ISDIR (st.st_mode))
     {
-      snprintf (lastlogfile, sizeof (lastlogfile), "%s/%s", fname,
+      snprintf (lastlogfile, sizeof (lastlogfile), "%s/%s", LASTLOG_FILE,
                (!pwent->pw_name || pwent->pw_name[0] == '\0') ? "unknown"
                : pwent->pw_name);
       if ((fd = open (lastlogfile, O_WRONLY | O_CREAT, 0644)) >= 0)
@@ -174,7 +174,7 @@ update_lastlog (const char *fname, const char *pty, const char *host)
         }
     }
   else if (S_ISREG (st.st_mode))
-    if ((fd = open (fname, O_RDWR)) != -1)
+    if ((fd = open (LASTLOG_FILE, O_RDWR)) != -1)
       {
         if (lseek (fd, (off_t) ((long)pwent->pw_uid * sizeof (ll)),
                    SEEK_SET) != -1)
@@ -323,11 +323,11 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 # endif
     }
 #endif
-#if defined(LASTLOG_SUPPORT) && defined(LASTLOG_FILE)
+#ifdef LASTLOG_SUPPORT
 #ifdef LOG_ONLY_ON_LOGIN
   if (login_shell)
 #endif
-    update_lastlog (LASTLOG_FILE, pty, hostname);
+    update_lastlog (pty, hostname);
 #endif
 }
 

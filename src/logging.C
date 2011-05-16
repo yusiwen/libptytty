@@ -185,6 +185,66 @@ update_lastlog (const char *pty, const char *host)
 }
 #endif /* LASTLOG_SUPPORT */
 
+#ifdef HAVE_STRUCT_UTMP
+static void
+fill_utmp (struct utmp *ut, bool login, int pid, const char *id, const char *line, const char *user, const char *host)
+{
+  memset (ut, 0, sizeof (struct utmp));
+
+# ifdef HAVE_UTMP_PID
+  strncpy (ut->ut_id, id, sizeof (ut->ut_id));
+  ut->ut_pid = pid;
+# endif
+  ut->ut_time = time (NULL);
+
+  if (login)
+    {
+      strncpy (ut->ut_line, line, sizeof (ut->ut_line));
+# ifdef HAVE_UTMP_PID
+      strncpy (ut->ut_user, user, sizeof (ut->ut_user));
+# else
+      strncpy (ut->ut_name, user, sizeof (ut->ut_name));
+# endif
+# ifdef HAVE_UTMP_HOST
+      strncpy (ut->ut_host, host, sizeof (ut->ut_host));
+# endif
+    }
+}
+#endif
+
+#ifdef HAVE_STRUCT_UTMPX
+static void
+fill_utmpx (struct utmpx *utx, bool login, int pid, const char *id, const char *line, const char *user, const char *host)
+{
+  memset (utx, 0, sizeof (struct utmpx));
+
+  strncpy (utx->ut_id, id, sizeof (utx->ut_id));
+  utx->ut_pid = pid;
+  utx->ut_tv.tv_sec = time (NULL);
+  utx->ut_tv.tv_usec = 0;
+# if HAVE_UTMPX_SESSION
+  utx->ut_session = getsid (0);
+# endif
+
+  if (login)
+    {
+      strncpy (utx->ut_line, line, sizeof (utx->ut_line));
+      strncpy (utx->ut_user, user, sizeof (utx->ut_user));
+# ifdef HAVE_UTMPX_HOST
+      strncpy (utx->ut_host, host, sizeof (utx->ut_host));
+#  if 0
+      {
+        char *colon;
+
+        if ((colon = strrchr (ut->ut_host, ':')) != NULL)
+          *colon = '\0';
+      }
+#  endif
+# endif
+    }
+}
+#endif
+
 /* ------------------------------------------------------------------------- */
 
 /*
@@ -227,63 +287,31 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
-  memset (ut, 0, sizeof (struct utmp));
+  fill_utmp (ut, true, cmd_pid, ut_id, pty, name, hostname);
 # ifdef HAVE_UTMP_PID
   setutent ();
-  strncpy (ut->ut_id, ut_id, sizeof (ut->ut_id));
   ut->ut_type = DEAD_PROCESS;
   getutid (ut);		/* position to entry in utmp file */
 # endif
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
-  memset (utx, 0, sizeof (struct utmpx));
+  fill_utmpx (utx, true, cmd_pid, ut_id, pty, name, hostname);
   setutxent ();
-  strncpy (utx->ut_id, ut_id, sizeof (utx->ut_id));
   utx->ut_type = DEAD_PROCESS;
   getutxid (utx);		/* position to entry in utmp file */
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
-  strncpy (ut->ut_line, pty, sizeof (ut->ut_line));
-# ifdef HAVE_UTMP_HOST
-  strncpy (ut->ut_host, hostname, sizeof (ut->ut_host));
-# endif
-  ut->ut_time = time (NULL);
 # ifdef HAVE_UTMP_PID
-  strncpy (ut->ut_user, name, sizeof (ut->ut_user));
-  strncpy (ut->ut_id, ut_id, sizeof (ut->ut_id));
-  ut->ut_pid = cmd_pid;
   ut->ut_type = USER_PROCESS;
   pututline (ut);
   endutent ();			/* close the file */
   utmp_pos = 0;
-# else
-  strncpy (ut->ut_name, name, sizeof (ut->ut_name));
 # endif
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
-  strncpy (utx->ut_line, pty, sizeof (utx->ut_line));
-  strncpy (utx->ut_user, name, sizeof (utx->ut_user));
-  strncpy (utx->ut_id, ut_id, sizeof (utx->ut_id));
-# if HAVE_UTMPX_SESSION
-  utx->ut_session = getsid (0);
-# endif
-  utx->ut_tv.tv_sec = time (NULL);
-  utx->ut_tv.tv_usec = 0;
-  utx->ut_pid = cmd_pid;
-# ifdef HAVE_UTMPX_HOST
-  strncpy (utx->ut_host, hostname, sizeof (utx->ut_host));
-#  if 0
-  {
-    char           *colon;
-
-    if ((colon = strrchr (ut->ut_host, ':')) != NULL)
-      *colon = '\0';
-  }
-#  endif
-# endif
   utx->ut_type = USER_PROCESS;
   pututxline (utx);
   endutxent ();		/* close the file */
@@ -349,36 +377,21 @@ ptytty_unix::logout ()
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
+  fill_utmp (ut, false, cmd_pid, ut_id, 0, 0, 0);
 # ifdef HAVE_UTMP_PID
-  memset (ut, 0, sizeof (struct utmp));
   setutent ();
-  strncpy (ut->ut_id, this->ut_id, sizeof (ut->ut_id));
   ut->ut_type = USER_PROCESS;
-  if ((tmput = getutid (ut)))		/* position to entry in utmp file */
-    ut = tmput;
+  tmput = getutid (ut);		/* position to entry in utmp file */
   ut->ut_type = DEAD_PROCESS;
-# else
-  memset (ut->ut_name, 0, sizeof (ut->ut_name));
-#  ifdef HAVE_UTMP_HOST
-  memset (ut->ut_host, 0, sizeof (ut->ut_host));
-#  endif
 # endif
-  ut->ut_time = time (NULL);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
-  memset (utx, 0, sizeof (struct utmpx));
+  fill_utmpx (utx, false, cmd_pid, ut_id, 0, 0, 0);
   setutxent ();
-  strncpy (utx->ut_id, this->ut_id, sizeof (utx->ut_id));
   utx->ut_type = USER_PROCESS;
-  if ((tmputx = getutxid (utx)))	/* position to entry in utmp file */
-    utx = tmputx;
+  tmputx = getutxid (utx);		/* position to entry in utmp file */
   utx->ut_type = DEAD_PROCESS;
-# if HAVE_UTMPX_SESSION
-  utx->ut_session = getsid (0);
-# endif
-  utx->ut_tv.tv_sec = time (NULL);
-  utx->ut_tv.tv_usec = 0;
 #endif
 
   /*
@@ -407,16 +420,15 @@ ptytty_unix::logout ()
    */
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
-  if (ut->ut_pid == cmd_pid)
+  if (tmput && tmput->ut_pid == cmd_pid)
     pututline (ut);
   endutent ();
 # else
-  memset (ut, 0, sizeof (struct utmp));
   write_bsd_utmp (utmp_pos, ut);
 # endif
 #endif
 #ifdef HAVE_STRUCT_UTMPX
-  if (utx->ut_pid == cmd_pid)
+  if (tmputx && tmputx->ut_pid == cmd_pid)
     pututxline (utx);
   endutxent ();
 #endif

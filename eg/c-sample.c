@@ -69,7 +69,7 @@ int main (void)
       dup2 (tty_fd, STDERR_FILENO);
       close (tty_fd);
 
-      execl ("/bin/sh", "-sh", 0);
+      execl ("/bin/sh", "-sh", (char *)0);
       _exit (EXIT_FAILURE);
     }
 

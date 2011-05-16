@@ -42,15 +42,6 @@
 
 # include <pwd.h>
 
-# ifdef UTMP_SYSV
-#  ifndef USER_PROCESS
-#   define USER_PROCESS		7
-#  endif
-#  ifndef DEAD_PROCESS
-#   define DEAD_PROCESS		8
-#  endif
-# endif
-
 #endif
 
 #define fatal(msg) do { write (2, msg, sizeof (msg) - 1); _exit (255); } while (0)

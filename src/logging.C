@@ -282,24 +282,22 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 
 #ifdef HAVE_STRUCT_UTMP
   fill_utmp (ut, true, cmd_pid, ut_id, pty, name, hostname);
-# ifdef HAVE_UTMP_PID
-  setutent ();
-# endif
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
   fill_utmpx (utx, true, cmd_pid, ut_id, pty, name, hostname);
-  setutxent ();
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
+  setutent ();
   pututline (ut);
   endutent ();			/* close the file */
 # endif
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
+  setutxent ();
   pututxline (utx);
   endutxent ();		/* close the file */
 #endif
@@ -364,16 +362,10 @@ ptytty_unix::logout ()
 
 #ifdef HAVE_STRUCT_UTMP
   fill_utmp (ut, false, cmd_pid, ut_id, 0, 0, 0);
-# ifdef HAVE_UTMP_PID
-  setutent ();
-  tmput = getutid (ut);		/* position to entry in utmp file */
-# endif
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
   fill_utmpx (utx, false, cmd_pid, ut_id, 0, 0, 0);
-  setutxent ();
-  tmputx = getutxid (utx);		/* position to entry in utmp file */
 #endif
 
   /*
@@ -402,6 +394,8 @@ ptytty_unix::logout ()
    */
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
+  setutent ();
+  tmput = getutid (ut);		/* position to entry in utmp file */
   if (tmput && tmput->ut_pid == cmd_pid)
     pututline (ut);
   endutent ();
@@ -410,6 +404,8 @@ ptytty_unix::logout ()
 # endif
 #endif
 #ifdef HAVE_STRUCT_UTMPX
+  setutxent ();
+  tmputx = getutxid (utx);		/* position to entry in utmp file */
   if (tmputx && tmputx->ut_pid == cmd_pid)
     pututxline (utx);
   endutxent ();

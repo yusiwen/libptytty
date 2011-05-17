@@ -284,14 +284,12 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   fill_utmp (ut, true, cmd_pid, ut_id, pty, name, hostname);
 # ifdef HAVE_UTMP_PID
   setutent ();
-  getutid (ut);		/* position to entry in utmp file */
 # endif
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
   fill_utmpx (utx, true, cmd_pid, ut_id, pty, name, hostname);
   setutxent ();
-  getutxid (utx);		/* position to entry in utmp file */
 #endif
 
 #ifdef HAVE_STRUCT_UTMP

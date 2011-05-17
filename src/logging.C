@@ -299,7 +299,6 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   ut->ut_type = USER_PROCESS;
   pututline (ut);
   endutent ();			/* close the file */
-  utmp_pos = 0;
 # endif
 #endif
 
@@ -307,7 +306,6 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   utx->ut_type = USER_PROCESS;
   pututxline (utx);
   endutxent ();		/* close the file */
-  utmp_pos = 0;
 #endif
 
 #if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
@@ -316,9 +314,9 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
     int fdstdin = dup (STDIN_FILENO);
     dup2 (tty, STDIN_FILENO);
 
-    i = ttyslot ();
-    if (write_bsd_utmp (i, ut))
-      utmp_pos = i;
+    utmp_pos = ttyslot ();
+    if (!write_bsd_utmp (utmp_pos, ut))
+      utmp_pos = 0;
 
     dup2 (fdstdin, STDIN_FILENO);
     close (fdstdin);

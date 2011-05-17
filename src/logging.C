@@ -293,6 +293,16 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   setutent ();
   pututline (ut);
   endutent ();			/* close the file */
+# else
+  int fd_stdin = dup (STDIN_FILENO);
+  dup2 (tty, STDIN_FILENO);
+
+  utmp_pos = ttyslot ();
+  if (!write_bsd_utmp (utmp_pos, ut))
+    utmp_pos = 0;
+
+  dup2 (fd_stdin, STDIN_FILENO);
+  close (fd_stdin);
 # endif
 #endif
 
@@ -300,22 +310,6 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   setutxent ();
   pututxline (utx);
   endutxent ();		/* close the file */
-#endif
-
-#if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
-  {
-# if 1
-    int fdstdin = dup (STDIN_FILENO);
-    dup2 (tty, STDIN_FILENO);
-
-    utmp_pos = ttyslot ();
-    if (!write_bsd_utmp (utmp_pos, ut))
-      utmp_pos = 0;
-
-    dup2 (fdstdin, STDIN_FILENO);
-    close (fdstdin);
-# endif
-  }
 #endif
 
 #ifdef WTMP_SUPPORT

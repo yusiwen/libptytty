@@ -194,6 +194,7 @@ fill_utmp (struct utmp *ut, bool login, int pid, const char *id, const char *lin
 # ifdef HAVE_UTMP_PID
   strncpy (ut->ut_id, id, sizeof (ut->ut_id));
   ut->ut_pid = pid;
+  ut->ut_type = login ? USER_PROCESS : DEAD_PROCESS;
 # endif
   ut->ut_time = time (NULL);
 
@@ -220,6 +221,7 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *id, const char *
 
   strncpy (utx->ut_id, id, sizeof (utx->ut_id));
   utx->ut_pid = pid;
+  utx->ut_type = login ? USER_PROCESS : DEAD_PROCESS;
   utx->ut_tv.tv_sec = time (NULL);
   utx->ut_tv.tv_usec = 0;
 # if HAVE_UTMPX_SESSION
@@ -282,7 +284,6 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   fill_utmp (ut, true, cmd_pid, ut_id, pty, name, hostname);
 # ifdef HAVE_UTMP_PID
   setutent ();
-  ut->ut_type = DEAD_PROCESS;
   getutid (ut);		/* position to entry in utmp file */
 # endif
 #endif
@@ -290,20 +291,17 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 #ifdef HAVE_STRUCT_UTMPX
   fill_utmpx (utx, true, cmd_pid, ut_id, pty, name, hostname);
   setutxent ();
-  utx->ut_type = DEAD_PROCESS;
   getutxid (utx);		/* position to entry in utmp file */
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
-  ut->ut_type = USER_PROCESS;
   pututline (ut);
   endutent ();			/* close the file */
 # endif
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
-  utx->ut_type = USER_PROCESS;
   pututxline (utx);
   endutxent ();		/* close the file */
 #endif
@@ -370,18 +368,14 @@ ptytty_unix::logout ()
   fill_utmp (ut, false, cmd_pid, ut_id, 0, 0, 0);
 # ifdef HAVE_UTMP_PID
   setutent ();
-  ut->ut_type = USER_PROCESS;
   tmput = getutid (ut);		/* position to entry in utmp file */
-  ut->ut_type = DEAD_PROCESS;
 # endif
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
   fill_utmpx (utx, false, cmd_pid, ut_id, 0, 0, 0);
   setutxent ();
-  utx->ut_type = USER_PROCESS;
   tmputx = getutxid (utx);		/* position to entry in utmp file */
-  utx->ut_type = DEAD_PROCESS;
 #endif
 
   /*

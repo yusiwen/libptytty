@@ -232,14 +232,6 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *id, const char *
       strncpy (utx->ut_user, user, sizeof (utx->ut_user));
 # ifdef HAVE_UTMPX_HOST
       strncpy (utx->ut_host, host, sizeof (utx->ut_host));
-#  if 0
-      {
-        char *colon;
-
-        if ((colon = strrchr (ut->ut_host, ':')) != NULL)
-          *colon = '\0';
-      }
-#  endif
 # endif
     }
 }

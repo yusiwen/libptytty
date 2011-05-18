@@ -263,7 +263,7 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 #endif
   int i;
   struct passwd *pwent = getpwuid (getuid ());
-  const char *name = (pwent && pwent->pw_name) ? pwent->pw_name : "?";
+  const char *user = (pwent && pwent->pw_name) ? pwent->pw_name : "?";
 
   if (!strncmp (pty, "/dev/", 5))
     pty += 5;		/* skip /dev/ prefix */
@@ -281,11 +281,11 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
-  fill_utmp (ut, true, cmd_pid, ut_id, pty, name, hostname);
+  fill_utmp (ut, true, cmd_pid, ut_id, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
-  fill_utmpx (utx, true, cmd_pid, ut_id, pty, name, hostname);
+  fill_utmpx (utx, true, cmd_pid, ut_id, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMP

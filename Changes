@@ -1,6 +1,4 @@
-	- align with POSIX by setting only id, pid and time in utmp(x)
-	  logout records, they are the only meaningful fields for this
-	  type of record according to the standard.
+	- clear user and host fields in utmp(x) logout records.
 	- fix utmpx detection on upcoming FreeBSD 9.
 	- switch to automake.
 	- refactoring and cleanup.

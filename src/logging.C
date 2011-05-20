@@ -220,7 +220,7 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *id, const char *
   memset (utx, 0, sizeof (struct utmpx));
 
   // posix says that ut_line is not meaningful for DEAD_PROCESS
-  // records, but most implementations of last uses ut_line to
+  // records, but most implementations of last use ut_line to
   // associate records in wtmp file
   strncpy (utx->ut_line, line, sizeof (utx->ut_line));
   strncpy (utx->ut_id, id, sizeof (utx->ut_id));

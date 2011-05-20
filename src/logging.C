@@ -191,6 +191,7 @@ fill_utmp (struct utmp *ut, bool login, int pid, const char *id, const char *lin
 {
   memset (ut, 0, sizeof (struct utmp));
 
+  strncpy (ut->ut_line, line, sizeof (ut->ut_line));
 # ifdef HAVE_UTMP_PID
   strncpy (ut->ut_id, id, sizeof (ut->ut_id));
   ut->ut_pid = pid;
@@ -200,7 +201,6 @@ fill_utmp (struct utmp *ut, bool login, int pid, const char *id, const char *lin
 
   if (login)
     {
-      strncpy (ut->ut_line, line, sizeof (ut->ut_line));
 # ifdef HAVE_UTMP_PID
       strncpy (ut->ut_user, user, sizeof (ut->ut_user));
 # else
@@ -219,6 +219,10 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *id, const char *
 {
   memset (utx, 0, sizeof (struct utmpx));
 
+  // posix says that ut_line is not meaningful for DEAD_PROCESS
+  // records, but most implementations of last uses ut_line to
+  // associate records in wtmp file
+  strncpy (utx->ut_line, line, sizeof (utx->ut_line));
   strncpy (utx->ut_id, id, sizeof (utx->ut_id));
   utx->ut_pid = pid;
   utx->ut_type = login ? USER_PROCESS : DEAD_PROCESS;
@@ -230,7 +234,6 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *id, const char *
 
   if (login)
     {
-      strncpy (utx->ut_line, line, sizeof (utx->ut_line));
       strncpy (utx->ut_user, user, sizeof (utx->ut_user));
 # ifdef HAVE_UTMPX_HOST
       strncpy (utx->ut_host, host, sizeof (utx->ut_host));
@@ -347,6 +350,11 @@ ptytty_unix::logout ()
   if (!cmd_pid)
     return;
 
+  const char *pty = name;
+
+  if (!strncmp (pty, "/dev/", 5))
+    pty += 5;
+
 #ifdef HAVE_STRUCT_UTMP
   struct utmp *tmput, *ut = &this->ut;
 #endif
@@ -355,11 +363,11 @@ ptytty_unix::logout ()
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
-  fill_utmp (ut, false, cmd_pid, ut_id, 0, 0, 0);
+  fill_utmp (ut, false, cmd_pid, ut_id, pty, 0, 0);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
-  fill_utmpx (utx, false, cmd_pid, ut_id, 0, 0, 0);
+  fill_utmpx (utx, false, cmd_pid, ut_id, pty, 0, 0);
 #endif
 
   /*

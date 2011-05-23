@@ -148,79 +148,63 @@ dnl# check for host field in utmp structure
 
 dnl# --------------------------------------------
 AC_CHECK_HEADERS(utmp.h,
-[AC_CACHE_CHECK([for struct utmp], pt_cv_struct_utmp,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmp.h>]], [[struct utmp ut;]])],[pt_cv_struct_utmp=yes],[pt_cv_struct_utmp=no])])
-if test x$pt_cv_struct_utmp = xyes; then
-  AC_DEFINE(HAVE_STRUCT_UTMP, 1, Define if utmp.h has struct utmp)
-fi
-]
+AC_CHECK_TYPES([struct utmp], [], [], [
+#include <sys/types.h>
+#include <utmp.h>
+])
 
-AC_CACHE_CHECK(for ut_host in utmp struct, pt_cv_struct_utmp_host,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmp.h>]], [[struct utmp ut; ut.ut_host;]])],[pt_cv_struct_utmp_host=yes],[pt_cv_struct_utmp_host=no])])
-if test x$pt_cv_struct_utmp_host = xyes; then
-  AC_DEFINE(HAVE_UTMP_HOST, 1, Define if struct utmp contains ut_host)
-fi
+AC_CHECK_MEMBER([struct utmp.ut_host],
+[AC_DEFINE(HAVE_UTMP_HOST, 1, Define if struct utmp contains ut_host)], [], [
+#include <sys/types.h>
+#include <utmp.h>
+])
 
-AC_CACHE_CHECK(for ut_pid in utmp struct, pt_cv_struct_utmp_pid,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmp.h>]], [[struct utmp ut; ut.ut_pid;]])],[pt_cv_struct_utmp_pid=yes],[pt_cv_struct_utmp_pid=no])])
-if test x$pt_cv_struct_utmp_pid = xyes; then
-  AC_DEFINE(HAVE_UTMP_PID, 1, Define if struct utmp contains ut_pid)
-fi
+AC_CHECK_MEMBER([struct utmp.ut_pid],
+[AC_DEFINE(HAVE_UTMP_PID, 1, Define if struct utmp contains ut_pid)], [], [
+#include <sys/types.h>
+#include <utmp.h>
+])
 ) dnl# AC_CHECK_HEADERS(utmp.h
 
 dnl# --------------------------------------------
 
 AC_CHECK_HEADERS(utmpx.h,
-[AC_CACHE_CHECK([for struct utmpx], pt_cv_struct_utmpx,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmpx.h>]], [[struct utmpx ut;]])],[pt_cv_struct_utmpx=yes],[pt_cv_struct_utmpx=no])])
-if test x$pt_cv_struct_utmpx = xyes; then
-  AC_DEFINE(HAVE_STRUCT_UTMPX, 1, Define if utmpx.h has struct utmpx)
-fi
-]
+AC_CHECK_TYPES([struct utmpx], [], [], [
+#include <sys/types.h>
+#include <utmpx.h>
+])
 
-AC_CACHE_CHECK(for host in utmpx struct, pt_cv_struct_utmpx_host,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmpx.h>]], [[struct utmpx utx; utx.ut_host;]])],[pt_cv_struct_utmpx_host=yes],[pt_cv_struct_utmpx_host=no])])
-if test x$pt_cv_struct_utmpx_host = xyes; then
-  AC_DEFINE(HAVE_UTMPX_HOST, 1, Define if struct utmpx contains ut_host)
-fi
+AC_CHECK_MEMBER([struct utmpx.ut_host],
+[AC_DEFINE(HAVE_UTMPX_HOST, 1, Define if struct utmpx contains ut_host)], [], [
+#include <sys/types.h>
+#include <utmpx.h>
+])
 
-AC_CACHE_CHECK(for session in utmpx struct, pt_cv_struct_utmpx_session,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmpx.h>]], [[struct utmpx utx; utx.ut_session;]])],[pt_cv_struct_utmpx_session=yes],[pt_cv_struct_utmpx_session=no])])
-if test x$pt_cv_struct_utmpx_session = xyes; then
-  AC_DEFINE(HAVE_UTMPX_SESSION, 1, Define if struct utmpx contains ut_session)
-fi
+AC_CHECK_MEMBER([struct utmpx.ut_session],
+[AC_DEFINE(HAVE_UTMPX_SESSION, 1, Define if struct utmpx contains ut_session)], [], [
+#include <sys/types.h>
+#include <utmpx.h>
+])
 ) dnl# AC_CHECK_HEADERS(utmpx.h
 
 dnl# --------------------------------------------------------------------------
 dnl# check for struct lastlog
-AC_CACHE_CHECK(for struct lastlog, pt_cv_struct_lastlog,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+AC_CHECK_TYPES([struct lastlog], [], [], [
+#include <sys/types.h>
 #include <utmp.h>
 #ifdef HAVE_LASTLOG_H
 #include <lastlog.h>
 #endif
-]], [[struct lastlog ll;]])],[pt_cv_struct_lastlog=yes],[pt_cv_struct_lastlog=no])])
-if test x$pt_cv_struct_lastlog = xyes; then
-  AC_DEFINE(HAVE_STRUCT_LASTLOG, 1, Define if utmp.h or lastlog.h has struct lastlog)
-fi
+])
 
 dnl# check for struct lastlogx
-AC_CACHE_CHECK(for struct lastlogx, pt_cv_struct_lastlogx,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+AC_CHECK_TYPES([struct lastlogx], [], [], [
+#include <sys/types.h>
 #include <utmpx.h>
 #ifdef HAVE_LASTLOG_H
 #include <lastlog.h>
 #endif
-]], [[struct lastlogx ll;]])],[pt_cv_struct_lastlogx=yes],[pt_cv_struct_lastlogx=no])])
-if test x$pt_cv_struct_lastlogx = xyes; then
-  AC_DEFINE(HAVE_STRUCT_LASTLOGX, 1, Define if utmpx.h or lastlog.h has struct lastlogx)
-fi
+])
 
 dnl# --------------------------------------------------------------------------
 dnl# FIND FILES

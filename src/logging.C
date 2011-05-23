@@ -295,7 +295,7 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 # ifdef HAVE_UTMP_PID
   setutent ();
   pututline (ut);
-  endutent ();			/* close the file */
+  endutent ();
 # else
   int fd_stdin = dup (STDIN_FILENO);
   dup2 (tty, STDIN_FILENO);
@@ -312,7 +312,7 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 #ifdef HAVE_STRUCT_UTMPX
   setutxent ();
   pututxline (utx);
-  endutxent ();		/* close the file */
+  endutxent ();
 #endif
 
 #ifdef WTMP_SUPPORT
@@ -397,7 +397,7 @@ ptytty_unix::logout ()
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
   setutent ();
-  tmput = getutid (ut);		/* position to entry in utmp file */
+  tmput = getutid (ut);
   if (tmput && tmput->ut_pid == cmd_pid)
     pututline (ut);
   endutent ();
@@ -407,7 +407,7 @@ ptytty_unix::logout ()
 #endif
 #ifdef HAVE_STRUCT_UTMPX
   setutxent ();
-  tmputx = getutxid (utx);		/* position to entry in utmp file */
+  tmputx = getutxid (utx);
   if (tmputx && tmputx->ut_pid == cmd_pid)
     pututxline (utx);
   endutxent ();

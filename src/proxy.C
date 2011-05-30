@@ -71,8 +71,8 @@ struct ptytty_proxy : ptytty
 };
 
 #if PTYTTY_REENTRANT
-# define NEED_TOKEN do { char ch; read  (lock_fd, &ch, 1); } while (0)
-# define GIVE_TOKEN do { char ch; write (lock_fd, &ch, 1); } while (0)
+# define NEED_TOKEN read  (lock_fd, &lock_fd, 1)
+# define GIVE_TOKEN write (lock_fd, &lock_fd, 1)
 #else
 # define NEED_TOKEN (void)0
 # define GIVE_TOKEN (void)0

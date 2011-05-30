@@ -9,13 +9,17 @@
  * compatible with most systems, change it to a more secure value if your
  * system supports it (0640 for example).
  */
-#define RESTORE_TTY_MODE 0666
+#ifndef RESTORE_TTY_MODE
+# define RESTORE_TTY_MODE 0666
+#endif
 
 /*
  * Define if you want to use a separate process for pty/tty handling
  * when running setuid/setgid. You need this when making it setuid/setgid.
  */
-#define PTYTTY_HELPER 1
+#ifndef PTYTTY_HELPER
+# define PTYTTY_HELPER 1
+#endif
 
 /*
  * Define if you want to use a single helper process from multiple threads
@@ -24,7 +28,9 @@
  * helper. Having it disabled avoids some syscalls and reduces codesize,
  * but unless you are really short on cpu or memory, it's not worth disabling.
  */
-#define PTYTTY_REENTRANT 1
+#ifndef PTYTTY_REENTRANT
+# define PTYTTY_REENTRANT 1
+#endif
 
 /*
  * Provide a STL-like vector class and find algorithm.

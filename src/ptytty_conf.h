@@ -21,14 +21,14 @@
  * Define if you want to use a single helper process from multiple threads
  * OR forked processes. Without it, the helper will only work from the
  * process having started it, and it might not be possible to start another
- * helper. Having it disabled avoids a some syscalls and reduces codesize,
+ * helper. Having it disabled avoids some syscalls and reduces codesize,
  * but unless you are really short on cpu or memory, it's not worth disabling.
  */
 #define PTYTTY_REENTRANT 1
 
 /*
  * Provide a STL-like vector class and find algorithm.
- * The default below fine for normal C++ environments.
+ * The default below is fine for normal C++ environments.
  */
 #include <vector>
 #include <algorithm>

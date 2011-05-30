@@ -30,15 +30,21 @@
  * Provide a STL-like vector class and find algorithm.
  * The default below is fine for normal C++ environments.
  */
+#ifndef PTYTTY_NO_LIBCPP
 #include <vector>
 #include <algorithm>
 using namespace std;
+#endif
 
 /*
  * printf-like functions to be called on fatal conditions
  * (must exit), or warning conditions (only print message)
  * TODO move elsewhere, e.g. util.C
  */
-#define ptytty_fatal(msg) do { ptytty_warn ("%s", msg); _exit (1); } while (0)
-#define ptytty_warn(msg,arg) fprintf (stderr, msg, arg) // TODO
+#ifndef PTYTTY_FATAL
+#define PTYTTY_FATAL(msg) do { PTYTTY_WARN ("%s", msg); _exit (1); } while (0)
+#endif
+#ifndef PTYTTY_WARN
+#define PTYTTY_WARN(msg,arg) fprintf (stderr, msg, arg) // TODO
+#endif
 

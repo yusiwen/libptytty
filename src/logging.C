@@ -152,7 +152,7 @@ update_lastlog (const char *pty, const char *host)
   pwent = getpwuid (getuid ());
   if (!pwent)
     {
-      ptytty_warn ("no entry in password file, not updating lastlog.\n", 0);
+      PTYTTY_WARN ("no entry in password file, not updating lastlog.\n", 0);
       return;
     }
 
@@ -278,7 +278,7 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
     sprintf (ut_id, "vt%02x", (i & 0xff));	/* sysv naming */
   else
     {
-      ptytty_warn ("can't parse tty name \"%s\", not adding utmp entry.\n", pty);
+      PTYTTY_WARN ("can't parse tty name \"%s\", not adding utmp entry.\n", pty);
       return;
     }
 #endif

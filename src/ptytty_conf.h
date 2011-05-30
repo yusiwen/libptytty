@@ -18,10 +18,11 @@
 #define PTYTTY_HELPER 1
 
 /*
- * Define if you want to use a single helper process form multiple threads
+ * Define if you want to use a single helper process from multiple threads
  * OR forked processes. Without it, the helper will only work from the
  * process having started it, and it might not be possible to start another
- * helper.
+ * helper. Having it disabled avoids a some syscalls and reduces codesize,
+ * but unless you are really short on cpu or memory, it's not worth disabling.
  */
 #define PTYTTY_REENTRANT 1
 

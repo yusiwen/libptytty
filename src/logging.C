@@ -64,7 +64,7 @@
  */
 #if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
 static int
-write_bsd_utmp (int utmp_pos, struct utmp *wu)
+write_bsd_utmp (int utmp_pos, struct utmp *ut)
 {
   int             fd;
 
@@ -72,7 +72,7 @@ write_bsd_utmp (int utmp_pos, struct utmp *wu)
     return 0;
 
   if (lseek (fd, (off_t) (utmp_pos * sizeof (struct utmp)), SEEK_SET) != -1)
-    write (fd, wu, sizeof (struct utmp));
+    write (fd, ut, sizeof (struct utmp));
   close (fd);
   return 1;
 }
@@ -84,7 +84,7 @@ write_bsd_utmp (int utmp_pos, struct utmp *wu)
  */
 #if defined(WTMP_SUPPORT) && !defined(HAVE_UPDWTMP) && defined(HAVE_STRUCT_UTMP)
 static void
-update_wtmp (const char *fname, const struct utmp *putmp)
+update_wtmp (const char *fname, const struct utmp *ut)
 {
   int             fd, gotlock, retry;
   struct flock    lck;	/* fcntl locking scheme */
@@ -114,7 +114,7 @@ update_wtmp (const char *fname, const struct utmp *putmp)
       return;
     }
   if (fstat (fd, &sbuf) == 0)
-    if (write (fd, putmp, sizeof (struct utmp)) != sizeof (struct utmp))
+    if (write (fd, ut, sizeof (struct utmp)) != sizeof (struct utmp))
       ftruncate (fd, sbuf.st_size);	/* remove bad writes */
 
   lck.l_type = F_UNLCK;	/* unlocking the file */

@@ -200,34 +200,6 @@ control_tty (int fd_tty)
 
   setsid ();
 
-#if defined(HAVE_DEV_PTMX) && defined(I_PUSH)
-  /*
-   * Push STREAMS modules:
-   *    ptem: pseudo-terminal hardware emulation module.
-   *    ldterm: standard terminal line discipline.
-   *    ttcompat: V7, 4BSD and XENIX STREAMS compatibility module.
-   *
-   * After we push the STREAMS modules, the first open () on the slave side
-   * (i.e. the next section between the dashes giving us "tty opened OK")
-   * should make the "ptem" (or "ldterm" depending upon either which OS
-   * version or which set of manual pages you have) module give us a
-   * controlling terminal.  We must already have close ()d the master side
-   * fd in this child process before we push STREAMS modules on because the
-   * documentation is really unclear about whether it is any close () on
-   * the master side or the last close () - i.e. a proper STREAMS dismantling
-   * close () - on the master side which causes a hang up to be sent
-   * through - Geoff Wing
-   */
-#if defined(HAVE_ISASTREAM) && defined(HAVE_STROPTS_H)
-  if (isastream (fd_tty) == 1)
-# endif
-    {
-      ioctl (fd_tty, I_PUSH, "ptem");
-      ioctl (fd_tty, I_PUSH, "ldterm");
-      ioctl (fd_tty, I_PUSH, "ttcompat");
-    }
-#endif
-
 #ifdef TIOCSCTTY
   ioctl (fd_tty, TIOCSCTTY, NULL);
 #else
@@ -374,6 +346,33 @@ ptytty_unix::get ()
           return false;
         }
     }
+
+#if defined(HAVE_DEV_PTMX) && defined(I_PUSH)
+  /*
+   * Push STREAMS modules:
+   *    ptem: pseudo-terminal hardware emulation module.
+   *    ldterm: standard terminal line discipline.
+   *    ttcompat: V7, 4BSD and XENIX STREAMS compatibility module.
+   *
+   * After we push the STREAMS modules, the first open () on the slave side
+   * should make the "ptem" (or "ldterm" depending upon either which OS
+   * version or which set of manual pages you have) module give us a
+   * controlling terminal.  We must already have close ()d the master side
+   * fd in this child process before we push STREAMS modules on because the
+   * documentation is really unclear about whether it is any close () on
+   * the master side or the last close () - i.e. a proper STREAMS dismantling
+   * close () - on the master side which causes a hang up to be sent
+   * through - Geoff Wing
+   */
+#if defined(HAVE_ISASTREAM) && defined(HAVE_STROPTS_H)
+  if (isastream (tty) == 1)
+# endif
+    {
+      ioctl (tty, I_PUSH, "ptem");
+      ioctl (tty, I_PUSH, "ldterm");
+      ioctl (tty, I_PUSH, "ttcompat");
+    }
+#endif
 
   return true;
 }

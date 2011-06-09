@@ -1,3 +1,7 @@
+	- push stream modules in ptytty::get rather than in
+	  ptytty::make_controlling_tty. This makes tty ioctls (such as
+	  TIOCSWINSZ, to set the window size) work even if
+	  make_controlling_tty has not been called.
 	- clear user and host fields in utmp(x) logout records.
 	- fix utmpx detection on upcoming FreeBSD 9.
 	- switch to automake.

@@ -233,7 +233,7 @@ ptytty::use_helper ()
   if (socketpair (AF_UNIX, SOCK_STREAM, 0, sv))
     PTYTTY_FATAL ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
 
-#ifdef PTYTTY_REENTRANT
+#if PTYTTY_REENTRANT
   int lv[2];
 
   if (socketpair (AF_UNIX, SOCK_STREAM, 0, lv))
@@ -251,7 +251,7 @@ ptytty::use_helper ()
       sock_fd = sv[0];
       close (sv[1]);
       fcntl (sock_fd, F_SETFD, FD_CLOEXEC);
-#ifdef PTYTTY_REENTRANT
+#if PTYTTY_REENTRANT
       lock_fd = lv[0];
       close (lv[1]);
       fcntl (lock_fd, F_SETFD, FD_CLOEXEC);
@@ -261,7 +261,7 @@ ptytty::use_helper ()
     {
       // server, pty-helper
       sock_fd = sv[1];
-#ifdef PTYTTY_REENTRANT
+#if PTYTTY_REENTRANT
       lock_fd = lv[1];
 #endif
 

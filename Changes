@@ -1,4 +1,4 @@
-1.4
+1.4  Wed Jun 29 14:36:19 CEST 2011
 	- push stream modules in ptytty::get rather than in
 	  ptytty::make_controlling_tty. This makes tty ioctls (such as
 	  TIOCSWINSZ, to set the window size) work even if

@@ -69,9 +69,7 @@ public:
 #ifdef HAVE_STRUCT_UTMPX
   struct utmpx utx;
 #endif
-#if (defined(HAVE_STRUCT_UTMP) && defined(HAVE_UTMP_PID)) || defined(HAVE_STRUCT_UTMPX)
   char ut_id[5];
-#endif
 
   void logout ();
 #endif

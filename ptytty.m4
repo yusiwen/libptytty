@@ -9,7 +9,7 @@ AC_DEFUN([PT_FIND_FILE],
 $5
 int main()
 {
-    char **path, *list[] = { $4, NULL };
+    const char **path, *list[] = { $4, NULL };
     FILE *f = fopen("conftestval", "w");
     if (!f) return 1;
 #ifdef $2

@@ -69,7 +69,6 @@ public:
 #ifdef HAVE_STRUCT_UTMPX
   struct utmpx utx;
 #endif
-  char ut_id[5];
 
   void logout ();
 #endif

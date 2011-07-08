@@ -185,15 +185,27 @@ update_lastlog (const char *pty, const char *host)
 }
 #endif /* LASTLOG_SUPPORT */
 
+#if defined(HAVE_UTMP_PID) || defined(HAVE_STRUCT_UTMPX)
+static void
+fill_id (char *id, const char *line, size_t id_size)
+{
+  size_t len = strlen (line);
+
+  if (len > id_size)
+    line += len - id_size;
+  strncpy (id, line, id_size);
+}
+#endif
+
 #ifdef HAVE_STRUCT_UTMP
 static void
-fill_utmp (struct utmp *ut, bool login, int pid, const char *id, const char *line, const char *user, const char *host)
+fill_utmp (struct utmp *ut, bool login, int pid, const char *line, const char *user, const char *host)
 {
   memset (ut, 0, sizeof (struct utmp));
 
   strncpy (ut->ut_line, line, sizeof (ut->ut_line));
 # ifdef HAVE_UTMP_PID
-  strncpy (ut->ut_id, id, sizeof (ut->ut_id));
+  fill_id (ut->ut_id, line, sizeof (ut->ut_id));
   ut->ut_pid = pid;
   ut->ut_type = login ? USER_PROCESS : DEAD_PROCESS;
 # endif
@@ -215,7 +227,7 @@ fill_utmp (struct utmp *ut, bool login, int pid, const char *id, const char *lin
 
 #ifdef HAVE_STRUCT_UTMPX
 static void
-fill_utmpx (struct utmpx *utx, bool login, int pid, const char *id, const char *line, const char *user, const char *host)
+fill_utmpx (struct utmpx *utx, bool login, int pid, const char *line, const char *user, const char *host)
 {
   memset (utx, 0, sizeof (struct utmpx));
 
@@ -223,7 +235,7 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *id, const char *
   // records, but most implementations of last use ut_line to
   // associate records in wtmp file
   strncpy (utx->ut_line, line, sizeof (utx->ut_line));
-  strncpy (utx->ut_id, id, sizeof (utx->ut_id));
+  fill_id (utx->ut_id, line, sizeof (utx->ut_id));
   utx->ut_pid = pid;
   utx->ut_type = login ? USER_PROCESS : DEAD_PROCESS;
   utx->ut_tv.tv_sec = time (NULL);
@@ -264,31 +276,18 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 #ifdef HAVE_STRUCT_UTMPX
   struct utmpx *utx = &this->utx;
 #endif
-  int i;
   struct passwd *pwent = getpwuid (getuid ());
   const char *user = (pwent && pwent->pw_name) ? pwent->pw_name : "?";
 
   if (!strncmp (pty, "/dev/", 5))
     pty += 5;		/* skip /dev/ prefix */
 
-#if defined(HAVE_UTMP_PID) || defined(HAVE_STRUCT_UTMPX)
-  if (!strncmp (pty, "pty", 3) || !strncmp (pty, "tty", 3))
-    strncpy (ut_id, pty + 3, sizeof (ut_id));
-  else if (sscanf (pty, "pts/%d", &i) == 1)
-    sprintf (ut_id, "vt%02x", (i & 0xff));	/* sysv naming */
-  else
-    {
-      PTYTTY_WARN ("can't parse tty name \"%s\", not adding utmp entry.\n", pty);
-      return;
-    }
-#endif
-
 #ifdef HAVE_STRUCT_UTMP
-  fill_utmp (ut, true, cmd_pid, ut_id, pty, user, hostname);
+  fill_utmp (ut, true, cmd_pid, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
-  fill_utmpx (utx, true, cmd_pid, ut_id, pty, user, hostname);
+  fill_utmpx (utx, true, cmd_pid, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
@@ -363,11 +362,11 @@ ptytty_unix::logout ()
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
-  fill_utmp (ut, false, cmd_pid, ut_id, pty, 0, 0);
+  fill_utmp (ut, false, cmd_pid, pty, 0, 0);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
-  fill_utmpx (utx, false, cmd_pid, ut_id, pty, 0, 0);
+  fill_utmpx (utx, false, cmd_pid, pty, 0, 0);
 #endif
 
   /*

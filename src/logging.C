@@ -270,12 +270,6 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   this->cmd_pid     = cmd_pid;
   this->login_shell = login_shell;
 
-#ifdef HAVE_STRUCT_UTMP
-  struct utmp *ut = &this->ut;
-#endif
-#ifdef HAVE_STRUCT_UTMPX
-  struct utmpx *utx = &this->utx;
-#endif
   struct passwd *pwent = getpwuid (getuid ());
   const char *user = (pwent && pwent->pw_name) ? pwent->pw_name : "?";
 
@@ -283,10 +277,12 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
     pty += 5;		/* skip /dev/ prefix */
 
 #ifdef HAVE_STRUCT_UTMP
+  struct utmp *ut = &this->ut;
   fill_utmp (ut, true, cmd_pid, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
+  struct utmpx *utx = &this->utx;
   fill_utmpx (utx, true, cmd_pid, pty, user, hostname);
 #endif
 
@@ -356,16 +352,11 @@ ptytty_unix::logout ()
 
 #ifdef HAVE_STRUCT_UTMP
   struct utmp *tmput, *ut = &this->ut;
-#endif
-#ifdef HAVE_STRUCT_UTMPX
-  struct utmpx *tmputx, *utx = &this->utx;
-#endif
-
-#ifdef HAVE_STRUCT_UTMP
   fill_utmp (ut, false, cmd_pid, pty, 0, 0);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
+  struct utmpx *tmputx, *utx = &this->utx;
   fill_utmpx (utx, false, cmd_pid, pty, 0, 0);
 #endif
 

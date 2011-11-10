@@ -244,9 +244,14 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *line, const char
   utx->ut_session = getsid (0);
 # endif
 
+  // posix says that ut_user is not meaningful for DEAD_PROCESS
+  // records, but solaris utmp_update helper requires that the ut_user
+  // field of a DEAD_PROCESS entry matches the one of an existing
+  // USER_PROCESS entry for the same line, if any
+  strncpy (utx->ut_user, user, sizeof (utx->ut_user));
+
   if (login)
     {
-      strncpy (utx->ut_user, user, sizeof (utx->ut_user));
 # ifdef HAVE_UTMPX_HOST
       strncpy (utx->ut_host, host, sizeof (utx->ut_host));
 # endif

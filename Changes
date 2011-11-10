@@ -1,3 +1,5 @@
+	- do not clear ut_user in utmpx logout records because
+	  pututxline fails otherwise on solaris
 	- Fix compilation on systems with bsd style utmp and no utmpx,
 	  such as openbsd.
 

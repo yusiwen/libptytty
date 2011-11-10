@@ -134,9 +134,7 @@ update_lastlog (const char *pty, const char *host)
 # ifdef HAVE_STRUCT_LASTLOG
   int             fd;
   struct lastlog  ll;
-  char            lastlogfile[256];
   struct passwd  *pwent;
-  struct stat     st;
 # endif
 
 # if defined(HAVE_STRUCT_LASTLOGX) && defined(HAVE_UPDLASTLOGX)
@@ -160,27 +158,13 @@ update_lastlog (const char *pty, const char *host)
   ll.ll_time = time (NULL);
   strncpy (ll.ll_line, pty, sizeof (ll.ll_line));
   strncpy (ll.ll_host, host, sizeof (ll.ll_host));
-  if (stat (LASTLOG_FILE, &st) != 0)
-    return;
-  if (S_ISDIR (st.st_mode))
+  if ((fd = open (LASTLOG_FILE, O_RDWR)) != -1)
     {
-      snprintf (lastlogfile, sizeof (lastlogfile), "%s/%s", LASTLOG_FILE,
-               (!pwent->pw_name || pwent->pw_name[0] == '\0') ? "unknown"
-               : pwent->pw_name);
-      if ((fd = open (lastlogfile, O_WRONLY | O_CREAT, 0644)) >= 0)
-        {
-          write (fd, &ll, sizeof (ll));
-          close (fd);
-        }
+      if (lseek (fd, (off_t) ((long)pwent->pw_uid * sizeof (ll)),
+                 SEEK_SET) != -1)
+        write (fd, &ll, sizeof (ll));
+      close (fd);
     }
-  else if (S_ISREG (st.st_mode))
-    if ((fd = open (LASTLOG_FILE, O_RDWR)) != -1)
-      {
-        if (lseek (fd, (off_t) ((long)pwent->pw_uid * sizeof (ll)),
-                   SEEK_SET) != -1)
-          write (fd, &ll, sizeof (ll));
-        close (fd);
-      }
 # endif /* HAVE_STRUCT_LASTLOG */
 }
 #endif /* LASTLOG_SUPPORT */

@@ -41,7 +41,7 @@
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
-#if defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
+#if defined(HAVE_SYS_STROPTS_H)
 # include <sys/stropts.h>      /* for I_PUSH */
 #endif
 #if defined(HAVE_ISASTREAM) && defined(HAVE_STROPTS_H)
@@ -82,7 +82,11 @@
 # elif defined(HAVE_POSIX_OPENPT)
     pfd = posix_openpt (O_RDWR);
 # else
-    pfd = open (CLONE_DEVICE, O_RDWR | O_NOCTTY, 0);
+#  ifdef _AIX
+    pfd = open ("/dev/ptc", O_RDWR | O_NOCTTY, 0);
+#  else
+    pfd = open ("/dev/ptmx", O_RDWR | O_NOCTTY, 0);
+#  endif
 # endif
 
     if (pfd >= 0)
@@ -347,7 +351,7 @@ ptytty_unix::get ()
         }
     }
 
-#if defined(HAVE_DEV_PTMX) && defined(I_PUSH)
+#if defined(I_PUSH)
   /*
    * Push STREAMS modules:
    *    ptem: pseudo-terminal hardware emulation module.

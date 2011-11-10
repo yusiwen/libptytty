@@ -55,36 +55,6 @@ AC_CHECK_FUNCS( \
   setresuid \
 )
 
-have_clone=no
-
-AC_MSG_CHECKING(for /dev/ptc)
-if test -e /dev/ptc; then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(CLONE_DEVICE, "/dev/ptc", [clone device filename])
-  have_clone=yes
-else
-  AC_MSG_RESULT(no)
-fi
-
-case $host in
-  *-*-cygwin*)
-    have_clone=yes
-    AC_DEFINE(CLONE_DEVICE, "/dev/ptmx", [clone device filename])
-    ;;
-  *)
-    AC_MSG_CHECKING(for /dev/ptmx)
-    if test -e /dev/ptmx; then
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(HAVE_DEV_PTMX, 1, [Define to 1 if you have /dev/ptmx])
-      AC_DEFINE(CLONE_DEVICE, "/dev/ptmx", [clone device filename])
-      have_clone=yes
-    else
-      AC_MSG_RESULT(no)
-    fi
-    ;;
-esac
-
-if test x$ac_cv_func_getpt = xyes -o x$ac_cv_func_posix_openpt = xyes -o x$have_clone = xyes; then
   AC_MSG_CHECKING(for UNIX98 ptys)
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>]],
               [[grantpt(0);unlockpt(0);ptsname(0);]])],
@@ -92,7 +62,6 @@ if test x$ac_cv_func_getpt = xyes -o x$ac_cv_func_posix_openpt = xyes -o x$have_
                AC_DEFINE(UNIX98_PTY, 1, "")
                AC_MSG_RESULT(yes)],
               [AC_MSG_RESULT(no)])
-fi
 
 if test -z "$unix98_pty"; then
   AC_SEARCH_LIBS(openpty, util, AC_DEFINE(HAVE_OPENPTY, 1, ""))

@@ -132,7 +132,7 @@
     int pfd;
     char *slave;
 
-    slave = _getpty (&pfd, O_RDWR | O_NONBLOCK | O_NOCTTY, 0622, 0);
+    slave = _getpty (&pfd, O_RDWR | O_NOCTTY, 0622, 0);
 
     if (slave != NULL)
       {

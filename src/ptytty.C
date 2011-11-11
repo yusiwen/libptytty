@@ -80,7 +80,7 @@
 # if defined(HAVE_GETPT)
     pfd = getpt();
 # elif defined(HAVE_POSIX_OPENPT)
-    pfd = posix_openpt (O_RDWR);
+    pfd = posix_openpt (O_RDWR | O_NOCTTY);
 # else
 #  ifdef _AIX
     pfd = open ("/dev/ptc", O_RDWR | O_NOCTTY, 0);

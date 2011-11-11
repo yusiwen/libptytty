@@ -1,3 +1,5 @@
+	- ptytty::get no longer makes the pty a controlling terminal
+	  when using posix_openpt.
 	- remove support for writing lastlog when the lastlog file is a
 	  directory, no system is known to require this code.
 	- do not clear ut_user in utmpx logout records because

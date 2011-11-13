@@ -384,7 +384,14 @@ ptytty_unix::logout ()
   setutxent ();
   tmputx = getutxid (utx);
   if (tmputx && tmputx->ut_pid == cmd_pid)
-    pututxline (utx);
+    {
+      // posix says that ut_user is not meaningful for DEAD_PROCESS
+      // records, but solaris utmp_update helper requires that the ut_user
+      // field of a DEAD_PROCESS entry matches the one of an existing
+      // USER_PROCESS entry for the same line, if any
+      strncpy (utx->ut_user, tmputx->ut_user, sizeof (utx->ut_user));
+      pututxline (utx);
+    }
   endutxent ();
 #endif
 

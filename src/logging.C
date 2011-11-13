@@ -345,6 +345,29 @@ ptytty_unix::logout ()
 #endif
 
   /*
+   * Write utmp entry
+   */
+#ifdef HAVE_STRUCT_UTMP
+# ifdef HAVE_UTMP_PID
+  setutent ();
+  tmput = getutid (ut);
+  if (tmput && tmput->ut_pid == cmd_pid)
+    pututline (ut);
+  endutent ();
+# else
+  write_bsd_utmp (utmp_pos, ut);
+# endif
+#endif
+
+#ifdef HAVE_STRUCT_UTMPX
+  setutxent ();
+  tmputx = getutxid (utx);
+  if (tmputx && tmputx->ut_pid == cmd_pid)
+    pututxline (utx);
+  endutxent ();
+#endif
+
+  /*
    * Write ending wtmp entry
    */
 #ifdef WTMP_SUPPORT
@@ -363,28 +386,6 @@ ptytty_unix::logout ()
       updwtmpx (WTMPX_FILE, utx);
 # endif
     }
-#endif
-
-  /*
-   * Write utmp entry
-   */
-#ifdef HAVE_STRUCT_UTMP
-# ifdef HAVE_UTMP_PID
-  setutent ();
-  tmput = getutid (ut);
-  if (tmput && tmput->ut_pid == cmd_pid)
-    pututline (ut);
-  endutent ();
-# else
-  write_bsd_utmp (utmp_pos, ut);
-# endif
-#endif
-#ifdef HAVE_STRUCT_UTMPX
-  setutxent ();
-  tmputx = getutxid (utx);
-  if (tmputx && tmputx->ut_pid == cmd_pid)
-    pututxline (utx);
-  endutxent ();
 #endif
 
   cmd_pid = 0;

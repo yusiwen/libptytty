@@ -63,18 +63,17 @@
  * Write a BSD style utmp entry
  */
 #if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
-static int
+static void
 write_bsd_utmp (int utmp_pos, struct utmp *ut)
 {
   int             fd;
 
   if (utmp_pos <= 0 || (fd = open (UTMP_FILE, O_WRONLY)) == -1)
-    return 0;
+    return;
 
   if (lseek (fd, (off_t) (utmp_pos * sizeof (struct utmp)), SEEK_SET) != -1)
     write (fd, ut, sizeof (struct utmp));
   close (fd);
-  return 1;
 }
 #endif
 
@@ -280,8 +279,7 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
   dup2 (tty, STDIN_FILENO);
 
   utmp_pos = ttyslot ();
-  if (!write_bsd_utmp (utmp_pos, ut))
-    utmp_pos = 0;
+  write_bsd_utmp (utmp_pos, ut);
 
   dup2 (fd_stdin, STDIN_FILENO);
   close (fd_stdin);

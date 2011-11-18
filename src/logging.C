@@ -227,9 +227,14 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *line, const char
   utx->ut_session = getsid (0);
 # endif
 
+  // posix says that ut_user is not meaningful for DEAD_PROCESS
+  // records, but solaris utmp_update helper requires that the ut_user
+  // field of a DEAD_PROCESS entry matches the one of an existing
+  // USER_PROCESS entry for the same line, if any
+  strncpy (utx->ut_user, user, sizeof (utx->ut_user));
+
   if (login)
     {
-      strncpy (utx->ut_user, user, sizeof (utx->ut_user));
 # ifdef HAVE_UTMPX_HOST
       strncpy (utx->ut_host, host, sizeof (utx->ut_host));
 # endif
@@ -245,40 +250,49 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *line, const char
 void
 ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 {
-  const char *pty = name;
-
-  if (!pty || !*pty)
+  if (!name || !*name)
     return;
 
   this->cmd_pid     = cmd_pid;
   this->login_shell = login_shell;
 
+  log_session (true, hostname);
+}
+
+void
+ptytty_unix::log_session (bool login, const char *hostname)
+{
   struct passwd *pwent = getpwuid (getuid ());
   const char *user = (pwent && pwent->pw_name) ? pwent->pw_name : "?";
+
+  const char *pty = name;
 
   if (!strncmp (pty, "/dev/", 5))
     pty += 5;		/* skip /dev/ prefix */
 
 #ifdef HAVE_STRUCT_UTMP
+  struct utmp *tmput;
   struct utmp *ut = &this->ut;
-  fill_utmp (ut, true, cmd_pid, pty, user, hostname);
+  fill_utmp (ut, login, cmd_pid, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
+  struct utmpx *tmputx;
   struct utmpx *utx = &this->utx;
-  fill_utmpx (utx, true, cmd_pid, pty, user, hostname);
+  fill_utmpx (utx, login, cmd_pid, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
   setutent ();
-  pututline (ut);
+  if (login || ((tmput = getutid (ut)) && tmput->ut_pid == cmd_pid))
+    pututline (ut);
   endutent ();
 # else
   int fd_stdin = dup (STDIN_FILENO);
   dup2 (tty, STDIN_FILENO);
 
-  utmp_pos = ttyslot ();
+  int utmp_pos = ttyslot ();
   write_bsd_utmp (utmp_pos, ut);
 
   dup2 (fd_stdin, STDIN_FILENO);
@@ -288,7 +302,8 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 
 #ifdef HAVE_STRUCT_UTMPX
   setutxent ();
-  pututxline (utx);
+  if (login || ((tmputx = getutxid (utx)) && tmputx->ut_pid == cmd_pid))
+    pututxline (utx);
   endutxent ();
 #endif
 
@@ -309,11 +324,13 @@ ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
 # endif
     }
 #endif
+
 #ifdef LASTLOG_SUPPORT
 #ifdef LOG_ONLY_ON_LOGIN
   if (login_shell)
 #endif
-    update_lastlog (pty, hostname);
+    if (login)
+      update_lastlog (pty, hostname);
 #endif
 }
 
@@ -327,71 +344,7 @@ ptytty_unix::logout ()
   if (!cmd_pid)
     return;
 
-  const char *pty = name;
-
-  if (!strncmp (pty, "/dev/", 5))
-    pty += 5;
-
-#ifdef HAVE_STRUCT_UTMP
-  struct utmp *tmput, *ut = &this->ut;
-  fill_utmp (ut, false, cmd_pid, pty, 0, 0);
-#endif
-
-#ifdef HAVE_STRUCT_UTMPX
-  struct utmpx *tmputx, *utx = &this->utx;
-  fill_utmpx (utx, false, cmd_pid, pty, 0, 0);
-#endif
-
-  /*
-   * Write ending wtmp entry
-   */
-#ifdef WTMP_SUPPORT
-#ifdef LOG_ONLY_ON_LOGIN
-  if (login_shell)
-#endif
-    {
-# ifdef HAVE_STRUCT_UTMP
-#  ifdef HAVE_UPDWTMP
-      updwtmp (WTMP_FILE, ut);
-#  else
-      update_wtmp (WTMP_FILE, ut);
-#  endif
-# endif
-# if defined(HAVE_STRUCT_UTMPX) && defined(HAVE_UPDWTMPX)
-      updwtmpx (WTMPX_FILE, utx);
-# endif
-    }
-#endif
-
-  /*
-   * Write utmp entry
-   */
-#ifdef HAVE_STRUCT_UTMP
-# ifdef HAVE_UTMP_PID
-  setutent ();
-  tmput = getutid (ut);
-  if (tmput && tmput->ut_pid == cmd_pid)
-    pututline (ut);
-  endutent ();
-# else
-  write_bsd_utmp (utmp_pos, ut);
-# endif
-#endif
-
-#ifdef HAVE_STRUCT_UTMPX
-  setutxent ();
-  tmputx = getutxid (utx);
-  if (tmputx && tmputx->ut_pid == cmd_pid)
-    {
-      // posix says that ut_user is not meaningful for DEAD_PROCESS
-      // records, but solaris utmp_update helper requires that the ut_user
-      // field of a DEAD_PROCESS entry matches the one of an existing
-      // USER_PROCESS entry for the same line, if any
-      strncpy (utx->ut_user, tmputx->ut_user, sizeof (utx->ut_user));
-      pututxline (utx);
-    }
-  endutxent ();
-#endif
+  log_session (false, 0);
 
   cmd_pid = 0;
 }

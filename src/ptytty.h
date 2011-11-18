@@ -48,6 +48,8 @@ struct ptytty_unix : ptytty
 {
   char *name;
 
+  void log_session (bool login, const char *hostname);
+
 public:
 
   ptytty_unix ();
@@ -59,7 +61,6 @@ public:
   void login (int cmd_pid, bool login_shell, const char *hostname);
 
 #if UTMP_SUPPORT
-  int utmp_pos;
   int cmd_pid;
   bool login_shell;
 

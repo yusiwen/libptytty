@@ -78,7 +78,7 @@
     int pfd;
 
 # if defined(HAVE_GETPT)
-    pfd = getpt();
+    pfd = getpt ();
 # elif defined(HAVE_POSIX_OPENPT)
     pfd = posix_openpt (O_RDWR | O_NOCTTY);
 # else
@@ -158,13 +158,13 @@
 
     for (i = 0; i < 256; i++)
       {
-        snprintf(pty_name, 32, "/dev/pty%c%c", majors[i / 16], minors[i % 16]);
-        snprintf(tty_name, 32, "/dev/tty%c%c", majors[i / 16], minors[i % 16]);
+        snprintf (pty_name, 32, "/dev/pty%c%c", majors[i / 16], minors[i % 16]);
+        snprintf (tty_name, 32, "/dev/tty%c%c", majors[i / 16], minors[i % 16]);
 
         if ((pfd = open (pty_name, O_RDWR | O_NOCTTY, 0)) == -1)
           {
-            snprintf(pty_name, 32, "/dev/ptyp%d", i);
-            snprintf(tty_name, 32, "/dev/ttyp%d", i);
+            snprintf (pty_name, 32, "/dev/ptyp%d", i);
+            snprintf (tty_name, 32, "/dev/ttyp%d", i);
             if ((pfd = open (pty_name, O_RDWR | O_NOCTTY, 0)) == -1)
               continue;
           }

@@ -55,13 +55,15 @@ AC_CHECK_FUNCS( \
   setresuid \
 )
 
-  AC_MSG_CHECKING(for UNIX98 ptys)
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>]],
-              [[grantpt(0);unlockpt(0);ptsname(0);]])],
-              [unix98_pty=yes
-               AC_DEFINE(UNIX98_PTY, 1, "")
-               AC_MSG_RESULT(yes)],
-              [AC_MSG_RESULT(no)])
+AC_MSG_CHECKING(for UNIX98 ptys)
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM(
+     [[#include <stdlib.h>]],
+     [[grantpt(0);unlockpt(0);ptsname(0);]])],
+  [unix98_pty=yes
+   AC_DEFINE(UNIX98_PTY, 1, "")
+   AC_MSG_RESULT(yes)],
+  [AC_MSG_RESULT(no)])
 
 if test -z "$unix98_pty"; then
   AC_SEARCH_LIBS(openpty, util, AC_DEFINE(HAVE_OPENPTY, 1, ""))

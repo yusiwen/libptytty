@@ -272,28 +272,28 @@ ptytty_unix::log_session (bool login, const char *hostname)
 
 #ifdef HAVE_STRUCT_UTMP
   struct utmp *tmput;
-  struct utmp *ut = &this->ut;
-  fill_utmp (ut, login, cmd_pid, pty, user, hostname);
+  struct utmp ut;
+  fill_utmp (&ut, login, cmd_pid, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMPX
   struct utmpx *tmputx;
-  struct utmpx *utx = &this->utx;
-  fill_utmpx (utx, login, cmd_pid, pty, user, hostname);
+  struct utmpx utx;
+  fill_utmpx (&utx, login, cmd_pid, pty, user, hostname);
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
   setutent ();
-  if (login || ((tmput = getutid (ut)) && tmput->ut_pid == cmd_pid))
-    pututline (ut);
+  if (login || ((tmput = getutid (&ut)) && tmput->ut_pid == cmd_pid))
+    pututline (&ut);
   endutent ();
 # else
   int fd_stdin = dup (STDIN_FILENO);
   dup2 (tty, STDIN_FILENO);
 
   int utmp_pos = ttyslot ();
-  write_bsd_utmp (utmp_pos, ut);
+  write_bsd_utmp (utmp_pos, &ut);
 
   dup2 (fd_stdin, STDIN_FILENO);
   close (fd_stdin);
@@ -302,8 +302,8 @@ ptytty_unix::log_session (bool login, const char *hostname)
 
 #ifdef HAVE_STRUCT_UTMPX
   setutxent ();
-  if (login || ((tmputx = getutxid (utx)) && tmputx->ut_pid == cmd_pid))
-    pututxline (utx);
+  if (login || ((tmputx = getutxid (&utx)) && tmputx->ut_pid == cmd_pid))
+    pututxline (&utx);
   endutxent ();
 #endif
 
@@ -314,13 +314,13 @@ ptytty_unix::log_session (bool login, const char *hostname)
     {
 # ifdef HAVE_STRUCT_UTMP
 #  ifdef HAVE_UPDWTMP
-      updwtmp (WTMP_FILE, ut);
+      updwtmp (WTMP_FILE, &ut);
 #  else
-      update_wtmp (WTMP_FILE, ut);
+      update_wtmp (WTMP_FILE, &ut);
 #  endif
 # endif
 # if defined(HAVE_STRUCT_UTMPX) && defined(HAVE_UPDWTMPX)
-      updwtmpx (WTMPX_FILE, utx);
+      updwtmpx (WTMPX_FILE, &utx);
 # endif
     }
 #endif

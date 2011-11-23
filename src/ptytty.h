@@ -64,13 +64,6 @@ public:
   int cmd_pid;
   bool login_shell;
 
-#ifdef HAVE_STRUCT_UTMP
-  struct utmp ut;
-#endif
-#ifdef HAVE_STRUCT_UTMPX
-  struct utmpx utx;
-#endif
-
   void logout ();
 #endif
 };

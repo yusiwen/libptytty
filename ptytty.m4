@@ -6,7 +6,16 @@ AC_DEFUN([PT_FIND_FILE],
 [AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-$5
+#include <sys/types.h>
+#ifdef HAVE_UTMPX_H
+#include <utmpx.h>
+#endif
+#ifdef HAVE_UTMP_H
+#include <utmp.h>
+#endif
+#ifdef HAVE_LASTLOG_H
+#include <lastlog.h>
+#endif
 int main()
 {
     const char **path, *list[] = { $4, NULL };
@@ -183,52 +192,28 @@ dnl# --------------------------------------------------------------------------
 
 dnl# find utmp
 PT_FIND_FILE([utmp], [UTMP_FILE], [_PATH_UTMP],
-["/var/run/utmp", "/var/adm/utmp", "/etc/utmp", "/usr/etc/utmp", "/usr/adm/utmp"],[
-#include <sys/types.h>
-#include <utmp.h>
-])
+["/var/run/utmp", "/var/adm/utmp", "/etc/utmp", "/usr/etc/utmp", "/usr/adm/utmp"])
 
 dnl# --------------------------------------------------------------------------
 
 dnl# find wtmp
 PT_FIND_FILE([wtmp], [WTMP_FILE], [_PATH_WTMP],
-["/var/log/wtmp", "/var/adm/wtmp", "/etc/wtmp", "/usr/etc/wtmp", "/usr/adm/wtmp"],[
-#include <sys/types.h>
-#ifdef HAVE_UTMP_H
-#include <utmp.h>
-#endif
-])
+["/var/log/wtmp", "/var/adm/wtmp", "/etc/wtmp", "/usr/etc/wtmp", "/usr/adm/wtmp"])
 dnl# --------------------------------------------------------------------------
 
 dnl# find wtmpx
 PT_FIND_FILE([wtmpx], [WTMPX_FILE], [_PATH_WTMPX],
-["/var/log/wtmpx", "/var/adm/wtmpx"],[
-#ifdef HAVE_UTMPX_H
-#include <utmpx.h>
-#endif
-])
+["/var/log/wtmpx", "/var/adm/wtmpx"])
 dnl# --------------------------------------------------------------------------
 
 dnl# find lastlog
 PT_FIND_FILE([lastlog], [LASTLOG_FILE], [_PATH_LASTLOG],
-["/var/log/lastlog"],[
-#include <sys/types.h>
-#ifdef HAVE_UTMP_H
-#include <utmp.h>
-#endif
-#ifdef HAVE_LASTLOG_H
-#include <lastlog.h>
-#endif
-])
+["/var/log/lastlog"])
 dnl# --------------------------------------------------------------------------
 
 dnl# find lastlogx
 PT_FIND_FILE([lastlogx], [LASTLOGX_FILE], [_PATH_LASTLOGX],
-["/var/log/lastlogx", "/var/adm/lastlogx"],[
-#ifdef HAVE_UTMPX_H
-#include <utmpx.h>
-#endif
-])
+["/var/log/lastlogx", "/var/adm/lastlogx"])
 ])
 
 AC_DEFUN([SCM_RIGHTS_CHECK],

@@ -25,22 +25,9 @@
 #  undef HAVE_STRUCT_UTMP
 # endif
 
-# ifdef HAVE_UTMPX_H
-#  include <utmpx.h>
-# endif
-# ifdef HAVE_UTMP_H
-#  include <utmp.h>
-# endif
-
 # if ! defined(HAVE_STRUCT_UTMPX) && ! defined(HAVE_STRUCT_UTMP)
 #  error cannot build with utmp support - no utmp or utmpx struct found
 # endif
-
-# ifdef HAVE_LASTLOG_H
-#  include <lastlog.h>
-# endif
-
-# include <pwd.h>
 
 #endif
 

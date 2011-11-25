@@ -118,18 +118,17 @@ update_wtmp (const char *fname, const struct utmp *ut)
       }
     else if (errno != EAGAIN && errno != EACCES)
       break;
-  if (!gotlock)
-    {
-      /* give it up */
-      close (fd);
-      return;
-    }
-  if (fstat (fd, &sbuf) == 0)
-    if (write (fd, ut, sizeof (struct utmp)) != sizeof (struct utmp))
-      ftruncate (fd, sbuf.st_size);	/* remove bad writes */
 
-  lck.l_type = F_UNLCK;	/* unlocking the file */
-  fcntl (fd, F_SETLK, &lck);
+  if (gotlock)
+    {
+      if (fstat (fd, &sbuf) == 0)
+        if (write (fd, ut, sizeof (struct utmp)) != sizeof (struct utmp))
+          ftruncate (fd, sbuf.st_size);	/* remove bad writes */
+
+      lck.l_type = F_UNLCK;	/* unlocking the file */
+      fcntl (fd, F_SETLK, &lck);
+    }
+
   close (fd);
 }
 #endif

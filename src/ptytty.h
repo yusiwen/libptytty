@@ -20,7 +20,7 @@
 #  undef HAVE_UTMPX_H
 #  undef HAVE_STRUCT_UTMPX
 # endif
-# if !defined(UTMP_FILE) || !defined(HAVE_STRUCT_UTMP)
+# if !defined(HAVE_STRUCT_UTMP)
 #  undef HAVE_UTMP_H
 #  undef HAVE_STRUCT_UTMP
 # endif

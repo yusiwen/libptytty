@@ -2,43 +2,19 @@ dnl this file is part of libptytty, do not make local modifications
 dnl http://software.schmorp.de/pkg/libptytty
 
 AC_DEFUN([PT_FIND_FILE],
-[AC_CACHE_CHECK(where $1 is located, pt_cv_path_$1,
-[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#ifdef HAVE_UTMPX_H
-#include <utmpx.h>
-#endif
-#ifdef HAVE_UTMP_H
-#include <utmp.h>
-#endif
-#ifdef HAVE_LASTLOG_H
-#include <lastlog.h>
-#endif
-int main()
-{
-    const char **path, *list[] = { $4, NULL };
-    FILE *f = fopen("conftestval", "w");
-    if (!f) return 1;
-#ifdef $2
-    fprintf(f, "%s\n", $2);
-#elif defined($3)
-    fprintf(f, "%s\n", $3);
-#else
-    for (path = list; *path; path++) {
-        struct stat st;
-        if (stat(*path, &st) == 0) {
-            fprintf(f, "%s\n", *path);
-            break;
-        }
-    }
-#endif
-    return fclose(f) != 0;
-}]])],[pt_cv_path_$1=`cat conftestval`],[pt_cv_path_$1=],
-[AC_MSG_WARN(Define $2 in config.h manually)])])
+[AC_CACHE_CHECK(for a fallback location of $1, pt_cv_path_$1, [
+if test "$cross_compiling" != yes; then
+  for file in $3; do
+    if test -f "$file"; then
+      pt_cv_path_$1=$file
+      break
+    fi
+  done
+fi])
 if test x$pt_cv_path_$1 != x; then
-  AC_DEFINE_UNQUOTED($2, "$pt_cv_path_$1", Define location of $1)
+  AC_DEFINE_UNQUOTED($2, "$pt_cv_path_$1", Define to a fallback location of $1)
+elif test "$cross_compiling" = yes; then
+  AC_MSG_WARN(Define $2 in config.h manually)
 fi])
 
 AC_DEFUN([PTY_CHECK],
@@ -191,29 +167,29 @@ dnl# FIND FILES
 dnl# --------------------------------------------------------------------------
 
 dnl# find utmp
-PT_FIND_FILE([utmp], [UTMP_FILE], [_PATH_UTMP],
-["/var/run/utmp", "/var/adm/utmp", "/etc/utmp", "/usr/etc/utmp", "/usr/adm/utmp"])
+PT_FIND_FILE([utmp], [PT_UTMP_FILE],
+["/var/run/utmp" "/var/adm/utmp" "/etc/utmp" "/usr/etc/utmp" "/usr/adm/utmp"])
 
 dnl# --------------------------------------------------------------------------
 
 dnl# find wtmp
-PT_FIND_FILE([wtmp], [WTMP_FILE], [_PATH_WTMP],
-["/var/log/wtmp", "/var/adm/wtmp", "/etc/wtmp", "/usr/etc/wtmp", "/usr/adm/wtmp"])
+PT_FIND_FILE([wtmp], [PT_WTMP_FILE],
+["/var/log/wtmp" "/var/adm/wtmp" "/etc/wtmp" "/usr/etc/wtmp" "/usr/adm/wtmp"])
 dnl# --------------------------------------------------------------------------
 
 dnl# find wtmpx
-PT_FIND_FILE([wtmpx], [WTMPX_FILE], [_PATH_WTMPX],
-["/var/log/wtmpx", "/var/adm/wtmpx"])
+PT_FIND_FILE([wtmpx], [PT_WTMPX_FILE],
+["/var/log/wtmpx" "/var/adm/wtmpx"])
 dnl# --------------------------------------------------------------------------
 
 dnl# find lastlog
-PT_FIND_FILE([lastlog], [LASTLOG_FILE], [_PATH_LASTLOG],
+PT_FIND_FILE([lastlog], [PT_LASTLOG_FILE],
 ["/var/log/lastlog"])
 dnl# --------------------------------------------------------------------------
 
 dnl# find lastlogx
-PT_FIND_FILE([lastlogx], [LASTLOGX_FILE], [_PATH_LASTLOGX],
-["/var/log/lastlogx", "/var/adm/lastlogx"])
+PT_FIND_FILE([lastlogx], [PT_LASTLOGX_FILE],
+["/var/log/lastlogx" "/var/adm/lastlogx"])
 ])
 
 AC_DEFUN([SCM_RIGHTS_CHECK],

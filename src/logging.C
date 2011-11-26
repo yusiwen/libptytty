@@ -51,6 +51,42 @@
 # include <lastlog.h>
 #endif
 
+#if !defined(UTMP_FILE)
+# if defined(_PATH_UTMP)
+#  define UTMP_FILE _PATH_UTMP
+# elif defined(PT_UTMP_FILE)
+#  define UTMP_FILE PT_UTMP_FILE
+# endif
+#endif
+#if !defined(WTMP_FILE)
+# if defined(_PATH_WTMP)
+#  define WTMP_FILE _PATH_WTMP
+# elif defined(PT_WTMP_FILE)
+#  define WTMP_FILE PT_WTMP_FILE
+# endif
+#endif
+#if !defined(WTMPX_FILE)
+# if defined(_PATH_WTMPX)
+#  define WTMPX_FILE _PATH_WTMPX
+# elif defined(PT_WTMPX_FILE)
+#  define WTMPX_FILE PT_WTMPX_FILE
+# endif
+#endif
+#if !defined(LASTLOG_FILE)
+# if defined(_PATH_LASTLOG)
+#  define LASTLOG_FILE _PATH_LASTLOG
+# elif defined(PT_LASTLOG_FILE)
+#  define LASTLOG_FILE PT_LASTLOG_FILE
+# endif
+#endif
+#if !defined(LASTLOGX_FILE)
+# if defined(_PATH_LASTLOGX)
+#  define LASTLOGX_FILE _PATH_LASTLOGX
+# elif defined(PT_LASTLOGX_FILE)
+#  define LASTLOGX_FILE PT_LASTLOGX_FILE
+# endif
+#endif
+
 #include <pwd.h>
 
 #include <cstdio>

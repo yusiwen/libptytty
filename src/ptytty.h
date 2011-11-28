@@ -16,13 +16,8 @@
 #endif
 
 #if UTMP_SUPPORT
-# if !defined(HAVE_STRUCT_UTMPX) || defined(__GLIBC__)
-#  undef HAVE_UTMPX_H
+# if defined(__GLIBC__)
 #  undef HAVE_STRUCT_UTMPX
-# endif
-# if !defined(HAVE_STRUCT_UTMP)
-#  undef HAVE_UTMP_H
-#  undef HAVE_STRUCT_UTMP
 # endif
 
 # if ! defined(HAVE_STRUCT_UTMPX) && ! defined(HAVE_STRUCT_UTMP)

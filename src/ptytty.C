@@ -378,6 +378,18 @@ ptytty_unix::get ()
     }
 #endif
 
+#if UTMP_SUPPORT
+# if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
+  int fd_stdin = dup (STDIN_FILENO);
+  dup2 (tty, STDIN_FILENO);
+
+  utmp_pos = ttyslot ();
+
+  dup2 (fd_stdin, STDIN_FILENO);
+  close (fd_stdin);
+# endif
+#endif
+
   return true;
 }
 

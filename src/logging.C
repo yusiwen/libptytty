@@ -336,14 +336,7 @@ ptytty_unix::log_session (bool login, const char *hostname)
     pututline (&ut);
   endutent ();
 # else
-  int fd_stdin = dup (STDIN_FILENO);
-  dup2 (tty, STDIN_FILENO);
-
-  int utmp_pos = ttyslot ();
   write_bsd_utmp (utmp_pos, &ut);
-
-  dup2 (fd_stdin, STDIN_FILENO);
-  close (fd_stdin);
 # endif
 #endif
 

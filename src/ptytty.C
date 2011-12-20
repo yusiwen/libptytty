@@ -30,8 +30,8 @@
 #include "ptytty.h"
 
 #include <cstdlib>
+#include <cstdio>
 #include <cstring>
-#include <csignal>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -57,8 +57,6 @@
 #ifdef TTY_GID_SUPPORT
 #include <grp.h>
 #endif
-
-#include <cstdio>
 
 /////////////////////////////////////////////////////////////////////////////
 

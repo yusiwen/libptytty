@@ -331,8 +331,6 @@ ptytty_unix::get ()
   if ((pty = get_pty (&tty, &name)) < 0)
     return false;
 
-  fcntl (pty, F_SETFL, O_NONBLOCK);
-
   /* get slave (tty) */
   if (tty < 0)
     {

@@ -1,3 +1,5 @@
+	- INCOMPATIBLE CHANGE: ptytty::get no longer sets the pty fd
+	  non-blocking.
 	- ptytty::get no longer makes the pty a controlling terminal
 	  when using posix_openpt.
 	- remove support for writing lastlog when the lastlog file is a

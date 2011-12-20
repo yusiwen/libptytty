@@ -14,7 +14,6 @@
 
 #include <sys/types.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 #include <libptytty.h>
 
@@ -37,7 +36,6 @@ int main (void)
 
   if (pid)
     {
-      fcntl (pty_fd, F_SETFL, 0); // might be in non-blocking mode
       ptytty_close_tty (pty);
       ptytty_login (pty, pid, 1, "libptytty.example.net");
 

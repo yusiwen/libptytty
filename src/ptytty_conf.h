@@ -37,9 +37,7 @@
  * The default below is fine for normal C++ environments.
  */
 #ifndef PTYTTY_NO_LIBCPP
-#include <vector>
-#include <algorithm>
-using namespace std;
+# define PTYTTY_NO_LIBCPP 0
 #endif
 
 /*

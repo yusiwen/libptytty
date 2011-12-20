@@ -43,12 +43,11 @@
 /*
  * printf-like functions to be called on fatal conditions
  * (must exit), or warning conditions (only print message)
- * TODO move elsewhere, e.g. util.C
  */
 #ifndef PTYTTY_FATAL
 #define PTYTTY_FATAL(msg) do { PTYTTY_WARN ("%s", msg); _exit (1); } while (0)
 #endif
 #ifndef PTYTTY_WARN
-#define PTYTTY_WARN(msg,arg) fprintf (stderr, msg, arg) // TODO
+#define PTYTTY_WARN(msg,arg) fprintf (stderr, msg, arg)
 #endif
 

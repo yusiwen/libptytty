@@ -11,3 +11,11 @@ include_HEADERS = src/libptytty.h
 lib_LTLIBRARIES = libptytty.la
 
 libptytty_la_SOURCES = src/c-api.C src/fdpass.C src/logging.C src/proxy.C src/ptytty.C
+
+doc/libptytty.3: doc/libptytty.3.pod
+	pod2man -n libptytty -r "$(VERSION)" -q\" -c LIBPTYTTY -s3 <$< >$@
+
+README: doc/libptytty.3.pod
+	pod2text <$< >$@
+
+alldoc: doc/libptytty.3 README

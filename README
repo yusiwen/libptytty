@@ -7,6 +7,7 @@ SYNOPSIS
 
        #include <libptytty.h>
 
+
        // C++
        ptytty *pty = ptytty::create ();
 
@@ -20,6 +21,7 @@ SYNOPSIS
 
        // we are done with it
        delete pty;
+
 
        // C
        PTYTTY pty = ptytty_create ();
@@ -36,7 +38,7 @@ SYNOPSIS
        ptytty_delete (pty);
 
     See also the eg/ directory, which currently contains the c-sample.c file
-    that spawns a loginshell from C using libptytty.
+    that spawns a login shell from C using libptytty.
 
 DESCRIPTION
     Libptytty is a small library that offers pseudo-tty management in an
@@ -60,7 +62,7 @@ SECURITY CONSIDERATIONS
     *It is of paramount importance that you at least read the following
     paragraph!*
 
-    If you are a typical terminal-like program that just wants one or more
+    If you write a typical terminal-like program that just wants one or more
     ptys, you should call the "ptytty::init ()" method (C: "ptytty_init ()"
     function) as the very first thing in your program:
 
@@ -78,26 +80,27 @@ SECURITY CONSIDERATIONS
 
     Some programs need finer control over if and when this helper process is
     started, and if and how to drop privileges. For those programs, the
-    methods "ptytty::use_helper" and "ptytty::drop_privileges" are more
-    useful.
+    methods "ptytty::use_helper" and "ptytty::drop_privileges" (and possibly
+    "ptytty::sanitise_stdfd") are more useful.
 
 C++ INTERFACE: THE ptytty CLASS
   STATIC METHODS
     ptytty::init ()
-        The default way to initialise libptytty. Must be called imemdiately
+        The default way to initialise libptytty. Must be called immediately
         as the first thing in the "main" function, or earlier e.g. during
         static construction time. The earlier, the better.
 
-        This method checks whether the program runs with setuid/setgid
-        permissions and, if yes, spawns a helper process for pty/tty
-        management. It then drops the privileges completely, so the actual
-        program runs without setuid/setgid privileges.
+        This method calls "sanitise_stdfd" and then checks whether the
+        program runs with setuid/setgid permissions and, if yes, spawns a
+        helper process for pty/tty management. It then drops the privileges
+        completely, so the actual program runs without setuid/setgid
+        privileges.
 
     ptytty::use_helper ()
         Tries to start a helper process that retains privileges even when
         the calling process does not. This is usually called from
         "ptytty::init" when it detects that the program is running setuid or
-        setgid, but can be called manually if it is inconvinient to drop
+        setgid, but can be called manually if it is inconvenient to drop
         privileges at startup, or when you are not running setuid/setgid but
         want to drop privileges (e.g. when running as a root-started
         daemon).
@@ -112,16 +115,25 @@ C++ INTERFACE: THE ptytty CLASS
         Useful to make sure that the process doesn't run with special
         privileges.
 
+    ptytty::sanitise_stdfd ()
+        Checks whether file descriptors 0, 1 and 2 (stdin, stdout and
+        stderr) are valid (open) and, if not, connects them to /dev/tty or
+        /dev/null if possible (and aborts otherwise). This is necessary
+        because libptytty might want to output error messages to those
+        descriptors, which at the time of outputting the error message,
+        might be connected to something unsuitable opened by the
+        unsuspecting program itself (this can be a security issue).
+
     bool success = ptytty::send_fd (int socket, int fd)
         Utility method to send a file descriptor over a unix domain socket.
         Returns true if successful, false otherwise. This method is only
-        exposed for your convinience and is not required for normal
+        exposed for your convenience and is not required for normal
         operation.
 
     int fd = ptytty::recv_fd (int socket)
         Utility method to receive a file descriptor over a unix domain
-        socket. Returns the fd if sucecssful and -1 otherwise. This method
-        is only exposed for your convinience and is not required for normal
+        socket. Returns the fd if successful and -1 otherwise. This method
+        is only exposed for your convenience and is not required for normal
         operation.
 
     ptytty *pty = ptytty::create ()
@@ -146,8 +158,8 @@ C++ INTERFACE: THE ptytty CLASS
         Creates an entry in the systems session database(s) (utmp, wtmp,
         lastlog). "cmd_pid" must be the pid of the process representing the
         session (such as the login shell), "login_shell" defines whether the
-        session is associated with a login, which influences whether wtmp and
-        lastlog entries are created, and "hostname" should identify the
+        session is associated with a login, which influences whether wtmp
+        and lastlog entries are created, and "hostname" should identify the
         "hostname" the user logs in from, which often is the value of the
         "DISPLAY" variable or tty line in case of local logins.
 

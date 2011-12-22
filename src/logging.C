@@ -262,9 +262,6 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *line, const char
   utx->ut_type = login ? USER_PROCESS : DEAD_PROCESS;
   utx->ut_tv.tv_sec = time (NULL);
   utx->ut_tv.tv_usec = 0;
-# if HAVE_UTMPX_SESSION
-  utx->ut_session = getsid (0);
-# endif
 
   // posix says that ut_user is not meaningful for DEAD_PROCESS
   // records, but solaris utmp_update helper requires that the ut_user

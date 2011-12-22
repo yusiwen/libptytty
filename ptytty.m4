@@ -135,12 +135,6 @@ AC_CHECK_MEMBER([struct utmpx.ut_host],
 #include <sys/types.h>
 #include <utmpx.h>
 ])
-
-AC_CHECK_MEMBER([struct utmpx.ut_session],
-[AC_DEFINE(HAVE_UTMPX_SESSION, 1, Define if struct utmpx contains ut_session)], [], [
-#include <sys/types.h>
-#include <utmpx.h>
-])
 ) dnl# AC_CHECK_HEADERS(utmpx.h
 
 dnl# --------------------------------------------------------------------------

@@ -1,7 +1,8 @@
 1.5
 	- INCOMPATIBLE CHANGE: ptytty::get no longer sets the pty fd
 	  non-blocking.
-	- the login_shell argument of login is now properly honoured.
+	- the login_shell argument of ptytty::login is now properly
+	  honoured.
 	- ptytty::get no longer makes the pty a controlling terminal
 	  when using posix_openpt.
 	- remove support for utmpx ut_session extension, it serves no
@@ -36,7 +37,7 @@
         - restore the SysV way of acquiring a controlling terminal
           (for systems having no TIOCSCTTY such as cygwin or solaris).
         - when using openpty, get the slave name with ttyname.
-        - fix a small memory leak for _getpty.
+        - fix invalid free when using _getpty.
         - update config.guess and config.sub.
 
 1.1  Mon Feb 12 18:25:07 CET 2007

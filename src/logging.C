@@ -337,9 +337,7 @@ ptytty_unix::log_session (bool login, const char *hostname)
 #endif
 
 #ifdef WTMP_SUPPORT
-#ifdef LOG_ONLY_ON_LOGIN
   if (login_shell)
-#endif
     {
 # ifdef HAVE_STRUCT_UTMP
 #  ifdef HAVE_UPDWTMP
@@ -355,9 +353,7 @@ ptytty_unix::log_session (bool login, const char *hostname)
 #endif
 
 #ifdef LASTLOG_SUPPORT
-#ifdef LOG_ONLY_ON_LOGIN
   if (login_shell)
-#endif
     if (login)
       {
         if (pwent)

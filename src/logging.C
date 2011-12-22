@@ -180,7 +180,6 @@ update_lastlog (const char *pty, const char *host)
 # ifdef HAVE_STRUCT_LASTLOG
   int             fd;
   struct lastlog  ll;
-  struct passwd  *pwent;
 # endif
 
 # if defined(HAVE_STRUCT_LASTLOGX) && defined(HAVE_UPDLASTLOGX)
@@ -193,20 +192,13 @@ update_lastlog (const char *pty, const char *host)
 # endif
 
 # ifdef HAVE_STRUCT_LASTLOG
-  pwent = getpwuid (getuid ());
-  if (!pwent)
-    {
-      PTYTTY_WARN ("no entry in password file, not updating lastlog.\n", 0);
-      return;
-    }
-
   memset (&ll, 0, sizeof (ll));
   ll.ll_time = time (NULL);
   strncpy (ll.ll_line, pty, sizeof (ll.ll_line));
   strncpy (ll.ll_host, host, sizeof (ll.ll_host));
   if ((fd = open (LASTLOG_FILE, O_RDWR)) != -1)
     {
-      if (lseek (fd, (off_t) ((long)pwent->pw_uid * sizeof (ll)),
+      if (lseek (fd, (off_t) (getuid () * sizeof (ll)),
                  SEEK_SET) != -1)
         write (fd, &ll, sizeof (ll));
       close (fd);
@@ -370,7 +362,12 @@ ptytty_unix::log_session (bool login, const char *hostname)
   if (login_shell)
 #endif
     if (login)
-      update_lastlog (pty, hostname);
+      {
+        if (pwent)
+          update_lastlog (pty, hostname);
+        else
+          PTYTTY_WARN ("no entry in password file, not updating lastlog.\n", 0);
+      }
 #endif
 }
 

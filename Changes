@@ -10,8 +10,10 @@
 	- remove support for writing lastlog when the lastlog file is a
 	  directory, no system is known to require this code.
 	- do not clear ut_user in utmpx logout records because
-	  pututxline fails otherwise on solaris
-	- Fix compilation on systems with bsd style utmp and no utmpx,
+	  pututxline fails otherwise on solaris.
+	- fix writing of bsd style utmp when the tty is closed before
+	  calling ptytty::login.
+	- fix compilation on systems with bsd style utmp and no utmpx,
 	  such as openbsd.
 
 1.4  Wed Jun 29 14:36:19 CEST 2011

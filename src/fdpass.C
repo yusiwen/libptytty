@@ -23,6 +23,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *----------------------------------------------------------------------*/
 
+#if defined(__SVR4) && defined(__sun)
+# define _XPG4_2 1
+#endif
+
 #include "config.h"
 
 #include <cstddef> // needed by broken bsds for NULL used in sys/uio.h

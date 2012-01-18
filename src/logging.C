@@ -1,6 +1,3 @@
-// This file is part of libptytty. Do not make local modifications.
-// http://software.schmorp.de/pkg/libptytty
-
 /*----------------------------------------------------------------------*
  * File:	logging.C
  *----------------------------------------------------------------------*

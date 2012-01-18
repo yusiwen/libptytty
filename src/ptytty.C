@@ -26,7 +26,7 @@
 
 #include "ptytty.h"
 
-#include <cstdlib>
+#include <stdlib.h>
 #include <cstdio>
 #include <cstring>
 

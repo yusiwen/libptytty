@@ -178,7 +178,7 @@ dnl# --------------------------------------------------------------------------
 
 dnl# find lastlog
 PT_FIND_FILE([lastlog], [PT_LASTLOG_FILE],
-["/var/log/lastlog"])
+["/var/log/lastlog" "/var/adm/lastlog"])
 dnl# --------------------------------------------------------------------------
 
 dnl# find lastlogx

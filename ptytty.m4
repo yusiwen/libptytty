@@ -97,6 +97,12 @@ AC_CHECK_FUNCS( \
 
 AC_CHECK_HEADERS(lastlog.h)
 
+case $host in
+   *-*-solaris*)
+      AC_DEFINE(__EXTENSIONS__, 1, Enable declarations in utmp.h on Solaris when the XPG4v2 namespace is active)
+      ;;
+esac
+
 dnl# --------------------------------------------------------------------------
 dnl# DO ALL UTMP AND WTMP CHECKING
 dnl# --------------------------------------------------------------------------
@@ -188,6 +194,13 @@ PT_FIND_FILE([lastlogx], [PT_LASTLOGX_FILE],
 
 AC_DEFUN([SCM_RIGHTS_CHECK],
 [
+case $host in
+   *-*-solaris*)
+      AC_DEFINE(_XOPEN_SOURCE, 500, Enable declarations of msg_control and msg_controllen on Solaris)
+      AC_SEARCH_LIBS(sendmsg, socket)
+      ;;
+esac
+
 AC_CACHE_CHECK(for unix-compliant filehandle passing ability, pt_cv_can_pass_fds,
 [AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <cstddef> // broken bsds (is that redundant?) need this

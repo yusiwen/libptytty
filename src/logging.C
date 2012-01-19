@@ -87,7 +87,7 @@
 #include <pwd.h>
 
 #include <cstdio>
-#include <cstring>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -1,6 +1,3 @@
-dnl this file is part of libptytty, do not make local modifications
-dnl http://software.schmorp.de/pkg/libptytty
-
 AC_DEFUN([PT_FIND_FILE],
 [AC_CACHE_CHECK(for a fallback location of $1, pt_cv_path_$1, [
 if test "$cross_compiling" != yes; then

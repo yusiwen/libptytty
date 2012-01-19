@@ -1,6 +1,3 @@
-// This file is part of libptytty. Do not make local modifications.
-// http://software.schmorp.de/pkg/libptytty
-
 #ifndef LIBPTYTTY_H_ /* public libptytty header file */
 #define LIBPTYTTY_H_
 

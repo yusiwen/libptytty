@@ -1,3 +1,5 @@
+	- fix compilation on solaris.
+
 1.5  Thu Dec 22 23:32:08 CET 2011
 	- INCOMPATIBLE CHANGE: ptytty::get no longer sets the pty fd
 	  non-blocking.

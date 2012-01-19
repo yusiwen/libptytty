@@ -21,7 +21,6 @@ AC_CHECK_HEADERS( \
   util.h \
   libutil.h \
   sys/ioctl.h \
-  sys/stropts.h \
   stropts.h \
 )
 

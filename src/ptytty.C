@@ -38,10 +38,7 @@
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
-#if defined(HAVE_SYS_STROPTS_H)
-# include <sys/stropts.h>      /* for I_PUSH */
-#endif
-#if defined(HAVE_ISASTREAM) && defined(HAVE_STROPTS_H)
+#ifdef HAVE_STROPTS_H
 # include <stropts.h>
 #endif
 #if defined(HAVE_PTY_H)

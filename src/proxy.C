@@ -30,9 +30,9 @@
 using namespace std;
 #endif
 
-#include <cstdio>
-#include <cstring>
-#include <csignal>
+#include <stdio.h>
+#include <string.h>
+#include <signal.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>

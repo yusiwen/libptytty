@@ -200,7 +200,7 @@ esac
 
 AC_CACHE_CHECK(for unix-compliant filehandle passing ability, pt_cv_can_pass_fds,
 [AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <cstddef> // broken bsds (is that redundant?) need this
+#include <stddef.h> // broken bsds (is that redundant?) need this
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/uio.h>

@@ -27,7 +27,7 @@
 #include "ptytty.h"
 
 #include <stdlib.h>
-#include <cstdio>
+#include <stdio.h>
 #include <string.h>
 
 #include <sys/types.h>

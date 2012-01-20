@@ -1,7 +1,3 @@
-// gcc -I../src -L../src/.libs c-sample.c -lptytty
-//
-// if your C compiler can't grok this, it isn't a C compiler
-//
 // on my system, this program outputs:
 //
 // who; echo 'Hello, World!'; exit

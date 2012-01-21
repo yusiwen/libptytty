@@ -24,11 +24,7 @@
 
 #include "ptytty.h"
 
-#if !PTYTTY_NO_LIBCPP
-#include <vector>
-#include <algorithm>
-using namespace std;
-#endif
+#include "estl.h"
 
 #include <stdio.h>
 #include <string.h>

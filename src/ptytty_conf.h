@@ -33,14 +33,6 @@
 #endif
 
 /*
- * Provide a STL-like vector class and find algorithm.
- * The default below is fine for normal C++ environments.
- */
-#ifndef PTYTTY_NO_LIBCPP
-# define PTYTTY_NO_LIBCPP 0
-#endif
-
-/*
  * printf-like functions to be called on fatal conditions
  * (must exit), or warning conditions (only print message)
  */

@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = foreign subdir-objects
 ACLOCAL_AMFLAGS = -I .
 
 EXTRA_DIST = Changes README doc/libptytty.3.pod doc/libptytty.3 eg/c-sample.c \
-	     src/ptytty.h src/ptytty_conf.h
+	     src/ptytty.h src/ptytty_conf.h src/estl.h
 
 man_MANS = doc/libptytty.3
 

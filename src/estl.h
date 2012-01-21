@@ -1,3 +1,6 @@
+#ifndef ESTL_H
+#define ESTL_H
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -274,3 +277,5 @@ template<typename T>
 struct vector : simplevec<T>
 {
 };
+
+#endif

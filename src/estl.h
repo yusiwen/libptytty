@@ -1,5 +1,5 @@
-#ifndef ESTL_H
-#define ESTL_H
+#ifndef ESTL_H_
+#define ESTL_H_
 
 #include <stdlib.h>
 #include <string.h>

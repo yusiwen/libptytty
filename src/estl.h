@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-template<typename T, typename U> static inline T min (T  a, U b) { return a < (T)b ? a : (T)b; }
-template<typename T, typename U> static inline T max (T  a, U b) { return a > (T)b ? a : (T)b; }
+template<typename T, typename U> static inline T min (T a, U b) { return a < (T)b ? a : (T)b; }
+template<typename T, typename U> static inline T max (T a, U b) { return a > (T)b ? a : (T)b; }
 
 template<typename T, typename U> static inline void swap (T& a, U& b) { T t = a; a = (T)b; b = (U)t; }
 
@@ -245,9 +245,9 @@ public:
 
   void swap (simplevec<T> &t)
   {
-    ::swap(_last, t._last);
-    ::swap(_size, t._size);
-    ::swap(_buf, t._buf);
+    ::swap (_last, t._last);
+    ::swap (_size, t._size);
+    ::swap (_buf, t._buf);
   }
 };
 

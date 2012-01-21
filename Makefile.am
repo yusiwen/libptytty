@@ -18,10 +18,10 @@ c_sample_LDADD = libptytty.la
 c_sample_CPPFLAGS = -I$(top_srcdir)/src
 c_sample_LINK = $(CXXLINK)
 
-doc/libptytty.3: doc/libptytty.3.pod
+$(srcdir)/doc/libptytty.3: $(srcdir)/doc/libptytty.3.pod
 	pod2man -n libptytty -r "$(VERSION)" -q\" -c LIBPTYTTY -s3 <$< >$@
 
-README: doc/libptytty.3.pod
+$(srcdir)/README: $(srcdir)/doc/libptytty.3.pod
 	pod2text <$< >$@
 
-alldoc: doc/libptytty.3 README
+alldoc: $(srcdir)/doc/libptytty.3 $(srcdir)/README

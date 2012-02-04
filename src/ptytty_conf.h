@@ -37,9 +37,9 @@
  * (must exit), or warning conditions (only print message)
  */
 #ifndef PTYTTY_FATAL
-#define PTYTTY_FATAL(msg) do { PTYTTY_WARN ("%s", msg); _exit (1); } while (0)
+#define PTYTTY_FATAL(msg) do { PTYTTY_WARN (msg); _exit (1); } while (0)
 #endif
 #ifndef PTYTTY_WARN
-#define PTYTTY_WARN(msg,arg) fprintf (stderr, msg, arg)
+#define PTYTTY_WARN(msg) fputs (msg, stderr)
 #endif
 

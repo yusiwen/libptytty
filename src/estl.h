@@ -201,7 +201,7 @@ public:
     if (n > 0)
       {
         reserve (pos, n);
-        pos = begin ()+at;
+        pos = begin () + at;
         memcpy (pos, first, (last - first) * sizeof (T));
         _last += n;
       }

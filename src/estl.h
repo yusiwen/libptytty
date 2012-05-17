@@ -103,6 +103,12 @@ public:
       }
   }
 
+  void resize (size_type sz)
+  {
+    reserve (sz);
+    _last = sz;
+  }
+
   simplevec ()
   : _last(0), _size(0), _buf(0)
   {

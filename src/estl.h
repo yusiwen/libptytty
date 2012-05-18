@@ -18,6 +18,21 @@ I find (I first, I last, const T& value)
   return first;
 }
 
+// see ecb.h for details
+#ifndef ECB_GCC_VERSION
+  #if !defined __GNUC_MINOR__ || defined __INTEL_COMPILER || defined __SUNPRO_C || defined __SUNPRO_CC || defined __llvm__ || defined __clang__
+    #define ECB_GCC_VERSION(major,minor) 0
+  #else
+    #define ECB_GCC_VERSION(major,minor) (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
+  #endif
+#endif
+
+#include <new>
+
+#if __cplusplus >= 201103L
+  #include <type_traits>
+#endif
+
 /* simplevec taken (and heavily modified), from:
  *
  *  MICO --- a free CORBA implementation
@@ -30,6 +45,23 @@ struct simplevec
   typedef T *iterator;
   typedef const T *const_iterator;
   typedef unsigned long size_type;
+
+  static bool is_simple_enough ()
+  {
+    #if __cplusplus >= 201103L
+      return std::is_trivially_assignable<T, T>::value
+          && std::is_trivially_constructable<T>::value
+          && std::is_trivially_copyable<T>::value
+          && std::is_trivially_destructible<T>::value;
+    #elif ECB_GCC_VERSION(4,4)
+      return __has_trivial_assign (T)
+          && __has_trivial_constructor (T)
+          && __has_trivial_copy (T)
+          && __has_trivial_destructor (T);
+    #else
+      return 0;
+    #endif
+  }
 
 private:
   size_type _last, _size;
@@ -51,10 +83,13 @@ private:
     return (T *)::operator new ((size_t) (n * sizeof (T)));
   }
 
-  static void dealloc (T *buf)
+  void dealloc ()
   {
-    if (buf)
-      ::operator delete (buf);
+    if (!is_simple_enough ())
+      for (size_type i = 0; i < _last; ++i)
+        _buf [i].~T ();
+
+    ::operator delete (_buf);
   }
 
   size_type good_size (size_type n)
@@ -62,10 +97,37 @@ private:
     return max (n, _size ? _size * 2 : 5);
   }
 
-  void reserve (iterator where, size_type n)
+  // these copy helpers actually use the copy constructor, not assignment
+  static void copy_lower (iterator dst, iterator src, size_type n)
+  {
+    if (is_simple_enough ())
+      memmove (dst, src, sizeof (T) * n);
+    else
+      while (n--)
+        new (dst++) T (*src++);
+  }
+
+  static void copy_higher (iterator dst, iterator src, size_type n)
+  {
+    if (is_simple_enough ())
+      memmove (dst, src, sizeof (T) * n);
+    else
+      while (n--)
+        new (dst + n) T (*(src + n));
+  }
+
+  static void copy (iterator dst, iterator src, size_type n)
+  {
+    if (is_simple_enough ())
+      memcpy (dst, src, sizeof (T) * n);
+    else
+      copy_lower (dst, src, n);
+  }
+
+  void ins (iterator where, size_type n)
   {
     if (_last + n <= _size)
-      memmove (where + n, where, (end () - where) * sizeof (T));
+      copy_higher (where + n, where, end () - where);
     else
       {
         size_type sz = _last + n;
@@ -74,9 +136,9 @@ private:
 
         if (_buf)
           {
-            memcpy (nbuf, begin (), (where - begin ()) * sizeof (T));
-            memcpy (nbuf + (where - begin ()) + n, where, (end () - where) * sizeof (T));
-            dealloc (_buf);
+            copy (nbuf, begin (), where - begin ());
+            copy (nbuf + (where - begin ()) + n, where, end () - where);
+            dealloc ();
           }
 
         _buf = nbuf;
@@ -94,8 +156,8 @@ public:
 
         if (_buf)
           {
-            memcpy (nbuf, begin (), size () * sizeof (T));
-            dealloc (_buf);
+            copy (nbuf, begin (), _last);
+            dealloc ();
           }
 
         _buf = nbuf;
@@ -106,7 +168,16 @@ public:
   void resize (size_type sz)
   {
     reserve (sz);
-    _last = sz;
+
+    if (is_simple_enough ())
+      _last = sz;
+    else
+      {
+        while (_last < sz)
+          new (_buf + _last++) T ();
+        while (_last > sz)
+          _buf [--_last].~T ();
+      }
   }
 
   simplevec ()
@@ -129,18 +200,21 @@ public:
   simplevec (const simplevec<T> &v)
   : _last(0), _size(0), _buf(0)
   {
-    reserve (v._last);
-    memcpy (_buf, v.begin (), v.size () * sizeof (T));
-    _last = v._last;
+    insert (begin (), v.begin (), v.end ());
   }
 
   simplevec<T> &operator= (const simplevec<T> &v)
   {
     if (this != &v)
       {
+
+        dealloc ();
+        _size = 0;
+        _buf  = 0;
         _last = 0;
         reserve (v._last);
-        memcpy (_buf, v.begin (), v.size () * sizeof (T));
+
+        copy (_buf, v.begin (), v.size ());
         _last = v._last;
       }
 
@@ -149,7 +223,7 @@ public:
 
   ~simplevec ()
   {
-    dealloc (_buf);
+    dealloc ();
   }
 
   const T &front () const { return _buf[      0]; }
@@ -169,16 +243,8 @@ public:
 
   void push_back (const T &t)
   {
-    reserve (_last+1);
-    *end () = t;
-    ++_last;
-  }
-
-  void push_back (T &t)
-  {
-    reserve (_last+1);
-    *end () = t;
-    ++_last;
+    reserve (_last + 1);
+    new (_buf + _last++) T (t);
   }
 
   void pop_back ()
@@ -191,8 +257,8 @@ public:
 
   iterator insert (iterator pos, const T &t)
   {
-    long at = pos - begin ();
-    reserve (pos, 1);
+    size_type at = pos - begin ();
+    ins (pos, 1);
     pos = begin () + at;
     *pos = t;
     ++_last;
@@ -201,15 +267,14 @@ public:
 
   iterator insert (iterator pos, const_iterator first, const_iterator last)
   {
-    long n = last - first;
-    long at = pos - begin ();
+    size_type n  = last - first;
+    size_type at = pos - begin ();
 
     if (n > 0)
       {
-        reserve (pos, n);
-        pos = begin () + at;
-        memcpy (pos, first, (last - first) * sizeof (T));
+        ins (pos, n);
         _last += n;
+        copy (pos, first, n);
       }
 
     return pos;
@@ -217,13 +282,13 @@ public:
 
   iterator insert (iterator pos, size_type n, const T &t)
   {
-    long at = pos - begin ();
+    size_type at = pos - begin ();
 
     if (n > 0)
       {
-        reserve (pos, n);
+        ins (pos, n);
         pos = begin () + at;
-        for (int i = 0; i < n; ++i)
+        for (size_type i = 0; i < n; ++i)
           pos[i] = t;
         _last += n;
       }
@@ -235,7 +300,12 @@ public:
   {
     if (last != first)
       {
-        memmove (first, last, (end () - last) * sizeof (T));
+        if (!is_simple_enough ())
+          for (iterator i = first; i < last; ++i)
+            i->~T ();
+
+        copy_lower (last, first, end () - last);
+
         _last -= last - first;
       }
   }
@@ -243,17 +313,14 @@ public:
   void erase (iterator pos)
   {
     if (pos != end ())
-      {
-        memmove (pos, pos + 1, (end () - (pos + 1)) * sizeof (T));
-        --_last;
-      }
+      erase (pos, pos + 1);
   }
 
   void swap (simplevec<T> &t)
   {
     ::swap (_last, t._last);
     ::swap (_size, t._size);
-    ::swap (_buf, t._buf);
+    ::swap (_buf , t._buf );
   }
 };
 

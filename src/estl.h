@@ -94,17 +94,24 @@ private:
         (*a++).~T ();
   }
 
-  static void cop_new (iterator a, iterator b) { new (a) T (*b); }
-  static void cop_set (iterator a, iterator b) {     *a  =  *b ; }
+  template<class I>
+  static void cop_new (iterator a, I b) { new (a) T (*b); }
+  template<class I>
+  static void cop_set (iterator a, I b) {     *a  =  *b ; }
 
-  // these copy helpers actually use the copy constructor, not assignment
+  template<class I>
+  static void copy_lower (iterator dst, I        src, size_type n, void (*op)(iterator, I       ) = cop_new)
+  {
+    while (n--)
+      op (dst++, src++);
+  }
+
   static void copy_lower (iterator dst, iterator src, size_type n, void (*op)(iterator, iterator) = cop_new)
   {
     if (is_simple_enough ())
       memmove (dst, src, sizeof (T) * n);
     else
-      while (n--)
-        op (dst++, src++);
+      copy_lower<iterator> (dst, src, n, cop_new);
   }
 
   static void copy_higher (iterator dst, iterator src, size_type n, void (*op)(iterator, iterator) = cop_new)
@@ -116,12 +123,18 @@ private:
         op (dst + n, src + n);
   }
 
+  template<class I>
+  static void copy (iterator dst, I        src, size_type n, void (*op)(iterator,        I) = cop_new)
+  {
+    copy_lower<I> (dst, src, n, op);
+  }
+
   static void copy (iterator dst, iterator src, size_type n, void (*op)(iterator, iterator) = cop_new)
   {
     if (is_simple_enough ())
       memcpy (dst, src, sizeof (T) * n);
     else
-      copy_lower (dst, src, n, op);
+      copy<iterator> (dst, src, n, op);
   }
 
   static T *alloc (size_type n) ecb_cold
@@ -163,6 +176,11 @@ public:
   size_type capacity () const { return res; }
   size_type size     () const { return sze; }
   bool empty         () const { return size () == 0; }
+
+  size_t max_size () const
+  {
+    return (~(size_type)0) >> 1;
+  }
 
   const_iterator  begin () const { return &buf [      0]; }
         iterator  begin ()       { return &buf [      0]; }
@@ -207,27 +225,28 @@ public:
   }
 
   simplevec (size_type n, const T &t = T ())
-  : sze(0), res(0), buf(0)
   {
-    insert (begin (), n, t);
+    sze = res = n;
+    buf = alloc (sze);
+
+    while (n--)
+      new (buf + n) T (t);
   }
 
-  simplevec (const_iterator first, const_iterator last)
-  : sze(0), res(0), buf(0)
+  template<class I>
+  simplevec (I first, I last)
   {
-    insert (begin (), first, last);
+    sze = res = last - first;
+    buf = alloc (sze);
+    copy (buf, first, sze);
   }
 
   simplevec (const simplevec<T> &v)
   : sze(0), res(0), buf(0)
   {
-    insert (begin (), v.begin (), v.end ());
-  }
-
-  simplevec<T> &operator= (const simplevec<T> &v)
-  {
-    swap (simplevec<T> (v));
-    return *this;
+    sze = res = v.size ();
+    buf = alloc (sze);
+    copy (buf, v.begin (), sze);
   }
 
   ~simplevec ()
@@ -259,8 +278,28 @@ public:
     destruct (buf + --sze);
   }
 
-  const T &operator [](size_type idx) const { return buf[idx]; }
-        T &operator [](size_type idx)       { return buf[idx]; }
+  const_reference operator [](size_type idx) const { return buf[idx]; }
+        reference operator [](size_type idx)       { return buf[idx]; }
+
+  const_reference at (size_type idx) const { return buf [idx]; }
+        reference at (size_type idx)       { return buf [idx]; }
+
+  template<class I>
+  void assign (I first, I last)
+  {
+    swap (simplevec<T> (first, last));
+  }
+
+  void assign (size_type n, const T &t)
+  {
+    swap (simplevec<T> (n, t));
+  }
+
+  simplevec<T> &operator= (const simplevec<T> &v)
+  {
+    assign (v.begin (), v.end ());
+    return *this;
+  }
 
   iterator insert (iterator pos, const T &t)
   {
@@ -272,7 +311,8 @@ public:
     return buf + at;
   }
 
-  iterator insert (iterator pos, const_iterator first, const_iterator last)
+  template<class I>
+  iterator insert (iterator pos, I first, I last)
   {
     size_type n  = last - first;
     size_type at = pos - begin ();

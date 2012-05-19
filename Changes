@@ -1,3 +1,6 @@
+
+	- add ecb.h.
+
 1.6  Sat Jan 21 16:59:22 CET 2012
 	- fix compilation on solaris.
 	- remove dependency on STL.

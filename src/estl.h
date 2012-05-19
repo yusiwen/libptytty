@@ -102,13 +102,13 @@ private:
 
   // MUST copy forwards
   template<class I>
-  static void copy (iterator dst, I        src, size_type n, void (*op)(iterator,        I) = cop_new)
+  static void copy (iterator dst, I        src, size_type n, void (*op)(iterator,        I))
   {
     while (n--)
       op (dst++, src++);
   }
 
-  static void copy (iterator dst, iterator src, size_type n, void (*op)(iterator, iterator) = cop_new)
+  static void copy (iterator dst, iterator src, size_type n, void (*op)(iterator, iterator))
   {
     if (is_simple_enough ())
       memcpy (dst, src, sizeof (T) * n);
@@ -185,7 +185,7 @@ public:
     sz = good_size (sz);
     T *nbuf = alloc (sz);
 
-    copy (nbuf, begin (), sze);
+    copy (nbuf, begin (), sze, cop_new);
     dealloc ();
 
     buf  = nbuf;
@@ -224,7 +224,7 @@ public:
   {
     sze = res = last - first;
     buf = alloc (sze);
-    copy (buf, first, sze);
+    copy (buf, first, sze, cop_new);
   }
 
   simplevec (const simplevec<T> &v)
@@ -232,7 +232,7 @@ public:
   {
     sze = res = v.size ();
     buf = alloc (sze);
-    copy (buf, v.begin (), sze);
+    copy (buf, v.begin (), sze, cop_new);
   }
 
   ~simplevec ()

@@ -265,9 +265,11 @@ public:
   iterator insert (iterator pos, const T &t)
   {
     size_type at = pos - begin ();
+
     ins (pos, 1);
-    buf [pos] = t;
-    return pos;
+    buf [at] = t;
+
+    return buf + at;
   }
 
   iterator insert (iterator pos, const_iterator first, const_iterator last)
@@ -276,9 +278,9 @@ public:
     size_type at = pos - begin ();
 
     ins (pos, n);
-    copy (pos, first, n, cop_set);
+    copy (buf + at, first, n, cop_set);
 
-    return pos;
+    return buf + at;
   }
 
   iterator insert (iterator pos, size_type n, const T &t)
@@ -287,10 +289,10 @@ public:
 
     ins (pos, n);
 
-    for (size_type i = 0; i < n; ++i)
-      buf [at + i] = t;
+    for (iterator i = buf + at; n--; )
+      *i++ = t;
 
-    return pos;
+    return buf + at;
   }
 
   void erase (iterator first, iterator last)

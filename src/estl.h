@@ -65,7 +65,6 @@ private:
   // "not simple enough" will use the slow path.
   static bool is_simple_enough ()
   {
-    return 1; // we are not there yet
     #if __cplusplus >= 201103L
       return std::is_trivially_assignable<T, T>::value
           && std::is_trivially_constructable<T>::value

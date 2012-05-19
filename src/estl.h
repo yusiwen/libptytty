@@ -84,7 +84,7 @@ private:
   {
     if (!is_simple_enough ())
       while (n--)
-        new (*a++) T ();
+        new (a++) T ();
   }
 
   static void destruct (iterator a, size_type n = 1)
@@ -154,7 +154,7 @@ private:
       memmove (src + n, src, sizeof (T) * n);
     else
       for (size_type i = n; i--; )
-        op (src + n + i, src + i);
+        cop_set (src + n + i, src + i);
   }
 
 public:

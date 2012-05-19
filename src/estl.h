@@ -29,11 +29,12 @@ I find (I first, I last, const T& value)
 // original version taken from MICO, but this has been completely rewritten
 // known limitations w.r.t. std::vector
 // - many methods missing
-// - no error checking, no exceptions thrown
+// - no error checking, no exceptions thrown (e.g. at())
 // - size_type is 32bit even on 64 bit hosts, so limited to 2**31 elements
 // - no allocator support
 // - we don't really care about const correctness, but we try
 // - we don't care about namespaces and stupid macros the user might define
+// - no bool specialisation
 template<class T>
 struct simplevec
 {

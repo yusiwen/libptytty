@@ -100,21 +100,6 @@ private:
   template<class I>
   static void cop_set (iterator a, I b) {     *a  =  *b ; }
 
-  template<class I>
-  static void copy_lower (iterator dst, I        src, size_type n, void (*op)(iterator, I       ) = cop_new)
-  {
-    while (n--)
-      op (dst++, src++);
-  }
-
-  static void copy_lower (iterator dst, iterator src, size_type n, void (*op)(iterator, iterator) = cop_new)
-  {
-    if (is_simple_enough ())
-      memmove (dst, src, sizeof (T) * n);
-    else
-      copy_lower<iterator> (dst, src, n, cop_new);
-  }
-
   static void copy_higher (iterator dst, iterator src, size_type n, void (*op)(iterator, iterator) = cop_new)
   {
     if (is_simple_enough ())
@@ -127,7 +112,8 @@ private:
   template<class I>
   static void copy (iterator dst, I        src, size_type n, void (*op)(iterator,        I) = cop_new)
   {
-    copy_lower<I> (dst, src, n, op);
+    while (n--)
+      op (dst++, src++);
   }
 
   static void copy (iterator dst, iterator src, size_type n, void (*op)(iterator, iterator) = cop_new)
@@ -340,7 +326,11 @@ public:
   {
     size_t n = last - first;
 
-    copy_lower (last, first, end () - last, cop_set);
+    if (is_simple_enough ())
+      memmove (first, last, sizeof (T) * n);
+    else
+      copy<iterator> (first, last, n, cop_new);
+
     sze -= n;
     destruct (buf + sze, n);
   }

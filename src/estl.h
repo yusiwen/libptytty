@@ -327,7 +327,7 @@ public:
     if (is_simple_enough ())
       memmove (first, last, sizeof (T) * n);
     else
-      copy<iterator> (first, last, n, cop_new);
+      copy<iterator> (first, last, n, cop_set);
 
     sze -= n;
     destruct (buf + sze, n);

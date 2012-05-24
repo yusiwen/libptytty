@@ -322,12 +322,13 @@ public:
 
   iterator erase (iterator first, iterator last)
   {
-    size_t n = last - first;
+    size_type n = last - first;
+    size_type c = end () - last;
 
     if (is_simple_enough ())
-      memmove (first, last, sizeof (T) * n);
+      memmove (first, last, sizeof (T) * c);
     else
-      copy<iterator> (first, last, n, cop_set);
+      copy<iterator> (first, last, c, cop_set);
 
     sze -= n;
     destruct (buf + sze, n);

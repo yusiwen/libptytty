@@ -320,7 +320,7 @@ public:
     return buf + at;
   }
 
-  void erase (iterator first, iterator last)
+  iterator erase (iterator first, iterator last)
   {
     size_t n = last - first;
 
@@ -331,12 +331,16 @@ public:
 
     sze -= n;
     destruct (buf + sze, n);
+
+    return first;
   }
 
-  void erase (iterator pos)
+  iterator erase (iterator pos)
   {
     if (pos != end ())
       erase (pos, pos + 1);
+
+    return pos;
   }
 };
 

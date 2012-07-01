@@ -31,7 +31,7 @@
 #define ECB_H
 
 /* 16 bits major, 16 bits minor */
-#define ECB_VERSION 0x00010001
+#define ECB_VERSION 0x00010002
 
 #ifdef _WIN32
   typedef   signed char   int8_t;
@@ -150,9 +150,16 @@
   #if ECB_GCC_VERSION(4,7)
     /* see comment below (stdatomic.h) about the C11 memory model. */
     #define ECB_MEMORY_FENCE         __atomic_thread_fence (__ATOMIC_SEQ_CST)
-  /*#elif defined __clang && __has_feature (cxx_atomic)*/
-    /* see comment below (stdatomic.h) about the C11 memory model. */
-    /*#define ECB_MEMORY_FENCE         __c11_atomic_thread_fence (__ATOMIC_SEQ_CST)*/
+
+  /* The __has_feature syntax from clang is so misdesigned that we cannot use it
+   * without risking compile time errors with other compilers. We *could*
+   * define our own ecb_clang_has_feature, but I just can't be bothered to work
+   * around * this shit time and again.
+   * #elif defined __clang && __has_feature (cxx_atomic)
+   *   // see comment below (stdatomic.h) about the C11 memory model.
+   *   #define ECB_MEMORY_FENCE         __c11_atomic_thread_fence (__ATOMIC_SEQ_CST)
+   */
+
   #elif ECB_GCC_VERSION(4,4) || defined __INTEL_COMPILER || defined __clang__
     #define ECB_MEMORY_FENCE         __sync_synchronize ()
   #elif _MSC_VER >= 1400 /* VC++ 2005 */

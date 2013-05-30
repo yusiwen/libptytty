@@ -267,5 +267,6 @@ You kiddin'?
 
 =head1 AUTHORS
 
-Emanuele Giaquinta L<< <e.giaquinta@glauco.it> >>, Marc Alexander Lehmann
-L<< <rxvt-unicode@schmorp.de> >>.
+Emanuele Giaquinta <e.giaquinta@glauco.it>, Marc Alexander Lehmann
+<rxvt-unicode@schmorp.de>.
+

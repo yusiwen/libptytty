@@ -143,7 +143,7 @@
     #elif defined __s390__ || defined __s390x__
       #define ECB_MEMORY_FENCE         __asm__ __volatile__ ("bcr 15,0" : : : "memory")
     #elif defined __mips__
-      /* GNU/Linux emulates sync on mips1 architectures, so we force it's use */
+      /* GNU/Linux emulates sync on mips1 architectures, so we force its use */
       /* anybody else who still uses mips1 is supposed to send in their version, with detection code. */
       #define ECB_MEMORY_FENCE         __asm__ __volatile__ (".set mips2; sync; .set mips0" : : : "memory")
     #elif defined __alpha__
@@ -153,6 +153,12 @@
       #define ECB_MEMORY_FENCE_RELEASE __asm__ __volatile__ ("")
     #elif defined __ia64__
       #define ECB_MEMORY_FENCE         __asm__ __volatile__ ("mf"       : : : "memory")
+    #elif defined __m68k__
+      #define ECB_MEMORY_FENCE         __asm__ __volatile__ (""         : : : "memory")
+    #elif defined __m88k__
+      #define ECB_MEMORY_FENCE         __asm__ __volatile__ ("tb1 0,%%r0,128" : : : "memory")
+    #elif defined __sh__
+      #define ECB_MEMORY_FENCE         __asm__ __volatile__ (""         : : : "memory")
     #endif
   #endif
 #endif
@@ -569,6 +575,9 @@ ecb_inline ecb_bool ecb_little_endian (void) { return ecb_byteorder_helper () ==
     || defined __alpha__ \
     || defined __hppa__ \
     || defined __ia64__ \
+    || defined __m68k__ \
+    || defined __m88k__ \
+    || defined __sh__ \
     || defined _M_IX86 || defined _M_AMD64 || defined _M_IA64
   #define ECB_STDFP 1
   #include <string.h> /* for memcpy */

@@ -67,7 +67,7 @@
 
 /* work around x32 idiocy by defining proper macros */
 #if __x86_64 || _M_AMD64
-  #if __ILP32
+  #if _ILP32
     #define ECB_AMD64_X32 1
   #else
     #define ECB_AMD64 1
@@ -583,10 +583,34 @@ ecb_inline ecb_bool ecb_little_endian (void) { return ecb_byteorder_helper () ==
   #include <string.h> /* for memcpy */
 #else
   #define ECB_STDFP 0
-  #include <math.h> /* for frexp*, ldexp* */
 #endif
 
 #ifndef ECB_NO_LIBM
+
+  #include <math.h> /* for frexp*, ldexp*, INFINITY, NAN */
+
+  #ifdef NEN
+    #define ECB_NAN NAN
+  #else
+    #define ECB_NAN INFINITY
+  #endif
+
+  /* converts an ieee half/binary16 to a float */
+  ecb_function_ float ecb_binary16_to_float (uint16_t x) ecb_const;
+  ecb_function_ float
+  ecb_binary16_to_float (uint16_t x)
+  {
+    int e = (x >> 10) & 0x1f;
+    int m = x & 0x3ff;
+    float r;
+
+    if      (!e     ) r = ldexpf (m        ,    -24);
+    else if (e != 31) r = ldexpf (m + 0x400, e - 25);
+    else if (m      ) r = ECB_NAN;
+    else              r = INFINITY;
+
+    return x & 0x8000 ? -r : r;
+  }
 
   /* convert a float to ieee single/binary32 */
   ecb_function_ uint32_t ecb_float_to_binary32 (float x) ecb_const;

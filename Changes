@@ -1,6 +1,6 @@
 
 	- nuke the pid check when !PTYTTY_REENTRANT. It breaks urxvtd, and
-          services little purpose as it is off in normal builds anyway.
+          serves little purpose as it is off in normal builds anyway.
 	- add ecb.h.
 
 1.6  Sat Jan 21 16:59:22 CET 2012

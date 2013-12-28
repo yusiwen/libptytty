@@ -41,7 +41,7 @@
 #if PTYTTY_HELPER
 
 static int sock_fd = -1, lock_fd = -1;
-static int helper_pid, owner_pid;
+static int helper_pid;
 
 struct command
 {
@@ -212,20 +212,8 @@ void serve ()
 void
 ptytty::use_helper ()
 {
-#ifndef PTYTTY_NO_PID_CHECK
-  int pid = getpid ();
-#endif
-
-  if (sock_fd >= 0
-#ifndef PTYTTY_NO_PID_CHECK
-      && pid == owner_pid
-#endif
-      )
+  if (sock_fd >= 0)
     return;
-
-#ifndef PTYTTY_NO_PID_CHECK
-  owner_pid = pid;
-#endif
 
   int sv[2];
 
@@ -286,11 +274,7 @@ ptytty *
 ptytty::create ()
 {
 #if PTYTTY_HELPER
-  if (helper_pid
-# ifndef PTYTTY_NO_PID_CHECK
-      && getpid () == owner_pid
-# endif
-      )
+  if (helper_pid)
     // use helper process
     return new ptytty_proxy;
   else

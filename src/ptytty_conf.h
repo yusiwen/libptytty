@@ -22,11 +22,11 @@
 #endif
 
 /*
- * Define if you want to use a single helper process from multiple threads
- * OR forked processes. Without it, the helper will only work from the
- * process having started it, and it might not be possible to start another
- * helper. Having it disabled avoids some syscalls and reduces codesize,
- * but unless you are really short on cpu or memory, it's not worth disabling.
+ * Define if you want to use a single helper process from multiple
+ * threads OR forked processes. Without it, the user is responsible for
+ * serialiasing all calls to libptytty functions. Having it disabled
+ * avoids some syscalls and reduces codesize, but unless you are really
+ * short on cpu or memory, it's not worth disabling.
  */
 #ifndef PTYTTY_REENTRANT
 # define PTYTTY_REENTRANT 1

@@ -24,7 +24,7 @@
 /*
  * Define if you want to use a single helper process from multiple
  * threads OR forked processes. Without it, the user is responsible for
- * serialiasing all calls to libptytty functions. Having it disabled
+ * serialising all calls to libptytty functions. Having it disabled
  * avoids some syscalls and reduces codesize, but unless you are really
  * short on cpu or memory, it's not worth disabling.
  */

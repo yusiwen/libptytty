@@ -147,14 +147,14 @@ private:
 
     construct (buf + sze, n);
 
-    sze += n;
-
     iterator src = buf + pos;
     if (is_simple_enough ())
-      memmove (src + n, src, sizeof (T) * n);
+      memmove (src + n, src, sizeof (T) * (sze - pos));
     else
-      for (size_type i = n; i--; )
+      for (size_type i = sze - pos; i--; )
         cop_set (src + n + i, src + i);
+
+    sze += n;
   }
 
 public:

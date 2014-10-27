@@ -218,8 +218,7 @@ public:
       new (buf + n) T (t);
   }
 
-  template<class I>
-  simplevec (I first, I last)
+  simplevec (const_iterator first, const_iterator last)
   {
     sze = res = last - first;
     buf = alloc (sze);
@@ -269,15 +268,16 @@ public:
   const_reference at (size_type idx) const { return buf [idx]; }
         reference at (size_type idx)       { return buf [idx]; }
 
-  template<class I>
-  void assign (I first, I last)
+  void assign (const_iterator first, const_iterator last)
   {
-    swap (simplevec<T> (first, last));
+    simplevec<T> v (first, last);
+    swap (v);
   }
 
   void assign (size_type n, const T &t)
   {
-    swap (simplevec<T> (n, t));
+    simplevec<T> v (n, t);
+    swap (v);
   }
 
   simplevec<T> &operator= (const simplevec<T> &v)
@@ -296,8 +296,7 @@ public:
     return buf + at;
   }
 
-  template<class I>
-  iterator insert (iterator pos, I first, I last)
+  iterator insert (iterator pos, const_iterator first, const_iterator last)
   {
     size_type n  = last - first;
     size_type at = pos - begin ();

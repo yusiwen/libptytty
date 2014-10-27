@@ -39,7 +39,7 @@ template<class T>
 struct simplevec
 {
 #if ESTL_BIG_VECTOR
-  // shoudl use size_t/ssize_t, but that's not portable enough for us
+  // should use size_t/ssize_t, but that's not portable enough for us
   typedef unsigned long size_type;
   typedef          long difference_type;
 #else

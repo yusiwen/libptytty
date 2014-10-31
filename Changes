@@ -1,4 +1,8 @@
-
+1.7
+	- fix various bugs that prevented the lib from working correctly on
+	  some systems when using the helper process.
+	- fix compilation on solaris with g++ >= 4.7.
+	- fix compilation on freebsd/openbsd.
 	- nuke the pid check when !PTYTTY_REENTRANT: it breaks urxvtd, and
           serves little purpose as it is off in normal builds anyway.
 	- add ecb.h.

@@ -190,9 +190,14 @@ PT_FIND_FILE([lastlogx], [PT_LASTLOGX_FILE],
 
 AC_DEFUN([SCM_RIGHTS_CHECK],
 [
+AH_TEMPLATE([_XOPEN_SOURCE], [Enable declarations of msg_control and msg_controllen on Solaris])
 case $host in
    *-*-solaris*)
-      AC_DEFINE(_XOPEN_SOURCE, 500, Enable declarations of msg_control and msg_controllen on Solaris)
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#if __STDC_VERSION__ >= 199901L
+error
+#endif
+]])],[AC_DEFINE(_XOPEN_SOURCE, 500)],[AC_DEFINE(_XOPEN_SOURCE, 600)])
       AC_SEARCH_LIBS(sendmsg, socket)
       ;;
 esac

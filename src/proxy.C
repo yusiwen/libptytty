@@ -170,6 +170,8 @@ void serve ()
 
               ptytty::send_fd (sock_fd, cmd.id->pty);
               ptytty::send_fd (sock_fd, cmd.id->tty);
+
+              cmd.id->close_tty ();
             }
           else
             {

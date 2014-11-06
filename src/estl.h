@@ -67,7 +67,7 @@ private:
   {
     #if ECB_CPP11
       return std::is_trivially_assignable<T, T>::value
-          && std::is_trivially_constructable<T>::value
+          && std::is_trivially_constructible<T>::value
           && std::is_trivially_copyable<T>::value
           && std::is_trivially_destructible<T>::value;
     #elif ECB_GCC_VERSION(4,4)

@@ -70,7 +70,7 @@ private:
           && std::is_trivially_constructible<T>::value
           && std::is_trivially_copyable<T>::value
           && std::is_trivially_destructible<T>::value;
-    #elif ECB_GCC_VERSION(4,4)
+    #elif ECB_GCC_VERSION(4,4) || ECB_CLANG_VERSION(2,8)
       return __has_trivial_assign (T)
           && __has_trivial_constructor (T)
           && __has_trivial_copy (T)

@@ -26,6 +26,73 @@ I find (I first, I last, const T& value)
   #include <type_traits>
 #endif
 
+namespace estl
+{
+#if ESTL_LARGE_MEMORY_MODEL
+  // should use size_t/ssize_t, but that's not portable enough for us
+  typedef unsigned long size_type;
+  typedef          long difference_type;
+#else
+  typedef uint32_t size_type;
+  typedef  int32_t difference_type;
+#endif
+
+  template<typename T>
+  struct scoped_ptr
+  {
+    T *p;
+
+    scoped_ptr ()     : p (0) { }
+
+    explicit
+    scoped_ptr (T *a) : p (a) { }
+
+    ~scoped_ptr ()
+    {
+      delete p;
+    }
+
+    void reset (T *a)
+    {
+      delete p;
+      p = a;
+    }
+
+    T *operator ->() const { return p; }
+    T &operator *() const { return *p; }
+
+    operator T *()  { return p; }
+    T *get () const { return p; }
+  };
+
+  template<typename T>
+  struct scoped_array
+  {
+    T *p;
+
+    scoped_array ()     : p (0) { }
+
+    explicit
+    scoped_array (T *a) : p (a) { }
+
+    ~scoped_array ()
+    {
+      delete [] p;
+    }
+
+    void reset (T *a)
+    {
+      delete [] p;
+      p = a;
+    }
+
+    T & operator [](size_type idx) const { return p[idx]; }
+
+    operator T *()  { return p; }
+    T *get () const { return p; }
+  };
+}
+
 // original version taken from MICO, but this has been completely rewritten
 // known limitations w.r.t. std::vector
 // - many methods missing
@@ -38,14 +105,7 @@ I find (I first, I last, const T& value)
 template<class T>
 struct simplevec
 {
-#if ESTL_BIG_VECTOR
-  // should use size_t/ssize_t, but that's not portable enough for us
-  typedef unsigned long size_type;
-  typedef          long difference_type;
-#else
-  typedef uint32_t size_type;
-  typedef  int32_t difference_type;
-#endif
+  typedef estl::size_type size_type;
 
   typedef       T  value_type;
   typedef       T *iterator;

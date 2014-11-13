@@ -63,6 +63,10 @@ namespace estl
 
     operator T *()  { return p; }
     T *get () const { return p; }
+
+  private:
+    scoped_ptr (const scoped_ptr &);
+    scoped_ptr &operator =(const scoped_ptr &);
   };
 
   template<typename T>
@@ -86,10 +90,12 @@ namespace estl
       p = a;
     }
 
-    T & operator [](size_type idx) const { return p[idx]; }
-
     operator T *()  { return p; }
     T *get () const { return p; }
+
+  private:
+    scoped_array (const scoped_array &);
+    scoped_array &operator =(const scoped_array &);
   };
 }
 

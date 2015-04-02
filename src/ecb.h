@@ -695,8 +695,10 @@ ecb_inline ecb_const ecb_bool ecb_little_endian (void) { return ecb_byteorder_he
 
   #if ECB_C99 || _XOPEN_VERSION >= 600 || _POSIX_VERSION >= 200112L
     #define ecb_ldexpf(x,e) ldexpf ((x), (e))
+    #define ecb_frexpf(x,e) frexpf ((x), (e))
   #else
     #define ecb_ldexpf(x,e) (float) ldexp ((double) (x), (e))
+    #define ecb_frexpf(x,e) (float) frexp ((double) (x), (e))
   #endif
 
   /* converts an ieee half/binary16 to a float */
@@ -735,7 +737,7 @@ ecb_inline ecb_const ecb_bool ecb_little_endian (void) { return ecb_byteorder_he
       if (x < -3.40282346638528860e+38f) return 0xff800000U;
       if (x != x                       ) return 0x7fbfffffU;
 
-      m = frexpf (x, &e) * 0x1000000U;
+      m = ecb_frexpf (x, &e) * 0x1000000U;
 
       r = m & 0x80000000U;
 

@@ -352,23 +352,36 @@ ptytty_unix::get ()
    *    ldterm: standard terminal line discipline.
    *    ttcompat: V7, 4BSD and XENIX STREAMS compatibility module.
    *
-   * After we push the STREAMS modules, the first open () on the slave side
-   * should make the "ptem" (or "ldterm" depending upon either which OS
-   * version or which set of manual pages you have) module give us a
-   * controlling terminal.  We must already have close ()d the master side
-   * fd in this child process before we push STREAMS modules on because the
-   * documentation is really unclear about whether it is any close () on
-   * the master side or the last close () - i.e. a proper STREAMS dismantling
-   * close () - on the master side which causes a hang up to be sent
-   * through - Geoff Wing
+   * On Solaris, a process can acquire a controlling terminal in the
+   * following ways:
+   * - open() of /dev/ptmx or of a slave device without O_NOCTTY
+   * - I_PUSH ioctl() of the "ptem" or "ldterm" module on a slave device
+   * The second case is problematic, because it cannot be disabled.
+   * Fortunately, Solaris (10 and 11 at least) provides an undocumented
+   * __IPUSH_NOCTTY ioctl which does not have this side-effect, so we
+   * use it if defined. See
+   * https://github.com/illumos/illumos-gate/blob/master/usr/src/uts/common/os/streamio.c#L3755
+   * https://github.com/illumos/illumos-gate/blob/master/usr/src/uts/common/io/ptem.c#L203
+   * https://github.com/illumos/illumos-gate/blob/master/usr/src/uts/common/io/ldterm.c#L794
+   * Note that an open() of a slave device autoloads the modules,
+   * with __I_PUSH_NOCTTY, if xpg[46] mode is enabled (which requires
+   * linking /usr/lib/values-xpg[46].o).
+   * https://github.com/illumos/illumos-gate/blob/master/usr/src/lib/libc/port/sys/open.c#L173
    */
+
+#ifdef __I_PUSH_NOCTTY
+# define PT_I_PUSH __I_PUSH_NOCTTY
+#else
+# define PT_I_PUSH I_PUSH
+#endif
+
 #if defined(HAVE_ISASTREAM) && defined(HAVE_STROPTS_H)
   if (isastream (tty) == 1)
 # endif
     {
-      ioctl (tty, I_PUSH, "ptem");
-      ioctl (tty, I_PUSH, "ldterm");
-      ioctl (tty, I_PUSH, "ttcompat");
+      ioctl (tty, PT_I_PUSH, "ptem");
+      ioctl (tty, PT_I_PUSH, "ldterm");
+      ioctl (tty, PT_I_PUSH, "ttcompat");
     }
 #endif
 

@@ -103,6 +103,8 @@ with setuid/setgid permissions and, if yes, spawns a helper process for
 pty/tty management. It then drops the privileges completely, so the actual
 program runs without setuid/setgid privileges.
 
+On failure, this method terminates the process.
+
 =item ptytty::use_helper ()
 
 Tries to start a helper process that retains privileges even when the
@@ -116,20 +118,27 @@ This method will try not to start more than one helper process. The same
 helper process can usually be used both from the process starting it and
 all its fork'ed (not exec'ed) children.
 
+On failure, this method terminates the process.
+
 =item ptytty::drop_privileges ()
 
-Drops privileges completely, i.e. sets real, effective and saved user id
-to the real user id. Also aborts if this cannot be achieved. Useful to
-make sure that the process doesn't run with special privileges.
+Drops privileges completely, i.e. sets real, effective and saved user
+id to the real user id. Useful to make sure that the process doesn't
+run with special privileges.
+
+On failure, this method terminates the process.
 
 =item ptytty::sanitise_stdfd ()
 
-Checks whether file descriptors 0, 1 and 2 (stdin, stdout and stderr) are
-valid (open) and, if not, connects them to F</dev/tty> or F</dev/null> if
-possible (and aborts otherwise). This is necessary because libptytty might
-want to output error messages to those descriptors, which at the time of
-outputting the error message, might be connected to something unsuitable
-opened by the unsuspecting program itself (this can be a security issue).
+Checks whether file descriptors 0, 1 and 2 (stdin, stdout and stderr)
+are valid (open) and, if not, connects them to F</dev/tty> or
+F</dev/null> if possible. This is necessary because libptytty might
+want to output error messages to those descriptors, which at the time
+of outputting the error message, might be connected to something
+unsuitable opened by the unsuspecting program itself (this can be a
+security issue).
+
+On failure, this method terminates the process.
 
 =item bool success = ptytty::send_fd (int socket, int fd)
 
@@ -170,6 +179,9 @@ initially contain C<-1> until a successful to C<ptytty::get>.
 
 Tries to find, allocate and initialise a new pty/tty pair. Returns C<true>
 when successful.
+
+If the helper process is running and there is a protocol error, this
+method terminates the process.
 
 =item pty->login (int cmd_pid, bool login_shell, const char *hostname)
 

@@ -297,7 +297,7 @@ ptytty::sanitise_stdfd ()
           fd2 = open ("/dev/null", fd ? O_WRONLY : O_RDONLY);
 
         if (fd2 != fd)
-          abort ();
+          PTYTTY_FATAL ("unable to sanitise fds, aborting.\n");
       }
 }
 

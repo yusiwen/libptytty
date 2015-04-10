@@ -173,7 +173,7 @@ differ at runtime, so you need a dynamic object creation facility.
 =item int tty_fd = pty->tty
 
 These members contain the pty and tty file descriptors, respectively. They
-initially contain C<-1> until a successful to C<ptytty::get>.
+initially contain C<-1> until a successful call to C<ptytty::get>.
 
 =item bool success = pty->get ()
 

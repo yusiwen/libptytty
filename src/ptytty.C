@@ -379,9 +379,14 @@ ptytty_unix::get ()
   if (isastream (tty) == 1)
 # endif
     {
-      ioctl (tty, PT_I_PUSH, "ptem");
-      ioctl (tty, PT_I_PUSH, "ldterm");
-      ioctl (tty, PT_I_PUSH, "ttcompat");
+      if (!ioctl (tty, I_FIND, "ptem"))
+        ioctl (tty, PT_I_PUSH, "ptem");
+
+      if (!ioctl (tty, I_FIND, "ldterm"))
+        ioctl (tty, PT_I_PUSH, "ldterm");
+
+      if (!ioctl (tty, I_FIND, "ttcompat"))
+        ioctl (tty, PT_I_PUSH, "ttcompat");
     }
 #endif
 

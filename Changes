@@ -1,3 +1,7 @@
+	- fix m4 underquoting bug that prevented utmpx detection from
+	  working on systems without the utmp.h header, such as
+	  freebsd 9 and newer.
+	- fix ptytty::get hang on AIX.
 	- ptytty::get on Solaris no longer makes the tty controlling
 	  when the calling process does not have a controlling
 	  terminal. Bug introduced in ptytty-1.4.

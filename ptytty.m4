@@ -105,7 +105,7 @@ dnl# --------------------------------------------------------------------------
 dnl# check for host field in utmp structure
 
 dnl# --------------------------------------------
-AC_CHECK_HEADERS(utmp.h,
+AC_CHECK_HEADERS(utmp.h, [
 AC_CHECK_TYPES([struct utmp], [], [], [
 #include <sys/types.h>
 #include <utmp.h>
@@ -122,11 +122,11 @@ AC_CHECK_MEMBER([struct utmp.ut_pid],
 #include <sys/types.h>
 #include <utmp.h>
 ])
-) dnl# AC_CHECK_HEADERS(utmp.h
+]) dnl# AC_CHECK_HEADERS(utmp.h
 
 dnl# --------------------------------------------
 
-AC_CHECK_HEADERS(utmpx.h,
+AC_CHECK_HEADERS(utmpx.h, [
 AC_CHECK_TYPES([struct utmpx], [], [], [
 #include <sys/types.h>
 #include <utmpx.h>
@@ -137,7 +137,7 @@ AC_CHECK_MEMBER([struct utmpx.ut_host],
 #include <sys/types.h>
 #include <utmpx.h>
 ])
-) dnl# AC_CHECK_HEADERS(utmpx.h
+]) dnl# AC_CHECK_HEADERS(utmpx.h
 
 dnl# --------------------------------------------------------------------------
 dnl# check for struct lastlog

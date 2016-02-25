@@ -1,3 +1,4 @@
+1.8  Thu Feb 25 21:17:12 CET 2016
 	- fix m4 underquoting bug that prevented utmpx detection from
 	  working on systems without the utmp.h header, such as
 	  freebsd 9 and newer.

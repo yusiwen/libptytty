@@ -2,8 +2,8 @@ dnl#
 dnl# Process this file with autoconf to produce a configure script.
 dnl#
 
-AC_INIT
-AM_INIT_AUTOMAKE(libptytty,1.7)
+AC_INIT(libptytty,1.8)
+AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER(config.h:config.h.in)
 
 AC_CANONICAL_HOST

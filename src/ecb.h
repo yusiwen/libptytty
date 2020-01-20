@@ -42,7 +42,7 @@
 #define ECB_H
 
 /* 16 bits major, 16 bits minor */
-#define ECB_VERSION 0x00010006
+#define ECB_VERSION 0x00010007
 
 #ifdef _WIN32
   typedef   signed char   int8_t;
@@ -78,6 +78,14 @@
 
 #define ECB_GCC_AMD64 (__amd64 || __amd64__ || __x86_64 || __x86_64__)
 #define ECB_MSVC_AMD64 (_M_AMD64 || _M_X64)
+
+#ifndef ECB_OPTIMIZE_SIZE
+  #if __OPTIMIZE_SIZE__
+    #define ECB_OPTIMIZE_SIZE 1
+  #else
+    #define ECB_OPTIMIZE_SIZE 0
+  #endif
+#endif
 
 /* work around x32 idiocy by defining proper macros */
 #if ECB_GCC_AMD64 || ECB_MSVC_AMD64

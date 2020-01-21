@@ -773,7 +773,7 @@ ecb_inline void ecb_poke_le_u16_u (void *ptr, uint_fast16_t v) { ecb_poke_u16_u 
 ecb_inline void ecb_poke_le_u32_u (void *ptr, uint_fast32_t v) { ecb_poke_u32_u (ptr, ecb_host_to_le_u32 (v)); }
 ecb_inline void ecb_poke_le_u64_u (void *ptr, uint_fast64_t v) { ecb_poke_u64_u (ptr, ecb_host_to_le_u64 (v)); }
 
-#ifdef ECB_CPP
+#if ECB_CPP
 
 inline uint8_t  ecb_bswap (uint8_t  v) { return v; }
 inline uint16_t ecb_bswap (uint16_t v) { return ecb_bswap16 (v); }

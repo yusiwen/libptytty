@@ -801,8 +801,10 @@ template<typename T> inline void ecb_poke_le_u (void *ptr, T v) { return ecb_pok
 #endif
 
 /*****************************************************************************/
+/* division */
 
 #if ECB_GCC_VERSION(3,0) || ECB_C99
+  /* C99 tightened the definition of %, so we can use a more efficient version */
   #define ecb_mod(m,n) ((m) % (n) + ((m) % (n) < 0 ? (n) : 0))
 #else
   #define ecb_mod(m,n) ((m) < 0 ? ((n) - 1 - ((-1 - (m)) % (n))) : ((m) % (n)))
@@ -824,6 +826,9 @@ template<typename T> inline void ecb_poke_le_u (void *ptr, T v) { return ecb_pok
   #define ecb_div_ru(val,div) ((val) < 0 ? - ((-(val)            ) / (div)) : ((val) + (div) - 1) / (div))
 #endif
 
+/*****************************************************************************/
+/* array length */
+
 #if ecb_cplusplus_does_not_suck
   /* does not work for local types (http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2657.htm) */
   template<typename T, int N>
@@ -836,6 +841,7 @@ template<typename T> inline void ecb_poke_le_u (void *ptr, T v) { return ecb_pok
 #endif
 
 /*****************************************************************************/
+/* IEEE 754-2008 half float conversions */
 
 ecb_function_ ecb_const uint32_t ecb_binary16_to_binary32 (uint32_t x);
 ecb_function_ ecb_const uint32_t
@@ -874,7 +880,7 @@ ecb_function_ ecb_const uint16_t
 ecb_binary32_to_binary16 (uint32_t x)
 {
   unsigned int s =  (x >> 16) & 0x00008000; /* sign bit, the easy part */
-  unsigned int e = ((x >> 23) & 0x000000ff) - (127 - 15); /* the desired exponent */
+  int          e = ((x >> 23) & 0x000000ff) - (127 - 15); /* the desired exponent */
   unsigned int m =   x        & 0x007fffff;
 
   x &= 0x7fffffff;

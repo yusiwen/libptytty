@@ -4,13 +4,13 @@ dnl#
 
 AC_INIT(libptytty,1.8)
 AM_INIT_AUTOMAKE
-AC_CONFIG_HEADER(config.h:config.h.in)
+AC_CONFIG_HEADERS(config.h:config.h.in)
 
 AC_CANONICAL_HOST
 
 AC_PROG_CXX
 AC_PROG_INSTALL
-AC_PROG_LIBTOOL
+LT_INIT
 
 AC_LANG(C++)
 

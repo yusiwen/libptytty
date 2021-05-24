@@ -4,6 +4,8 @@
 #include "libptytty.h"
 #include "ptytty_conf.h"
 
+#include <sys/types.h>
+
 #if defined(HAVE__GETPTY) || defined(HAVE_OPENPTY) || defined(UNIX98_PTY)
 # define NO_SETOWNER_TTYDEV 1
 #endif

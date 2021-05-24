@@ -272,6 +272,27 @@ See C<< ptytty::use_helper >>.
 
 =back
 
+=head1 PORTABILITY
+
+To date, libptytty has been tested on the following platforms:
+
+=over 4
+
+=item GNU/Linux
+
+=item FreeBSD
+
+=item NetBSD
+
+=item OpenBSD
+
+=item macOS
+
+=item Solaris
+
+=item AIX
+
+=back
 
 =head1 BUGS
 

@@ -230,6 +230,17 @@ C INTERFACE: THE ptytty FAMILY OF FUNCTIONS
     void ptytty_use_helper ()
         See "ptytty::use_helper".
 
+PORTABILITY
+    To date, libptytty has been tested on the following platforms:
+
+    GNU/Linux
+    FreeBSD
+    NetBSD
+    OpenBSD
+    macOS
+    Solaris
+    AIX
+
 BUGS
     You kiddin'?
 

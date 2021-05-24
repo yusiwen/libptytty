@@ -295,7 +295,8 @@ ptytty_unix::ptytty_unix ()
 ptytty_unix::~ptytty_unix ()
 {
 #if UTMP_SUPPORT
-  logout ();
+  if (cmd_pid)
+    log_session (false, 0);
 #endif
   put ();
 }
@@ -390,8 +391,7 @@ ptytty_unix::get ()
     }
 #endif
 
-#if UTMP_SUPPORT
-# if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
+#if defined(USE_UTMP) && !defined(HAVE_UTMP_PID)
   int fd_stdin = dup (STDIN_FILENO);
   dup2 (tty, STDIN_FILENO);
 
@@ -399,9 +399,21 @@ ptytty_unix::get ()
 
   dup2 (fd_stdin, STDIN_FILENO);
   close (fd_stdin);
-# endif
 #endif
 
   return true;
 }
 
+void
+ptytty_unix::login (int cmd_pid, bool login_shell, const char *hostname)
+{
+#if UTMP_SUPPORT
+  if (!name || !*name)
+    return;
+
+  this->cmd_pid     = cmd_pid;
+  this->login_shell = login_shell;
+
+  log_session (true, hostname);
+#endif
+}

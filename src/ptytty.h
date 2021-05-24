@@ -11,14 +11,13 @@
 #endif
 
 #if UTMP_SUPPORT
-# if defined(__GLIBC__)
-#  undef HAVE_STRUCT_UTMPX
-# endif
-
-# if ! defined(HAVE_STRUCT_UTMPX) && ! defined(HAVE_STRUCT_UTMP)
+# if defined(HAVE_STRUCT_UTMPX) && !defined(__GLIBC__)
+#  define USE_UTMPX
+# elif defined(HAVE_STRUCT_UTMP)
+#  define USE_UTMP
+# else
 #  error cannot build with utmp support - no utmp or utmpx struct found
 # endif
-
 #endif
 
 struct ptytty_unix : ptytty
@@ -41,8 +40,6 @@ public:
   int utmp_pos;
   int cmd_pid;
   bool login_shell;
-
-  void logout ();
 #endif
 };
 

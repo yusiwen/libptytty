@@ -14,6 +14,11 @@
 #endif
 
 /*
+ * Define if you want to enable the C api.
+ */
+#define PTYTTY_C_API 1
+
+/*
  * Define if you want to use a separate process for pty/tty handling
  * when running setuid/setgid. You need this when making it setuid/setgid.
  */

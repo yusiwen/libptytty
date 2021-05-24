@@ -104,24 +104,16 @@
  *      ut_user, ut_id, ut_line, ut_pid, ut_type, ut_exit, ut_time
  */
 
-/* ------------------------------------------------------------------------- */
-/*
- * Write a BSD style utmp entry
- */
-#if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
 static void
-write_bsd_utmp (int utmp_pos, struct utmp *ut)
+write_record (const char *path, off_t pos, const void *record, size_t size)
 {
-  int             fd;
-
-  if (utmp_pos <= 0 || (fd = open (UTMP_FILE, O_WRONLY)) == -1)
-    return;
-
-  if (lseek (fd, (off_t) (utmp_pos * sizeof (struct utmp)), SEEK_SET) != -1)
-    write (fd, ut, sizeof (struct utmp));
-  close (fd);
+  int fd = open (path, O_WRONLY);
+  if (fd >= 0)
+    {
+      pwrite (fd, record, size, pos * size);
+      close (fd);
+    }
 }
-#endif
 
 /* ------------------------------------------------------------------------- */
 /*
@@ -176,8 +168,7 @@ update_lastlog (const char *pty, const char *host)
   struct lastlogx llx;
 # endif
 # ifdef HAVE_STRUCT_LASTLOG
-  int             fd;
-  struct lastlog  ll;
+  struct lastlog ll;
 # endif
 
 # if defined(HAVE_STRUCT_LASTLOGX) && defined(HAVE_UPDLASTLOGX)
@@ -194,13 +185,7 @@ update_lastlog (const char *pty, const char *host)
   ll.ll_time = time (NULL);
   strncpy (ll.ll_line, pty, sizeof (ll.ll_line));
   strncpy (ll.ll_host, host, sizeof (ll.ll_host));
-  if ((fd = open (LASTLOG_FILE, O_RDWR)) != -1)
-    {
-      if (lseek (fd, (off_t) (getuid () * sizeof (ll)),
-                 SEEK_SET) != -1)
-        write (fd, &ll, sizeof (ll));
-      close (fd);
-    }
+  write_record (LASTLOG_FILE, getuid (), &ll, sizeof (ll));
 # endif /* HAVE_STRUCT_LASTLOG */
 }
 #endif /* LASTLOG_SUPPORT */
@@ -323,7 +308,8 @@ ptytty_unix::log_session (bool login, const char *hostname)
     pututline (&ut);
   endutent ();
 # else
-  write_bsd_utmp (utmp_pos, &ut);
+  if (utmp_pos > 0)
+    write_record (UTMP_FILE, utmp_pos, &ut, sizeof (ut));
 # endif
 #endif
 

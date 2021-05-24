@@ -2,7 +2,7 @@ dnl#
 dnl# Process this file with autoconf to produce a configure script.
 dnl#
 
-AC_INIT(libptytty,1.8)
+AC_INIT(libptytty,1.9)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h:config.h.in)
 

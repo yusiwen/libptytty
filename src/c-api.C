@@ -49,7 +49,9 @@ extern "C" retval ptytty_ ## name args           \
 { return ptytty::name args; }
 
 DEFINE_STATIC(void,drop_privileges,())
+#if PTYTTY_HELPER
 DEFINE_STATIC(void,use_helper,())
+#endif
 DEFINE_STATIC(void,sanitise_stdfd,())
 DEFINE_STATIC(void,init,())
 

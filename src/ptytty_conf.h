@@ -16,7 +16,9 @@
 /*
  * Define if you want to enable the C api.
  */
-#define PTYTTY_C_API 1
+#ifndef PTYTTY_C_API
+# define PTYTTY_C_API 1
+#endif
 
 /*
  * Define if you want to use a separate process for pty/tty handling

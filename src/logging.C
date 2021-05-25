@@ -40,7 +40,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
-#include <time.h>
 #include <unistd.h>
 
 static void
@@ -62,6 +61,7 @@ fill_id (char *id, const char *line, size_t id_size)
 
 #if defined(USE_UTMPX)
 
+#include <sys/time.h>
 #include <utmpx.h>
 
 #if !defined(WTMPX_FILE)
@@ -88,8 +88,7 @@ update_lastlog (const char *pty, const char *host)
   struct lastlogx llx;
 
   memset (&llx, 0, sizeof (llx));
-  llx.ll_tv.tv_sec = time (NULL);
-  llx.ll_tv.tv_usec = 0;
+  gettimeofday (&llx.ll_tv, 0);
   strncpy (llx.ll_line, pty, sizeof (llx.ll_line));
   strncpy (llx.ll_host, host, sizeof (llx.ll_host));
   updlastlogx (LASTLOGX_FILE, getuid (), &llx);
@@ -109,8 +108,7 @@ fill_utmpx (struct utmpx *utx, bool login, int pid, const char *line, const char
   fill_id (utx->ut_id, line, sizeof (utx->ut_id));
   utx->ut_pid = pid;
   utx->ut_type = login ? USER_PROCESS : DEAD_PROCESS;
-  utx->ut_tv.tv_sec = time (NULL);
-  utx->ut_tv.tv_usec = 0;
+  gettimeofday (&utx->ut_tv, 0);
 
   // posix says that ut_user is not meaningful for DEAD_PROCESS
   // records, but solaris utmp_update helper requires that the ut_user
@@ -164,6 +162,7 @@ ptytty_unix::log_session (bool login, const char *hostname)
 
 #elif defined(USE_UTMP)
 
+#include <time.h>
 #include <utmp.h>
 #ifdef HAVE_LASTLOG_H
 # include <lastlog.h>

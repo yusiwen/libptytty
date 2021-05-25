@@ -1,3 +1,8 @@
+	- ptytty::login no longer writes a utmp, wtmp and lastlog
+	  record when utmpx is available.
+	- ptytty::login now provides the time with microseconds in
+	  utmpx, wtmpx and lastlogx records.
+
 1.8  Thu Feb 25 21:17:12 CET 2016
 	- fix m4 underquoting bug that prevented utmpx detection from
 	  working on systems without the utmp.h header, such as

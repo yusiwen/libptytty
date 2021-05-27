@@ -85,26 +85,12 @@ if test x$support_lastlog = xyes; then
   AC_DEFINE(LASTLOG_SUPPORT, 1, Define if you want to have lastlog support when utmp/utmpx is enabled)
 fi
 
-AC_CHECK_FUNCS( \
-	updwtmp \
-	updwtmpx \
-	updlastlogx \
-)
-
-AC_CHECK_HEADERS(lastlog.h)
-
 case $host in
    *-*-solaris*)
       AC_DEFINE(__EXTENSIONS__, 1, Enable declarations in utmp.h on Solaris when the XPG4v2 namespace is active)
       ;;
 esac
 
-dnl# --------------------------------------------------------------------------
-dnl# DO ALL UTMP AND WTMP CHECKING
-dnl# --------------------------------------------------------------------------
-dnl# check for host field in utmp structure
-
-dnl# --------------------------------------------
 AC_CHECK_HEADERS(utmp.h, [
 AC_CHECK_TYPES([struct utmp], [], [], [
 #include <sys/types.h>
@@ -122,9 +108,29 @@ AC_CHECK_MEMBER([struct utmp.ut_pid],
 #include <sys/types.h>
 #include <utmp.h>
 ])
-]) dnl# AC_CHECK_HEADERS(utmp.h
 
-dnl# --------------------------------------------
+AC_CHECK_FUNCS([updwtmp])
+
+AC_CHECK_HEADERS([lastlog.h])
+
+AC_CHECK_TYPES([struct lastlog], [], [], [
+#include <sys/types.h>
+#include <utmp.h>
+#ifdef HAVE_LASTLOG_H
+#include <lastlog.h>
+#endif
+])
+
+PT_FIND_FILE([utmp], [PT_UTMP_FILE],
+["/var/run/utmp" "/var/adm/utmp" "/etc/utmp" "/usr/etc/utmp" "/usr/adm/utmp"])
+
+PT_FIND_FILE([wtmp], [PT_WTMP_FILE],
+["/var/log/wtmp" "/var/adm/wtmp" "/etc/wtmp" "/usr/etc/wtmp" "/usr/adm/wtmp"])
+
+PT_FIND_FILE([lastlog], [PT_LASTLOG_FILE],
+["/var/log/lastlog" "/var/adm/lastlog"])
+
+])
 
 AC_CHECK_HEADERS(utmpx.h, [
 AC_CHECK_TYPES([struct utmpx], [], [], [
@@ -137,55 +143,21 @@ AC_CHECK_MEMBER([struct utmpx.ut_host],
 #include <sys/types.h>
 #include <utmpx.h>
 ])
-]) dnl# AC_CHECK_HEADERS(utmpx.h
 
-dnl# --------------------------------------------------------------------------
-dnl# check for struct lastlog
-AC_CHECK_TYPES([struct lastlog], [], [], [
-#include <sys/types.h>
-#include <utmp.h>
-#ifdef HAVE_LASTLOG_H
-#include <lastlog.h>
-#endif
-])
+AC_CHECK_FUNCS([updwtmpx updlastlogx])
 
-dnl# check for struct lastlogx
 AC_CHECK_TYPES([struct lastlogx], [], [], [
 #include <sys/types.h>
 #include <utmpx.h>
-#ifdef HAVE_LASTLOG_H
-#include <lastlog.h>
-#endif
 ])
 
-dnl# --------------------------------------------------------------------------
-dnl# FIND FILES
-dnl# --------------------------------------------------------------------------
-
-dnl# find utmp
-PT_FIND_FILE([utmp], [PT_UTMP_FILE],
-["/var/run/utmp" "/var/adm/utmp" "/etc/utmp" "/usr/etc/utmp" "/usr/adm/utmp"])
-
-dnl# --------------------------------------------------------------------------
-
-dnl# find wtmp
-PT_FIND_FILE([wtmp], [PT_WTMP_FILE],
-["/var/log/wtmp" "/var/adm/wtmp" "/etc/wtmp" "/usr/etc/wtmp" "/usr/adm/wtmp"])
-dnl# --------------------------------------------------------------------------
-
-dnl# find wtmpx
 PT_FIND_FILE([wtmpx], [PT_WTMPX_FILE],
 ["/var/log/wtmpx" "/var/adm/wtmpx"])
-dnl# --------------------------------------------------------------------------
 
-dnl# find lastlog
-PT_FIND_FILE([lastlog], [PT_LASTLOG_FILE],
-["/var/log/lastlog" "/var/adm/lastlog"])
-dnl# --------------------------------------------------------------------------
-
-dnl# find lastlogx
 PT_FIND_FILE([lastlogx], [PT_LASTLOGX_FILE],
 ["/var/log/lastlogx" "/var/adm/lastlogx"])
+])
+
 ])
 
 AC_DEFUN([SCM_RIGHTS_CHECK],

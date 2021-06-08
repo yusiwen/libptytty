@@ -31,7 +31,6 @@ AC_CHECK_FUNCS( \
   posix_openpt \
   isastream \
   setuid \
-  seteuid \
   setreuid \
   setresuid \
 )
@@ -205,9 +204,7 @@ AC_CACHE_CHECK(for unix-compliant filehandle passing ability, pt_cv_can_pass_fds
   return sendmsg (3, &msg, 0);
 }
 ]])],[pt_cv_can_pass_fds=yes],[pt_cv_can_pass_fds=no])])
-if test x$pt_cv_can_pass_fds = xyes; then
-   AC_DEFINE(HAVE_UNIX_FDPASS, 1, Define if sys/socket.h defines the necessary macros/functions for file handle passing)
-else
+if test x$pt_cv_can_pass_fds = xno; then
    AC_MSG_ERROR([libptytty requires unix-compliant filehandle passing ability])
 fi
 ])

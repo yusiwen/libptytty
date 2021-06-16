@@ -31,38 +31,89 @@
 
 typedef void *PTYTTY;
 
-#define DEFINE_METHOD(retval, name, args1, args2) \
-extern "C" retval ptytty_ ## name args1           \
-{ return ((struct ptytty *)ptytty)->name args2; }
-
-DEFINE_METHOD(int,pty,(PTYTTY ptytty),)
-DEFINE_METHOD(int,tty,(PTYTTY ptytty),)
-DEFINE_METHOD(int,get,(PTYTTY ptytty),())
-DEFINE_METHOD(void,login,(PTYTTY ptytty, int cmd_pid, int login_shell, const char *hostname),(cmd_pid,login_shell,hostname))
-
-DEFINE_METHOD(void,close_tty,(PTYTTY ptytty),())
-DEFINE_METHOD(int,make_controlling_tty,(PTYTTY ptytty),())
-DEFINE_METHOD(void,set_utf8_mode,(PTYTTY ptytty, int on),(on))
-
-#define DEFINE_STATIC(retval, name, args) \
-extern "C" retval ptytty_ ## name args           \
-{ return ptytty::name args; }
-
-DEFINE_STATIC(void,drop_privileges,())
-#if PTYTTY_HELPER
-DEFINE_STATIC(void,use_helper,())
-#endif
-DEFINE_STATIC(void,sanitise_stdfd,())
-DEFINE_STATIC(void,init,())
-
-DEFINE_STATIC(PTYTTY,create,())
-
-extern "C" void ptytty_delete (PTYTTY ptytty)
+extern "C"
 {
-  delete (struct ptytty *)ptytty;
+  int
+  ptytty_pty (PTYTTY ptytty)
+  {
+    return ((struct ptytty *)ptytty)->pty;
+  }
+
+  int
+  ptytty_tty (PTYTTY ptytty)
+  {
+    return ((struct ptytty *)ptytty)->tty;
+  }
+
+  int
+  ptytty_get (PTYTTY ptytty)
+  {
+    return ((struct ptytty *)ptytty)->get ();
+  }
+
+  void
+  ptytty_login (PTYTTY ptytty, int cmd_pid, int login_shell, const char *hostname)
+  {
+    return ((struct ptytty *)ptytty)->login (cmd_pid, login_shell, hostname);
+  }
+
+  void
+  ptytty_close_tty (PTYTTY ptytty)
+  {
+    return ((struct ptytty *)ptytty)->close_tty ();
+  }
+
+  int
+  ptytty_make_controlling_tty (PTYTTY ptytty)
+  {
+    return ((struct ptytty *)ptytty)->make_controlling_tty ();
+  }
+
+  void
+  ptytty_set_utf8_mode (PTYTTY ptytty, int on)
+  {
+    return ((struct ptytty *)ptytty)->set_utf8_mode (on);
+  }
+
+  void
+  ptytty_sanitise_stdfd ()
+  {
+    return ptytty::sanitise_stdfd ();
+  }
+
+  void
+  ptytty_init ()
+  {
+    return ptytty::init ();
+  }
+
+  PTYTTY
+  ptytty_create ()
+  {
+    return ptytty::create ();
+  }
+
+  void
+  ptytty_delete (PTYTTY ptytty)
+  {
+    delete (struct ptytty *)ptytty;
+  }
+
+  void
+  ptytty_drop_privileges ()
+  {
+    return ptytty::drop_privileges ();
+  }
+
+#if PTYTTY_HELPER
+  void
+  ptytty_use_helper ()
+  {
+    return ptytty::use_helper ();
+  }
+#endif
 }
 
 // send_fd, recv_fd not exposed
 
 #endif
-

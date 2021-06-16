@@ -22,9 +22,17 @@
 
 struct ptytty_unix : ptytty
 {
+private:
+
   char *name;
+#if UTMP_SUPPORT
+  int utmp_pos;
+  int cmd_pid;
+  bool login_shell;
+#endif
 
   void log_session (bool login, const char *hostname);
+  void put ();
 
 public:
 
@@ -32,15 +40,7 @@ public:
   ~ptytty_unix ();
 
   bool get ();
-  void put ();
-
   void login (int cmd_pid, bool login_shell, const char *hostname);
-
-#if UTMP_SUPPORT
-  int utmp_pos;
-  int cmd_pid;
-  bool login_shell;
-#endif
 };
 
 #endif

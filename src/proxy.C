@@ -56,7 +56,11 @@ struct command
 
 struct ptytty_proxy : ptytty
 {
+private:
+
   ptytty *id;
+
+public:
 
   ptytty_proxy ()
   : id(0)

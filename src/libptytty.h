@@ -5,7 +5,8 @@
 
 // C++ API
 
-struct ptytty {
+struct ptytty
+{
   int pty; // pty file descriptor; connected to terminal emulator
   int tty; // tty file descriptor; connected to child
 

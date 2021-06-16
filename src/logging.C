@@ -149,13 +149,13 @@ ptytty_unix::log_session (bool login, const char *hostname)
 #endif
 
 #ifdef LASTLOG_SUPPORT
-    if (login)
-      {
-        if (pwent)
-          update_lastlog (pty, hostname);
-        else
-          PTYTTY_WARN ("no entry in password file, not updating lastlog.\n");
-      }
+      if (login)
+        {
+          if (pwent)
+            update_lastlog (pty, hostname);
+          else
+            PTYTTY_WARN ("no entry in password file, not updating lastlog.\n");
+        }
 #endif
     }
 }
@@ -326,13 +326,13 @@ ptytty_unix::log_session (bool login, const char *hostname)
 #endif
 
 #ifdef LASTLOG_SUPPORT
-    if (login)
-      {
-        if (pwent)
-          update_lastlog (pty, hostname);
-        else
-          PTYTTY_WARN ("no entry in password file, not updating lastlog.\n");
-      }
+      if (login)
+        {
+          if (pwent)
+            update_lastlog (pty, hostname);
+          else
+            PTYTTY_WARN ("no entry in password file, not updating lastlog.\n");
+        }
 #endif
     }
 }

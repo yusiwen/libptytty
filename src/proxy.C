@@ -145,8 +145,8 @@ ptytty_proxy::~ptytty_proxy ()
     }
 }
 
-static
-void serve ()
+static void
+serve ()
 {
   command cmd;
   vector<ptytty *> ptys;

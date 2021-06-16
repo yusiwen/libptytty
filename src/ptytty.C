@@ -260,28 +260,29 @@ ptytty::set_utf8_mode (bool on)
 #endif
 }
 
-static struct ttyconf {
+static struct ttyconf
+{
   gid_t gid;
   mode_t mode;
 
   ttyconf ()
-    {
+  {
 #ifdef TTY_GID_SUPPORT
-      struct group *gr = getgrnam ("tty");
+    struct group *gr = getgrnam ("tty");
 
-      if (gr)
-        {
-          /* change group ownership of tty to "tty" */
-          mode = S_IRUSR | S_IWUSR | S_IWGRP;
-          gid = gr->gr_gid;
-        }
-      else
+    if (gr)
+      {
+        /* change group ownership of tty to "tty" */
+        mode = S_IRUSR | S_IWUSR | S_IWGRP;
+        gid = gr->gr_gid;
+      }
+    else
 #endif /* TTY_GID_SUPPORT */
-        {
-          mode = S_IRUSR | S_IWUSR | S_IWGRP | S_IWOTH;
-          gid = 0;
-        }
-    }
+      {
+        mode = S_IRUSR | S_IWUSR | S_IWGRP | S_IWOTH;
+        gid = 0;
+      }
+  }
 } ttyconf;
 
 ptytty_unix::ptytty_unix ()

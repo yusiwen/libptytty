@@ -103,7 +103,7 @@ with setuid/setgid permissions and, if yes, spawns a helper process for
 pty/tty management. It then drops the privileges completely, so the actual
 program runs without setuid/setgid privileges.
 
-On failure, this method terminates the process.
+On failure, this method throws a C<ptytty_error> exception.
 
 =item ptytty::use_helper ()
 
@@ -118,7 +118,7 @@ This method will try not to start more than one helper process. The same
 helper process can usually be used both from the process starting it and
 all its fork'ed (not exec'ed) children.
 
-On failure, this method terminates the process.
+On failure, this method throws a C<ptytty_error> exception.
 
 =item ptytty::drop_privileges ()
 
@@ -126,7 +126,7 @@ Drops privileges completely, i.e. sets real, effective and saved user
 id to the real user id. Useful to make sure that the process doesn't
 run with special privileges.
 
-On failure, this method terminates the process.
+On failure, this method throws a C<ptytty_error> exception.
 
 =item ptytty::sanitise_stdfd ()
 
@@ -138,7 +138,7 @@ of outputting the error message, might be connected to something
 unsuitable opened by the unsuspecting program itself (this can be a
 security issue).
 
-On failure, this method terminates the process.
+On failure, this method throws a C<ptytty_error> exception.
 
 =item bool success = ptytty::send_fd (int socket, int fd)
 
@@ -181,7 +181,7 @@ Tries to find, allocate and initialise a new pty/tty pair. Returns C<true>
 when successful.
 
 If the helper process is running and there is a protocol error, this
-method terminates the process.
+method throws a C<ptytty_error> exception.
 
 =item pty->login (int cmd_pid, bool login_shell, const char *hostname)
 

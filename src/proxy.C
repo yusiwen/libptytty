@@ -93,7 +93,7 @@ ptytty_proxy::get ()
   write (sock_fd, &cmd, sizeof (cmd));
 
   if (read (sock_fd, &id, sizeof (id)) != sizeof (id))
-    PTYTTY_FATAL ("protocol error while creating pty using helper process, aborting.\n");
+    throw ptytty_error ("protocol error while creating pty using helper process.\n");
 
   if (!id)
     {
@@ -103,7 +103,7 @@ ptytty_proxy::get ()
 
   if ((pty = recv_fd (sock_fd)) < 0
       || (tty = recv_fd (sock_fd)) < 0)
-    PTYTTY_FATAL ("protocol error while reading pty/tty fds from helper process, aborting.\n");
+    throw ptytty_error ("protocol error while reading pty/tty fds from helper process.\n");
 
   GIVE_TOKEN;
   return true;
@@ -224,19 +224,19 @@ ptytty::use_helper ()
   int sv[2];
 
   if (socketpair (AF_UNIX, SOCK_STREAM, 0, sv))
-    PTYTTY_FATAL ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
+    throw ptytty_error ("could not create socket to communicate with pty/sessiondb helper.\n");
 
 #if PTYTTY_REENTRANT
   int lv[2];
 
   if (socketpair (AF_UNIX, SOCK_STREAM, 0, lv))
-    PTYTTY_FATAL ("could not create socket to communicate with pty/sessiondb helper, aborting.\n");
+    throw ptytty_error ("could not create socket to communicate with pty/sessiondb helper.\n");
 #endif
 
   helper_pid = fork ();
 
   if (helper_pid < 0)
-    PTYTTY_FATAL ("could not create pty/sessiondb helper process, aborting.\n");
+    throw ptytty_error ("could not create pty/sessiondb helper process.\n");
 
   if (helper_pid)
     {
@@ -301,7 +301,7 @@ ptytty::sanitise_stdfd ()
           fd2 = open ("/dev/null", fd ? O_WRONLY : O_RDONLY);
 
         if (fd2 != fd)
-          PTYTTY_FATAL ("unable to sanitise fds, aborting.\n");
+          throw ptytty_error ("unable to sanitise fds.\n");
       }
 }
 
@@ -320,8 +320,6 @@ ptytty::init ()
     {
 #if PTYTTY_HELPER
       use_helper ();
-#else
-      PTYTTY_WARN ("running setuid/setgid without pty helper compiled in, continuing unprivileged.\n");
 #endif
 
       drop_privileges ();
@@ -350,6 +348,6 @@ ptytty::drop_privileges ()
 
   if (uid != geteuid ()
       || gid != getegid ())
-    PTYTTY_FATAL ("unable to drop privileges, aborting.\n");
+    throw ptytty_error ("unable to drop privileges.\n");
 }
 

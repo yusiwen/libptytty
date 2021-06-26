@@ -5,6 +5,32 @@
 
 // C++ API
 
+#include <exception>
+#include <string.h>
+
+class ptytty_error : public std::exception
+{
+private:
+  char *msg;
+
+public:
+  ptytty_error (const char *what_arg)
+  {
+    msg = strdup (what_arg);
+  }
+
+  ~ptytty_error ()
+  {
+    free (msg);
+  }
+
+  const char *
+  what () const noexcept override
+  {
+    return msg;
+  }
+};
+
 struct ptytty
 {
   int pty; // pty file descriptor; connected to terminal emulator

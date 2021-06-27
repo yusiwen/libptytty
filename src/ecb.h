@@ -950,6 +950,19 @@ ecb_binary32_to_binary16 (uint32_t x)
 /*******************************************************************************/
 /* fast integer to ascii */
 
+/*
+ * This code is pretty complicated because it is general. The idea behind it,
+ * however, is pretty simple: first, the number is multiplied with a scaling
+ * factor (2**bits / 10**(digits-1)) to convert the integer into a fixed-point
+ * number with the first digit in the upper bits.
+ * Then this digit is converted to text and masked out. The resulting number
+ * is then multiplied by 10, by multiplying the fixed point representation
+ * by 5 and shifting the (binary) decimal point one to the right, so a 4.28
+ * format becomes 5.27, 6.26 and so on.
+ * The rest involves only advancing the pointer if we already generated a
+ * non-zero digit, so leading zeroes are overwritten.
+ */
+
 // simply return a mask with "bits" bits set
 #define ecb_i2a_mask(type,bits) ((((type)1) << (bits)) - 1)
 
@@ -959,8 +972,8 @@ ecb_binary32_to_binary16 (uint32_t x)
     { \
       char digit = x >> (bits - digitidx); /* calculate the topmost digit */ \
       *ptr = digit + '0'; /* output it */ \
-      nz = (digitmask == maskvalue) | nz | digit; /* first term == always output last digit */ \
-      ptr += nz ? 1 : 0; /* output digit only if non-zero digit seen */ \
+      nz = (digitmask == maskvalue) || nz || digit; /* first term == always output last digit */ \
+      ptr += nz; /* output digit only if non-zero digit seen */ \
       x = (x & ecb_i2a_mask (type, bits - digitidx)) * 5; /* *10, but shift decimal point right */ \
     }
 

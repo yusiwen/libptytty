@@ -1,3 +1,4 @@
+/* this file lives in libptytty/src/estl.h, only edit it there and copy it here */
 #ifndef ESTL_H_
 #define ESTL_H_
 

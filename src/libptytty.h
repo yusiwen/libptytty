@@ -6,8 +6,8 @@
 // C++ API
 
 #include <stdlib.h>
-#include <exception>
 #include <string.h>
+#include <exception>
 
 class ptytty_error : public std::exception
 {

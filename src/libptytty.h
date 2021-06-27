@@ -5,6 +5,7 @@
 
 // C++ API
 
+#include <stdlib.h>
 #include <exception>
 #include <string.h>
 

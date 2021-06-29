@@ -1,3 +1,4 @@
+	- add pkg-config file.
 	- ptytty::login no longer writes a utmp, wtmp and lastlog
 	  record when utmpx is available.
 	- ptytty::login now provides the time with microseconds in

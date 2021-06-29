@@ -1,8 +1,16 @@
 AUTOMAKE_OPTIONS = foreign subdir-objects
 ACLOCAL_AMFLAGS = -I .
 
-EXTRA_DIST = Changes README doc/libptytty.3.pod doc/libptytty.3 eg/c-sample.c \
-	     src/ptytty.h src/ptytty_conf.h src/estl.h src/ecb.h
+EXTRA_DIST = \
+  Changes \
+  README \
+  doc/libptytty.3 \
+  doc/libptytty.3.pod \
+  eg/c-sample.c \
+  src/ecb.h \
+  src/estl.h \
+  src/ptytty.h \
+  src/ptytty_conf.h
 
 man_MANS = doc/libptytty.3
 
@@ -10,7 +18,12 @@ include_HEADERS = src/libptytty.h
 
 lib_LTLIBRARIES = libptytty.la
 
-libptytty_la_SOURCES = src/c-api.C src/fdpass.C src/logging.C src/proxy.C src/ptytty.C
+libptytty_la_SOURCES = \
+  src/c-api.C \
+  src/fdpass.C \
+  src/logging.C \
+  src/proxy.C \
+  src/ptytty.C
 
 noinst_PROGRAMS = c-sample
 c_sample_SOURCES = eg/c-sample.c

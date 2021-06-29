@@ -362,13 +362,13 @@ ptytty_unix::get ()
    * Fortunately, Solaris (10 and 11 at least) provides an undocumented
    * __IPUSH_NOCTTY ioctl which does not have this side-effect, so we
    * use it if defined. See
-   * https://github.com/illumos/illumos-gate/blob/master/usr/src/uts/common/os/streamio.c#L3755
-   * https://github.com/illumos/illumos-gate/blob/master/usr/src/uts/common/io/ptem.c#L203
-   * https://github.com/illumos/illumos-gate/blob/master/usr/src/uts/common/io/ldterm.c#L794
+   * https://github.com/illumos/illumos-gate/blob/19d32b9ab53d17ac6605971e14c45a5281f8d9bb/usr/src/uts/common/os/streamio.c#L3755
+   * https://github.com/illumos/illumos-gate/blob/19d32b9ab53d17ac6605971e14c45a5281f8d9bb/usr/src/uts/common/io/ptem.c#L203
+   * https://github.com/illumos/illumos-gate/blob/19d32b9ab53d17ac6605971e14c45a5281f8d9bb/usr/src/uts/common/io/ldterm.c#L794
    * Note that an open() of a slave device autoloads the modules,
    * with __I_PUSH_NOCTTY, if xpg[46] mode is enabled (which requires
    * linking /usr/lib/values-xpg[46].o).
-   * https://github.com/illumos/illumos-gate/blob/master/usr/src/lib/libc/port/sys/open.c#L173
+   * https://github.com/illumos/illumos-gate/blob/19d32b9ab53d17ac6605971e14c45a5281f8d9bb/usr/src/lib/libc/port/sys/open.c#L173
    */
 
 #ifdef __I_PUSH_NOCTTY

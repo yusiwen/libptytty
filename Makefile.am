@@ -7,10 +7,14 @@ EXTRA_DIST = \
   doc/libptytty.3 \
   doc/libptytty.3.pod \
   eg/c-sample.c \
+  libptytty.pc.in \
   src/ecb.h \
   src/estl.h \
   src/ptytty.h \
   src/ptytty_conf.h
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libptytty.pc
 
 man_MANS = doc/libptytty.3
 

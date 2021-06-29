@@ -25,5 +25,5 @@ UTMP_CHECK
 
 SCM_RIGHTS_CHECK
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile libptytty.pc])
 AC_OUTPUT

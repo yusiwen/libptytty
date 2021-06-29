@@ -1,0 +1,8 @@
+prefix=@prefix@
+
+Name: libptytty
+Description: OS independent and secure pty/tty and utmp/wtmp/lastlog handling
+Version: @VERSION@
+Cflags: -I@includedir@
+Libs: -L@libdir@ -lptytty
+Libs.private: @LIBS@

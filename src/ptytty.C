@@ -140,6 +140,7 @@
   }
 
 #else
+# define SET_TTY_OWNER
 
   /* Based on the code in openssh/openbsd-compat/bsd-openpty.c */
   static int
@@ -332,7 +333,7 @@ ptytty_unix::get ()
   /* get slave (tty) */
   if (tty < 0)
     {
-#ifndef NO_SETOWNER_TTYDEV
+#ifdef SET_TTY_OWNER
       chown (name, getuid (), ttyconf.gid);      /* fail silently */
       chmod (name, ttyconf.mode);
 # ifdef HAVE_REVOKE

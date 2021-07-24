@@ -15,7 +15,7 @@
  * Copyright (c) 1999      D J Hawkey Jr <hawkeyd@visi.com>
  *				- lastlog support
  * Copyright (c) 2004-2006 Marc Lehmann <schmorp@schmorp.de>
- * Copyright (c) 2006-2021 Emanuele Giaquinta <e.giaquinta@glauco.it>
+ * Copyright (c) 2006-2021 Emanuele Giaquinta <emanuele.giaquinta@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -300,6 +300,6 @@ You kiddin'?
 
 =head1 AUTHORS
 
-Emanuele Giaquinta <e.giaquinta@glauco.it>, Marc Alexander Lehmann
+Emanuele Giaquinta <emanuele.giaquinta@gmail.com>, Marc Alexander Lehmann
 <rxvt-unicode@schmorp.de>.
 

@@ -60,6 +60,16 @@ of attack immensely.
 
 Libptytty is written in C++, but it also offers a C-only API.
 
+=head1 INSTALLATION
+
+libptytty uses C<CMake> as build system. To build libptytty, install
+C<CMake> and run the following commands from either the libptytty
+source directory or a separate build directory:
+
+   cmake -DCMAKE_INSTALL_PREFIX=<prefix> -DBUILD_SHARED_LIBS=ON <path/to/libptytty>
+   cmake --build .
+   cmake --install .
+
 =head1 SECURITY CONSIDERATIONS
 
 I<< B<It is of paramount importance that you at least read the following

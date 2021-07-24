@@ -90,7 +90,7 @@ C<ptytty::sanitise_stdfd>) are more useful.
 
 =head2 STATIC METHODS
 
-=over 4
+=over
 
 =item ptytty::init ()
 
@@ -166,7 +166,7 @@ differ at runtime, so you need a dynamic object creation facility.
 
 =head2 DYNAMIC/SESSION-RELATED DATA MEMBERS AND METHODS
 
-=over 4
+=over
 
 =item int pty_fd = pty->pty
 
@@ -216,7 +216,7 @@ time to change the mode.
 
 =head1 C INTERFACE: THE ptytty FAMILY OF FUNCTIONS
 
-=over 4
+=over
 
 =item ptytty_init ()
 
@@ -276,7 +276,7 @@ See C<< ptytty::use_helper >>.
 
 To date, libptytty has been tested on the following platforms:
 
-=over 4
+=over
 
 =item GNU/Linux
 

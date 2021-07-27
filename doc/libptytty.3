@@ -133,7 +133,7 @@
 .\" ========================================================================
 .\"
 .IX Title "libptytty 3"
-.TH libptytty 3 "2021-06-27" "1.9" "LIBPTYTTY"
+.TH libptytty 3 "2021-07-27" "2.0" "LIBPTYTTY"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -198,6 +198,17 @@ process runs with privileges (e.g. setuid/setgid), which reduces the area
 of attack immensely.
 .PP
 Libptytty is written in \*(C+, but it also offers a C\-only \s-1API.\s0
+.SH "INSTALLATION"
+.IX Header "INSTALLATION"
+libptytty uses \f(CW\*(C`CMake\*(C'\fR as build system. To build libptytty, install
+\&\f(CW\*(C`CMake\*(C'\fR and run the following commands from either the libptytty
+source directory or a separate build directory:
+.PP
+.Vb 3
+\&   cmake \-DCMAKE_INSTALL_PREFIX=<prefix> \-DBUILD_SHARED_LIBS=ON <path/to/libptytty>
+\&   cmake \-\-build .
+\&   cmake \-\-install .
+.Ve
 .SH "SECURITY CONSIDERATIONS"
 .IX Header "SECURITY CONSIDERATIONS"
 \&\fI\f(BIIt is of paramount importance that you at least read the following
@@ -398,5 +409,5 @@ To date, libptytty has been tested on the following platforms:
 You kiddin'?
 .SH "AUTHORS"
 .IX Header "AUTHORS"
-Emanuele Giaquinta <e.giaquinta@glauco.it>, Marc Alexander Lehmann
+Emanuele Giaquinta <emanuele.giaquinta@gmail.com>, Marc Alexander Lehmann
 <rxvt\-unicode@schmorp.de>.

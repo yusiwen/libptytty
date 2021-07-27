@@ -41,6 +41,44 @@ function(PT_FIND_FILE name id)
   endif()
 endfunction()
 
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/test.cxx"
+    "
+     struct e { };
+
+     void f ()
+     {
+       try
+         {
+           new e ();
+         }
+       catch (...)
+         {
+           throw;
+         }
+     }
+    ")
+  execute_process(
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp"
+    COMMAND ${CMAKE_C_COMPILER} -x c++ -shared -fPIC -o test.so test.cxx -lsupc++
+    OUTPUT_VARIABLE OUTPUT
+    ERROR_VARIABLE OUTPUT
+    RESULT_VARIABLE RESULT)
+  if(RESULT EQUAL 0)
+    message(STATUS "Checking for working libsupc++ - yes")
+    set(HAVE_LIBSUPCXX 1 CACHE BOOL "")
+    file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
+      "libsupc++ test succeeded with the following output:\n"
+      "${OUTPUT}\n")
+  else()
+    message(STATUS "Checking for working libsupc++ - no")
+    set(HAVE_LIBSUPCXX 0 CACHE BOOL "")
+    file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+      "libsupc++ test failed with the following output:\n"
+      "${OUTPUT}\n")
+  endif()
+endif()
+
 check_include_files(pty.h HAVE_PTY_H)
 check_include_files(util.h HAVE_UTIL_H)
 check_include_files(libutil.h HAVE_LIBUTIL_H)
@@ -267,9 +305,10 @@ add_library(ptytty
   src/ptytty.C)
 target_include_directories(ptytty PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(ptytty PROPERTIES VERSION 0)
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+if(HAVE_LIBSUPCXX)
   set_target_properties(ptytty PROPERTIES LINKER_LANGUAGE C)
   target_link_libraries(ptytty PRIVATE supc++)
+  set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES)
 endif()
 if(HAVE_LIBSOCKET)
   target_link_libraries(ptytty PRIVATE socket)

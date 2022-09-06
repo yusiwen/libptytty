@@ -1,3 +1,7 @@
+
+	- limit cmsg->cmsg_len to controllen, as some buggy OSes allow
+          buffer overruns otherwise.
+
 2.0  Wed Aug  4 15:59:08 CEST 2021
 	- change build system to cmake.
 	- add pkg-config file.

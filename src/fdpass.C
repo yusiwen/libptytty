@@ -102,20 +102,22 @@ ptytty::recv_fd (int socket)
   int fd = -1;
 
   if (recvmsg (socket, &msg, 0) >  0
-      && data                   == 0)
+      && data == 0)
     {
       cmsghdr *cmsg = CMSG_FIRSTHDR (&msg);
 
-      // some operating systems (i.e. osx) allow msg->cmsg_len to be larger than
-      // msg.msg_controllen, so limit the size here
-      if (cmsg->cmsg_len > CMSG_SPACE (sizeof (int)))
-        cmsg->cmsg_len = CMSG_SPACE (sizeof (int));
+      if (cmsg)
+        {
+          // some operating systems (i.e. osx) allow msg->cmsg_len to be larger than
+          // msg.msg_controllen, so limit the size here
+          if (cmsg->cmsg_len > CMSG_SPACE (sizeof (int)))
+            cmsg->cmsg_len = CMSG_SPACE (sizeof (int));
 
-      if (cmsg
-          && cmsg->cmsg_level == SOL_SOCKET
-          && cmsg->cmsg_type  == SCM_RIGHTS
-          && cmsg->cmsg_len   >= CMSG_LEN (sizeof (int)))
-        fd = *(int *)CMSG_DATA (cmsg);
+          if (   cmsg->cmsg_level == SOL_SOCKET
+              && cmsg->cmsg_type  == SCM_RIGHTS
+              && cmsg->cmsg_len   >= CMSG_LEN (sizeof (int)))
+            fd = *(int *)CMSG_DATA (cmsg);
+        }
     }
 
   free (buf);

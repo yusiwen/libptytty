@@ -25,6 +25,7 @@
 #include <stddef.h> // needed by broken bsds for NULL used in sys/uio.h
 #include <stdlib.h>
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <sys/socket.h>
@@ -101,8 +102,7 @@ ptytty::recv_fd (int socket)
 
   int fd = -1;
 
-  if (recvmsg (socket, &msg, 0) >  0
-      && data == 0)
+  if (recvmsg (socket, &msg, 0) > 0)
     {
       cmsghdr *cmsg = CMSG_FIRSTHDR (&msg);
 
@@ -116,11 +116,27 @@ ptytty::recv_fd (int socket)
           if (   cmsg->cmsg_level == SOL_SOCKET
               && cmsg->cmsg_type  == SCM_RIGHTS
               && cmsg->cmsg_len   >= CMSG_LEN (sizeof (int)))
-            fd = *(int *)CMSG_DATA (cmsg);
+            {
+              // close any extra fd's that might have been passed.
+              // this does not work around osx/freebsad bugs where a malicious sender
+              // can send usw more fds than we can receive, leaking the extra fds,
+              // which must be fixed in the kernel, really.
+              for (fd = 1; cmsg->cmsg_len >= CMSG_LEN (sizeof (int) * (fd + 1)); ++fd)
+                close (((int *)CMSG_DATA (cmsg))[fd]);
+
+              // we are only interested in the first fd
+              fd = *(int *)CMSG_DATA (cmsg);
+            }
         }
     }
 
   free (buf);
+
+  if (data != 0)
+    {
+      close (fd);
+      fd = -1;
+    }
 
   return fd;
 }

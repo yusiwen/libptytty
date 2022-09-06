@@ -1,7 +1,9 @@
 
-	- hardening: limit cmsg->cmsg_len to controllen, as some buggy OSes
-          allow buffer overruns otherwise.
-        - hardening: do not leak fds on fdpass protocol failures.
+        - fdpass hardening:
+	   - limit cmsg->cmsg_len to controllen, as some buggy OSes
+             allow buffer overruns otherwise.
+           - do not leak fds on fdpass protocol failures.
+           - close extra fd's sent by non-compliant sender.
 
 2.0  Wed Aug  4 15:59:08 CEST 2021
 	- change build system to cmake.

@@ -121,7 +121,7 @@ ptytty::recv_fd (int socket)
               && cmsg->cmsg_len   >= CMSG_LEN (sizeof (int)))
             {
               // close any extra fds that might have been passed.
-              // this does not work around osx/freebsad bugs where a malicious sender
+              // this does not work around osx/freebsd bugs where a malicious sender
               // can send us more fds than we can receive, leaking the extra fds,
               // which must be fixed in the kernel, really.
               for (fd = 1; cmsg->cmsg_len >= CMSG_LEN (sizeof (int) * (fd + 1)); ++fd)

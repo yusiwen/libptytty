@@ -1,6 +1,4 @@
 
-TODO: make clean deletes doc/lib*.3, make install afterwards fails
-
         - fdpass hardening:
 	   - limit cmsg->cmsg_len to controllen, as some buggy OSes
              allow buffer overruns otherwise.

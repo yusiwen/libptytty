@@ -327,25 +327,14 @@ add_executable(c-sample eg/c-sample.c)
 target_include_directories(c-sample PRIVATE src)
 target_link_libraries(c-sample ptytty)
 
-add_custom_command(
-  OUTPUT ${CMAKE_SOURCE_DIR}/doc/libptytty.3
-  DEPENDS ${CMAKE_SOURCE_DIR}/doc/libptytty.3.pod
+add_custom_target(alldoc
   COMMAND pod2man -n libptytty -r ${PROJECT_VERSION} -q\" -c LIBPTYTTY -s3
             < ${CMAKE_SOURCE_DIR}/doc/libptytty.3.pod
             > ${CMAKE_SOURCE_DIR}/doc/libptytty.3
-  VERBATIM)
-
-add_custom_command(
-  OUTPUT ${CMAKE_SOURCE_DIR}/README
-  DEPENDS ${CMAKE_SOURCE_DIR}/doc/libptytty.3.pod
   COMMAND pod2text
             < ${CMAKE_SOURCE_DIR}/doc/libptytty.3.pod
             > ${CMAKE_SOURCE_DIR}/README
   VERBATIM)
-
-add_custom_target(alldoc
-  DEPENDS ${CMAKE_SOURCE_DIR}/doc/libptytty.3
-          ${CMAKE_SOURCE_DIR}/README)
 
 install(
   TARGETS ptytty
